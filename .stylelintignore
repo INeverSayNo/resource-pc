@@ -1,0 +1,5 @@
+/dist/*
+/public/*
+public/*
+/dist*
+/types/env.d.ts

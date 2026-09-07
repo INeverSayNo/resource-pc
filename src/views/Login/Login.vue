@@ -1,12 +1,10 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { LoginForm, RegisterForm } from './components'
+  import { LoginForm } from './components'
   import { ThemeSwitch } from '@/components/base'
   import { useAppStore } from '@/store/modules/app'
   import { appConfig } from '@/config/app'
 
   const appStore = useAppStore()
-  const isLogin = ref(true)
 </script>
 
 <template>
@@ -69,8 +67,7 @@
     <section class="form-stage">
       <div class="form-card">
         <Transition name="form-swap" mode="out-in">
-          <LoginForm v-if="isLogin" key="login" @to-register="isLogin = false" />
-          <RegisterForm v-else key="register" @to-login="isLogin = true" />
+          <LoginForm key="login"  />
         </Transition>
       </div>
     </section>

@@ -9,7 +9,6 @@
   import { readLoginPreferences, saveLoginPreferences } from '@/utils/loginPreferences'
   import { resolveInternalRedirect } from '@/utils/redirect'
 
-  const emit = defineEmits(['to-register'])
   const userStore = useUserStore()
   const permissionStore = usePermissionStore()
   const { currentRoute, replace } = useRouter()
@@ -91,11 +90,6 @@
     <ElButton native-type="submit" :loading="submitting" type="primary" class="login-submit">
       登录
     </ElButton>
-
-    <button type="button" class="register-link" @click="emit('to-register')">
-      <span>注册</span>
-      <i aria-hidden="true">↗</i>
-    </button>
   </ElForm>
 </template>
 

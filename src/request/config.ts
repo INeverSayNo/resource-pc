@@ -11,7 +11,6 @@ const {
   file_url,
   getfile_url,
   applicationId,
-  applicationMenuModuleId,
   self_url,
   jssdk_url,
   gateway_url,
@@ -38,8 +37,6 @@ export const LOGIN_URL: string = login_url[env]
 export const FILE_URL: string = file_url[env]
 export const GETFILE_URL: string = getfile_url[env]
 export const ApplicationId: string = applicationId
-export const ApplicationMenuModuleId: string = applicationMenuModuleId
-
 export const SELF_URL: string = self_url[env]
 export const RESOURCE_URL: string = Resource_url[env]
 export const SUPPLIER_URL: string = Supplier_url[env]

@@ -3,7 +3,6 @@
  */
 export interface ConfigOptions {
   applicationId: string
-  applicationMenuModuleId: string
   default_headers: string
   base_url: UrlObject
   trace_url: UrlObject
