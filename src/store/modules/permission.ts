@@ -62,11 +62,12 @@ export const usePermissionStore = defineStore('permission', {
   },
   actions: {
     prepareRoutes(response: BackendMenuResponse): AppRouteRecordRaw[] {
-      if (env === 'pro') return []
       const menus = normalizeBackendMenus(response)
       if (!menus) throw new Error('菜单解析失败')
       const adapted = adaptBackendMenus(menus, getStaticPaths(constantRouterMap))
       for (const warning of adapted.warnings) console.warn(warning)
+      console.log(adapted.routes)
+      console.log(generateRoutesByServer(adapted.routes))
       return generateRoutesByServer(adapted.routes)
     },
     replaceRoutes(routes: AppRouteRecordRaw[]): void {

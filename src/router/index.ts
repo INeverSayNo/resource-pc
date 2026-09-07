@@ -17,13 +17,12 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
         meta: {
           title: '首页',
           affix: true,
-          alwaysShow: true
+          alwaysShow: true,
+          icon: 'solution-map'
         }
       }
     ],
-    meta: {
-      hidden: true
-    }
+    meta: {}
   },
   {
     path: '/redirect',

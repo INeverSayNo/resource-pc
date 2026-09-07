@@ -17,7 +17,7 @@
           <template #content>
             <div class="max-w-200px">{{ message }}</div>
           </template>
-          <Icon class="ml-5px" icon="mdi:help-circle" :size="14" />
+          <SvgIcon class="ml-5px" icon="help-circle" :size="14" />
         </ElTooltip>
         <div class="flex pl-20px flex-grow">
           <slot name="header"></slot>

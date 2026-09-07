@@ -36,7 +36,7 @@
           :disabled="item.disabled"
           :command="item"
         >
-          <Icon :icon="item.icon" /> {{ item.label }}
+          <SvgIcon :icon="item.icon" /> {{ item.label }}
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>

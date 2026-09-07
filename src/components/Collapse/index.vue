@@ -18,9 +18,9 @@
     :aria-label="appStore.collapse ? '展开导航菜单' : '收起导航菜单'"
     @click="toggleCollapse"
   >
-    <Icon
+    <SvgIcon
       :size="18"
-      :icon="appStore.collapse ? 'mdi:menu-open' : 'mdi:menu'"
+      :icon="appStore.collapse ? 'menu-open' : 'menu'"
       :color="color"
       class="cursor-pointer"
     />

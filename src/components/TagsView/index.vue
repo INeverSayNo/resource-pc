@@ -93,39 +93,39 @@
 
     return [
       {
-        icon: 'mdi:sync',
+        icon: 'sync',
         label: '重新加载',
         disabled: !view.name,
         command: () => refreshTag(view)
       },
       {
-        icon: 'mdi:close',
+        icon: 'close',
         label: '关闭标签页',
         disabled: view.affix,
         command: () => closeTag(view)
       },
       {
         divided: true,
-        icon: 'mdi:page-last',
+        icon: 'page-last',
         label: '关闭左侧标签页',
         disabled: index <= 0 || !hasClosableView(visitedViews.value.slice(0, index)),
         command: () => closeLeftTags(view)
       },
       {
-        icon: 'mdi:page-first',
+        icon: 'page-first',
         label: '关闭右侧标签页',
         disabled: index < 0 || !hasClosableView(visitedViews.value.slice(index + 1)),
         command: () => closeRightTags(view)
       },
       {
         divided: true,
-        icon: 'mdi:tag-outline',
+        icon: 'tag-outline',
         label: '关闭其它标签页',
         disabled: !hasClosableView(otherViews),
         command: () => closeOtherTags(view)
       },
       {
-        icon: 'mdi:minus',
+        icon: 'minus',
         label: '关闭全部标签页',
         disabled: !hasClosableView(visitedViews.value),
         command: closeAllTags
@@ -161,7 +161,7 @@
       aria-label="向左滚动标签页"
       @click="scrollTags(-200)"
     >
-      <Icon icon="mdi:chevron-double-left" />
+      <SvgIcon icon="chevron-double-left" />
     </button>
 
     <div :class="`${prefixCls}__viewport`">
@@ -178,7 +178,7 @@
           >
             <div :class="`${prefixCls}__item-body`">
               <RouterLink :to="item.fullPath" :class="`${prefixCls}__link`">
-                <Icon v-if="appConfig.ui.tagsViewIcon && item.icon" :icon="item.icon" :size="13" />
+                <SvgIcon v-if="appConfig.ui.tagsViewIcon && item.icon" :icon="item.icon" :size="13" />
                 <span>{{ item.title || '' }}</span>
               </RouterLink>
               <button
@@ -188,7 +188,7 @@
                 :aria-label="`关闭标签页：${item.title || ''}`"
                 @click.stop="closeTag(item)"
               >
-                <Icon icon="mdi:close" :size="13" />
+                <SvgIcon icon="close" :size="13" />
               </button>
             </div>
           </ContextMenu>
@@ -203,7 +203,7 @@
       aria-label="向右滚动标签页"
       @click="scrollTags(200)"
     >
-      <Icon icon="mdi:chevron-double-right" />
+      <SvgIcon icon="chevron-double-right" />
     </button>
     <button
       :class="`${prefixCls}__tool`"
@@ -213,7 +213,7 @@
       :disabled="!activeTag"
       @click="refreshTag(activeTag)"
     >
-      <Icon icon="mdi:reload" />
+      <SvgIcon icon="reload" />
     </button>
     <ContextMenu trigger="click" :schema="activeTag ? createContextMenu(activeTag) : []">
       <button
@@ -223,7 +223,7 @@
         aria-label="更多标签页操作"
         :disabled="!activeTag"
       >
-        <Icon icon="mdi:dots-horizontal" />
+        <SvgIcon icon="dots-horizontal" />
       </button>
     </ContextMenu>
   </div>

@@ -5,6 +5,7 @@ import Vue from '@vitejs/plugin-vue'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 const root = process.cwd()
 
@@ -16,7 +17,18 @@ export default ({ mode }: ConfigEnv): UserConfig => {
   const env = loadEnv(mode, root)
   return {
     base: env.VITE_BASE_PATH,
-    plugins: [Vue(), VueJsx(), ElementPlus(), UnoCSS()],
+    plugins: [
+      Vue(),
+      VueJsx(),
+      ElementPlus(),
+      UnoCSS(),
+      createSvgIconsPlugin({
+        iconDirs: [pathResolve('src/assets/icons/svg')],
+        symbolId: 'icon-[name]',
+        inject: 'body-last',
+        customDomId: '__svg__icons__'
+      })
+    ],
 
     resolve: {
       alias: [
@@ -27,7 +39,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       ]
     },
     build: {
-      target: 'es2015',
+      target: 'esnext',
       outDir: env.VITE_OUT_DIR || 'dist',
       sourcemap: env.VITE_SOURCEMAP === 'true',
       cssCodeSplit: !(env.VITE_USE_CSS_SPLIT === 'false'),
@@ -39,6 +51,14 @@ export default ({ mode }: ConfigEnv): UserConfig => {
               {
                 name: 'zrender',
                 test: /node_modules[\\/]zrender[\\/]/
+              },
+              {
+                name: 'crypto',
+                test: /node_modules[\\/](elliptic|crypto-js)[\\/]/
+              },
+              {
+                name: 'http',
+                test: /node_modules[\\/](axios|@dczy[\\/]tie-tools)[\\/]/
               }
             ]
           }

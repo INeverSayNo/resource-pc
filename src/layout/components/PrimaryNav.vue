@@ -26,7 +26,7 @@
       :title="route.meta?.title || ''"
       @click="emit('select', route)"
     >
-      <Icon v-if="route.meta?.icon" :icon="route.meta.icon" :size="mode === 'rail' ? 22 : 18" />
+      <SvgIcon v-if="route.meta?.icon" :icon="route.meta.icon" :size="mode === 'rail' ? 22 : 18" />
       <span>{{ route.meta?.title || '' }}</span>
     </button>
   </nav>

@@ -1,13 +1,12 @@
 import type { RouteMeta } from 'vue-router'
-import { Icon } from '@/components/base'
-
+import SvgIcon from "@/components/SvgIcon/index.vue"
 export const useRenderMenuTitle = () => {
   const renderMenuTitle = (meta: RouteMeta) => {
     const { title = '请设置标题', icon } = meta
 
     return icon ? (
       <>
-        <Icon icon={meta.icon}></Icon>
+        <SvgIcon icon={meta.icon}></SvgIcon>
         <span class="v-menu__title truncate">{title as string}</span>
       </>
     ) : (
