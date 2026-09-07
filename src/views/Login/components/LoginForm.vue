@@ -59,7 +59,6 @@
     <div class="form-intro">
       <span class="form-kicker">欢迎使用道臣智运</span>
       <h2>登录</h2>
-      <p>开箱即用的中后台管理系统</p>
     </div>
 
     <ElFormItem class="login-field" label="用户名" :error="errors.username?.[0]">

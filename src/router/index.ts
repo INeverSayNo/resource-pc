@@ -16,7 +16,8 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
         component: () => import('@/views/Dashboard/index.vue'),
         meta: {
           title: '首页',
-          affix: true
+          affix: true,
+          alwaysShow: true
         }
       }
     ],

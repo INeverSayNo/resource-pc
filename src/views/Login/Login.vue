@@ -450,7 +450,7 @@
     display: flex;
     width: min(100%, 540px);
     min-height: 410px;
-    padding: clamp(32px, 4vw, 48px);
+    padding: 14px 32px;
     background: var(--login-card);
     border: 1px solid rgb(255 255 255 / 86%);
     border-radius: 28px;
