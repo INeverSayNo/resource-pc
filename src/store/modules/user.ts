@@ -1,0 +1,294 @@
+import { defineStore } from 'pinia'
+import router from '@/router'
+import {
+  accountLogin,
+  exchangeErpCookie,
+  getLinkedAccounts,
+  getUserMenus,
+  loginByOa as requestOaLogin,
+  switchLinkedAccount
+} from '@/api/login'
+import type { LinkedAccount, LoginCredentials, OaLoginCredentials } from '@/api/login'
+import type { ApiResult } from '@/request'
+import type { LoginResponse, UserInfo } from '@/types/user'
+import { decodeJwtUser, getUserId } from '@/utils/jwt'
+import { monitor } from '@/plugins/monitor'
+import { useDictionaryStore } from './dictionary'
+import { useOrgUserStore } from './orgUser'
+import { usePermissionStore } from './permission'
+import { useTagsViewStore } from './tagsView'
+import { store } from '../index'
+
+type AuthSource = 'password' | 'external-token' | 'erp-cookie' | 'oa' | 'account-switch'
+
+interface UserState {
+  token: string
+  userInfo: UserInfo | null
+  expiresAt: number | null
+  accounts: LinkedAccount[]
+}
+
+let authenticationPromise: Promise<ApiResult<UserInfo>> | null = null
+let restorePromise: Promise<ApiResult<boolean>> | null = null
+let accountsPromise: Promise<ApiResult<LinkedAccount[]>> | null = null
+let sessionGeneration = 0
+
+const withAuthenticationLock = (
+  task: () => Promise<ApiResult<UserInfo>>
+): Promise<ApiResult<UserInfo>> => {
+  if (authenticationPromise) return authenticationPromise
+  const pending = task().finally(() => {
+    if (authenticationPromise === pending) authenticationPromise = null
+  })
+  authenticationPromise = pending
+  return pending
+}
+
+const getExpiresAt = (response: LoginResponse, userInfo: UserInfo): number | null => {
+  if (typeof userInfo.exp === 'number') return userInfo.exp * 1000
+  if (typeof response.expires_in === 'number' && Number.isFinite(response.expires_in)) {
+    return Date.now() + response.expires_in * 1000
+  }
+  return null
+}
+
+const normalizeAccounts = (
+  value: LinkedAccount[] | LinkedAccount | string
+): ApiResult<LinkedAccount[]> => {
+  try {
+    const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value
+    const items = Array.isArray(parsed) ? parsed : [parsed]
+    const accounts = items.filter(
+      (item): item is LinkedAccount =>
+        typeof item === 'object' && item !== null && typeof Reflect.get(item, 'id') === 'string'
+    )
+    return [null, accounts]
+  } catch {
+    return [new Error('关联账号响应格式无效'), null]
+  }
+}
+
+const trackNonBlocking = (event: string, properties: Record<string, unknown>): void => {
+  try {
+    void monitor.track(event, properties).catch(() => undefined)
+  } catch {
+    // 埋点异常不能中断登录、恢复或账号切换。
+  }
+}
+
+export const useUserStore = defineStore('user', {
+  state: (): UserState => ({
+    token: '',
+    userInfo: null,
+    expiresAt: null,
+    accounts: []
+  }),
+  getters: {
+    isAuthenticated(state): boolean {
+      return Boolean(state.token && state.userInfo)
+    },
+    currentUserId(state): string {
+      return state.userInfo ? getUserId(state.userInfo) : ''
+    }
+  },
+  actions: {
+    isSessionValid(): boolean {
+      return Boolean(
+        this.token && this.userInfo && (this.expiresAt === null || this.expiresAt > Date.now())
+      )
+    },
+    async completeAuthentication(
+      response: LoginResponse,
+      source: AuthSource,
+      previousUserId = ''
+    ): Promise<ApiResult<UserInfo>> {
+      const token = response.access_token
+      const [jwtError, userInfo] = decodeJwtUser(token)
+      if (jwtError || !userInfo) return [jwtError || new Error('Token 解析失败'), null]
+
+      const [menuError, menuResponse] = await getUserMenus(token)
+      if (menuError || !menuResponse) return [menuError || new Error('菜单加载失败'), null]
+
+      const permissionStore = usePermissionStore()
+      const [prepareError, routes] = permissionStore.prepareRoutes(menuResponse)
+      if (prepareError || !routes) return [prepareError || new Error('菜单转换失败'), null]
+
+      const [installError] = permissionStore.replaceRoutes(routes)
+      if (installError) return [installError, null]
+
+      this.token = token
+      this.userInfo = userInfo
+      this.expiresAt = getExpiresAt(response, userInfo)
+      this.accounts = []
+      accountsPromise = null
+      useTagsViewStore().removeAllViews(false)
+
+      sessionGeneration += 1
+      const generation = sessionGeneration
+      const dictionaryStore = useDictionaryStore()
+      const orgUserStore = useOrgUserStore()
+      dictionaryStore.reset(generation)
+      orgUserStore.reset(generation)
+      monitor.setUser({ ...userInfo, id: getUserId(userInfo) })
+
+      void this.loadAccounts()
+      void dictionaryStore.loadAll(generation)
+      void orgUserStore.prefetch(generation)
+
+      if (source === 'account-switch') {
+        trackNonBlocking('$AccountSwitch', {
+          module: 'login',
+          from_user_id: previousUserId,
+          to_user_id: getUserId(userInfo)
+        })
+      } else {
+        trackNonBlocking('$LoginSuccess', { module: 'login', auth_source: source })
+      }
+      return [null, userInfo]
+    },
+    loginByPassword(credentials: LoginCredentials): Promise<ApiResult<UserInfo>> {
+      return withAuthenticationLock(async () => {
+        const [error, response] = await accountLogin(credentials)
+        if (error || !response) return [error || new Error('登录失败'), null]
+        return this.completeAuthentication(response, 'password')
+      })
+    },
+    loginByExternalToken(token: string): Promise<ApiResult<UserInfo>> {
+      return withAuthenticationLock(() =>
+        this.completeAuthentication({ access_token: token }, 'external-token')
+      )
+    },
+    loginByErpCookie(cookie: string): Promise<ApiResult<UserInfo>> {
+      return withAuthenticationLock(async () => {
+        const [error, response] = await exchangeErpCookie(cookie)
+        if (error || !response) return [error || new Error('ERP 登录失败'), null]
+        return this.completeAuthentication(response, 'erp-cookie')
+      })
+    },
+    loginByOa(credentials: OaLoginCredentials): Promise<ApiResult<UserInfo>> {
+      return withAuthenticationLock(async () => {
+        const [error, response] = await requestOaLogin(credentials)
+        if (error || !response) return [error || new Error('OA 登录失败'), null]
+        return this.completeAuthentication(response, 'oa')
+      })
+    },
+    switchAccount(accountId: string): Promise<ApiResult<UserInfo>> {
+      return withAuthenticationLock(async () => {
+        if (!this.token) return [new Error('当前会话不存在'), null]
+        const previousUserId = this.currentUserId
+        const [error, response] = await switchLinkedAccount(accountId, this.token)
+        if (error || !response) return [error || new Error('账号切换失败'), null]
+        return this.completeAuthentication(response, 'account-switch', previousUserId)
+      })
+    },
+    async loadAccounts(): Promise<ApiResult<LinkedAccount[]>> {
+      if (accountsPromise) return accountsPromise
+      const generation = sessionGeneration
+      const pending = (async (): Promise<ApiResult<LinkedAccount[]>> => {
+        const [error, response] = await getLinkedAccounts()
+        if (generation !== sessionGeneration) return [new Error('关联账号请求已失效'), null]
+        if (error || !response) return [error || new Error('关联账号加载失败'), null]
+        const [normalizeError, accounts] = normalizeAccounts(response)
+        if (normalizeError || !accounts)
+          return [normalizeError || new Error('关联账号解析失败'), null]
+        this.accounts = accounts
+        return [null, accounts]
+      })().finally(() => {
+        if (accountsPromise === pending) accountsPromise = null
+      })
+      accountsPromise = pending
+      return pending
+    },
+    restoreSession(): Promise<ApiResult<boolean>> {
+      if (restorePromise) return restorePromise
+      const pending = (async (): Promise<ApiResult<boolean>> => {
+        if (!this.token || !this.userInfo) {
+          if (this.token || this.userInfo) this.clearSession()
+          return [null, false]
+        }
+
+        const [jwtError, decodedUser] = decodeJwtUser(this.token)
+        if (jwtError || !decodedUser || !this.isSessionValid()) {
+          this.clearSession()
+          return [jwtError || new Error('登录会话已过期'), null]
+        }
+
+        const permissionStore = usePermissionStore()
+        if (!permissionStore.isAddRouters) {
+          const [menuError, menuResponse] = await getUserMenus(this.token)
+          if (menuError || !menuResponse) {
+            this.clearSession()
+            return [menuError || new Error('菜单恢复失败'), null]
+          }
+          const [prepareError, routes] = permissionStore.prepareRoutes(menuResponse)
+          if (prepareError || !routes) {
+            this.clearSession()
+            return [prepareError || new Error('菜单恢复失败'), null]
+          }
+          const [installError] = permissionStore.replaceRoutes(routes)
+          if (installError) {
+            this.clearSession()
+            return [installError, null]
+          }
+        }
+
+        this.userInfo = decodedUser
+        this.expiresAt =
+          typeof decodedUser.exp === 'number' ? decodedUser.exp * 1000 : this.expiresAt
+        this.accounts = []
+        accountsPromise = null
+        monitor.setUser({ ...decodedUser, id: getUserId(decodedUser) })
+        sessionGeneration += 1
+        const generation = sessionGeneration
+        useDictionaryStore().reset(generation)
+        useOrgUserStore().reset(generation)
+        void this.loadAccounts()
+        void useDictionaryStore().loadAll(generation)
+        void useOrgUserStore().prefetch(generation)
+        return [null, true]
+      })().finally(() => {
+        if (restorePromise === pending) restorePromise = null
+      })
+      restorePromise = pending
+      return pending
+    },
+    clearSession(): void {
+      sessionGeneration += 1
+      this.token = ''
+      this.userInfo = null
+      this.expiresAt = null
+      this.accounts = []
+      accountsPromise = null
+      usePermissionStore().reset()
+      useTagsViewStore().removeAllViews(false)
+      useDictionaryStore().reset(sessionGeneration)
+      useOrgUserStore().reset(sessionGeneration)
+      monitor.clearUser()
+      sessionStorage.removeItem('vea-auth-session-v2')
+      localStorage.removeItem('JsToken')
+      localStorage.removeItem('CurUser')
+      sessionStorage.removeItem('userInfo')
+    },
+    async expireSession(): Promise<void> {
+      const currentPath = router.currentRoute.value.fullPath
+      this.clearSession()
+      if (router.currentRoute.value.path !== '/login') {
+        await router.replace({
+          path: '/login',
+          query: currentPath && currentPath !== '/' ? { redirect: currentPath } : undefined
+        })
+      }
+    },
+    async logout(): Promise<void> {
+      this.clearSession()
+      await router.replace('/login')
+    }
+  },
+  persist: {
+    key: 'vea-auth-session-v2',
+    storage: sessionStorage,
+    pick: ['token', 'userInfo', 'expiresAt']
+  }
+})
+
+export const useUserStoreWithOut = () => useUserStore(store)

@@ -1,0 +1,74 @@
+{
+  "applicationId": "999A3418-BBAB-4720-9A81-9EBB6025ECCF",
+  "applicationMenuModuleId":"685bc38e-7670-4013-bf5b-e344e4180f73",
+  "auth": {
+    "clientId": "resource-admin",
+    "clientSecret": "1q2w3e*"
+  },
+  "gateway_url": {
+    "dev": "http://test.cddc56.com:40100",
+    "pro": "https://gateway.dczhiyun.com",
+    "test": "http://test.cddc56.com:40100"
+  },
+  "stream_url": {
+    "dev": "http://test.cddc56.com:46002",
+    "pro": "https://gateway8.dczhiyun.com",
+    "test": "http://test.cddc56.com:46002"
+  },
+  "trace_url": {
+    "dev": "http://test.cddc56.com:40109",
+    "pro": "https://gateway.dczhiyun.com/trace",
+    "test": "http://test.cddc56.com:40109"
+  },
+  "file_url": {
+    "dev": "https://gateway-test.daochen.com/api/files/static/resource/p",
+    "pro": "https://gateway.dczhiyun.com/api/files/static/resource/p",
+    "test": "https://gateway-test.daochen.com/api/files/static/resource/p"
+  },
+  "getfile_url": {
+    "dev": "https://gateway-test.daochen.com/api/abp/minio",
+    "pro": "https://gateway.dczhiyun.com/api/abp/minio",
+    "test": "https://gateway-test.daochen.com/api/abp/minio"
+  },
+  "login_url": {
+    "dev": "https://gateway-test.daochen.com",
+    "pro": "https://a.daochen.com",
+    "test": "https://gateway-test.daochen.com"
+  },
+  "jssdk_url": {
+    "dev": "https://notify.dczhiyun.com",
+    "pro": "https://notify.dczhiyun.com",
+    "test": "https://notify.dczhiyun.com"
+  },
+  "self_url": {
+    "dev": "http://localhost:8005",
+    "pro": "https://m.dczhiyun.com",
+    "test": "https://wechatapp-test.daochen.com/mobile-platform"
+  },
+  "Resource_url": {
+    "dev": "https://wechatapp-test.daochen.com/resource",
+    "pro": "https://r.dczhiyun.com/1.0.7",
+    "test": "https://wechatapp-test.daochen.com/resource"
+  },
+  "Supplier_url": {
+    "dev": "https://wechatapp-test.daochen.com/gys/dcEmployee",
+    "pro": "https://gys-dcm.dczhiyun.com",
+    "test": "https://wechatapp-test.daochen.com/gys/dcEmployee"
+  },
+  "v8_baseData_url": {
+    "dev": "http://test.cddc56.com:30000",
+    "pro": "http://test.cddc56.com:30000",
+    "test": "http://test.cddc56.com:30000"
+  },
+  "system_config": {
+    "#comment": "系统配置,主要针对外部系统进行主题配置",
+    "solutionTitle": "欢迎使用智慧物流方案",
+    "documentTitle": "道臣智运",
+    "solutionDefalutTabIndex": 0,
+    "solutionTab": ["首页", "查方案", "我的"]
+  },
+  "useCrypto": false,
+  "useFrontendDecrement": false,
+  "cryptoType":1,
+  "showAIHelp": true
+}
