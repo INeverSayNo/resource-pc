@@ -24,49 +24,12 @@ type AuthSource = 'password' | 'external-token' | 'erp-cookie' | 'oa' | 'account
 interface UserState {
   token: string
   userInfo: UserInfo | null
-  expiresAt: number | null
   accounts: LinkedAccount[]
 }
 
-let authenticationPromise: Promise<ApiResult<UserInfo>> | null = null
 let restorePromise: Promise<ApiResult<boolean>> | null = null
 let accountsPromise: Promise<ApiResult<LinkedAccount[]>> | null = null
 let sessionGeneration = 0
-
-const withAuthenticationLock = (
-  task: () => Promise<ApiResult<UserInfo>>
-): Promise<ApiResult<UserInfo>> => {
-  if (authenticationPromise) return authenticationPromise
-  const pending = task().finally(() => {
-    if (authenticationPromise === pending) authenticationPromise = null
-  })
-  authenticationPromise = pending
-  return pending
-}
-
-const getExpiresAt = (response: LoginResponse, userInfo: UserInfo): number | null => {
-  if (typeof userInfo.exp === 'number') return userInfo.exp * 1000
-  if (typeof response.expires_in === 'number' && Number.isFinite(response.expires_in)) {
-    return Date.now() + response.expires_in * 1000
-  }
-  return null
-}
-
-const normalizeAccounts = (
-  value: LinkedAccount[] | LinkedAccount | string
-): ApiResult<LinkedAccount[]> => {
-  try {
-    const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value
-    const items = Array.isArray(parsed) ? parsed : [parsed]
-    const accounts = items.filter(
-      (item): item is LinkedAccount =>
-        typeof item === 'object' && item !== null && typeof Reflect.get(item, 'id') === 'string'
-    )
-    return [null, accounts]
-  } catch {
-    return [new Error('关联账号响应格式无效'), null]
-  }
-}
 
 const trackNonBlocking = (event: string, properties: Record<string, unknown>): void => {
   try {
@@ -80,7 +43,6 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: '',
     userInfo: null,
-    expiresAt: null,
     accounts: []
   }),
   getters: {
@@ -93,9 +55,8 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     isSessionValid(): boolean {
-      return Boolean(
-        this.token && this.userInfo && (this.expiresAt === null || this.expiresAt > Date.now())
-      )
+      if (!this.token || !this.userInfo) return false
+      return decodeJwtUser(this.token)[0] === null
     },
     async completeAuthentication(
       response: LoginResponse,
@@ -118,7 +79,6 @@ export const useUserStore = defineStore('user', {
 
       this.token = token
       this.userInfo = userInfo
-      this.expiresAt = getExpiresAt(response, userInfo)
       this.accounts = []
       accountsPromise = null
       useTagsViewStore().removeAllViews(false)
@@ -146,40 +106,30 @@ export const useUserStore = defineStore('user', {
       }
       return [null, userInfo]
     },
-    loginByPassword(credentials: LoginCredentials): Promise<ApiResult<UserInfo>> {
-      return withAuthenticationLock(async () => {
-        const [error, response] = await accountLogin(credentials)
-        if (error || !response) return [error || new Error('登录失败'), null]
-        return this.completeAuthentication(response, 'password')
-      })
+    async loginByPassword(credentials: LoginCredentials): Promise<ApiResult<UserInfo>> {
+      const [error, response] = await accountLogin(credentials)
+      if (error || !response) return [error || new Error('登录失败'), null]
+      return this.completeAuthentication(response, 'password')
     },
     loginByExternalToken(token: string): Promise<ApiResult<UserInfo>> {
-      return withAuthenticationLock(() =>
-        this.completeAuthentication({ access_token: token }, 'external-token')
-      )
+      return this.completeAuthentication({ access_token: token }, 'external-token')
     },
-    loginByErpCookie(cookie: string): Promise<ApiResult<UserInfo>> {
-      return withAuthenticationLock(async () => {
-        const [error, response] = await exchangeErpCookie(cookie)
-        if (error || !response) return [error || new Error('ERP 登录失败'), null]
-        return this.completeAuthentication(response, 'erp-cookie')
-      })
+    async loginByErpCookie(cookie: string): Promise<ApiResult<UserInfo>> {
+      const [error, response] = await exchangeErpCookie(cookie)
+      if (error || !response) return [error || new Error('ERP 登录失败'), null]
+      return this.completeAuthentication(response, 'erp-cookie')
     },
-    loginByOa(credentials: OaLoginCredentials): Promise<ApiResult<UserInfo>> {
-      return withAuthenticationLock(async () => {
-        const [error, response] = await requestOaLogin(credentials)
-        if (error || !response) return [error || new Error('OA 登录失败'), null]
-        return this.completeAuthentication(response, 'oa')
-      })
+    async loginByOa(credentials: OaLoginCredentials): Promise<ApiResult<UserInfo>> {
+      const [error, response] = await requestOaLogin(credentials)
+      if (error || !response) return [error || new Error('OA 登录失败'), null]
+      return this.completeAuthentication(response, 'oa')
     },
-    switchAccount(accountId: string): Promise<ApiResult<UserInfo>> {
-      return withAuthenticationLock(async () => {
-        if (!this.token) return [new Error('当前会话不存在'), null]
-        const previousUserId = this.currentUserId
-        const [error, response] = await switchLinkedAccount(accountId, this.token)
-        if (error || !response) return [error || new Error('账号切换失败'), null]
-        return this.completeAuthentication(response, 'account-switch', previousUserId)
-      })
+    async switchAccount(accountId: string): Promise<ApiResult<UserInfo>> {
+      if (!this.token) return [new Error('当前会话不存在'), null]
+      const previousUserId = this.currentUserId
+      const [error, response] = await switchLinkedAccount(accountId, this.token)
+      if (error || !response) return [error || new Error('账号切换失败'), null]
+      return this.completeAuthentication(response, 'account-switch', previousUserId)
     },
     async loadAccounts(): Promise<ApiResult<LinkedAccount[]>> {
       if (accountsPromise) return accountsPromise
@@ -188,11 +138,13 @@ export const useUserStore = defineStore('user', {
         const [error, response] = await getLinkedAccounts()
         if (generation !== sessionGeneration) return [new Error('关联账号请求已失效'), null]
         if (error || !response) return [error || new Error('关联账号加载失败'), null]
-        const [normalizeError, accounts] = normalizeAccounts(response)
-        if (normalizeError || !accounts)
-          return [normalizeError || new Error('关联账号解析失败'), null]
-        this.accounts = accounts
-        return [null, accounts]
+        try {
+          const parsed = typeof response === 'string' ? JSON.parse(response) : response
+          this.accounts = Array.isArray(parsed) ? parsed : [parsed]
+          return [null, this.accounts]
+        } catch {
+          return [new Error('关联账号响应格式无效'), null]
+        }
       })().finally(() => {
         if (accountsPromise === pending) accountsPromise = null
       })
@@ -233,8 +185,6 @@ export const useUserStore = defineStore('user', {
         }
 
         this.userInfo = decodedUser
-        this.expiresAt =
-          typeof decodedUser.exp === 'number' ? decodedUser.exp * 1000 : this.expiresAt
         this.accounts = []
         accountsPromise = null
         monitor.setUser({ ...decodedUser, id: getUserId(decodedUser) })
@@ -256,7 +206,6 @@ export const useUserStore = defineStore('user', {
       sessionGeneration += 1
       this.token = ''
       this.userInfo = null
-      this.expiresAt = null
       this.accounts = []
       accountsPromise = null
       usePermissionStore().reset()
@@ -287,7 +236,7 @@ export const useUserStore = defineStore('user', {
   persist: {
     key: 'vea-auth-session-v2',
     storage: sessionStorage,
-    pick: ['token', 'userInfo', 'expiresAt']
+    pick: ['token', 'userInfo']
   }
 })
 

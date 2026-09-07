@@ -154,8 +154,7 @@ describe('user authentication store', () => {
     const userStore = useUserStore()
     userStore.$patch({
       token: accessToken,
-      userInfo: { erp_userid: 'restored-user' },
-      expiresAt: 4_102_444_800_000
+      userInfo: { erp_userid: 'restored-user' }
     })
     monitor.track.mockClear()
 
@@ -170,8 +169,7 @@ describe('user authentication store', () => {
     const userStore = useUserStore()
     userStore.$patch({
       token: accessToken,
-      userInfo: { erp_userid: 'restored-user' },
-      expiresAt: 4_102_444_800_000
+      userInfo: { erp_userid: 'restored-user' }
     })
 
     const [first, second] = await Promise.all([

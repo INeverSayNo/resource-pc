@@ -5,7 +5,6 @@
   import { required, useForm } from '@/hooks/useForm'
   import { useUserStore } from '@/store/modules/user'
   import { usePermissionStore } from '@/store/modules/permission'
-  import { getApiErrorMessage } from '@/request'
   import { readLoginPreferences, saveLoginPreferences } from '@/utils/loginPreferences'
   import { resolveInternalRedirect } from '@/utils/redirect'
 
@@ -33,7 +32,9 @@
   const login = async (formData: Record<'username' | 'password', string>) => {
     const [error] = await userStore.loginByPassword(formData)
     if (error) {
-      ElMessage.error(getApiErrorMessage(error, '登录失败，请检查账号密码是否有误'))
+      ElMessage.error(
+        (typeof error === 'string' ? error : error.message) || '登录失败，请检查账号密码是否有误'
+      )
       return
     }
     saveLoginPreferences(formData.username, remember.value)

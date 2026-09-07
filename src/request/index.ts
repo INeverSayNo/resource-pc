@@ -89,4 +89,3 @@ export class BaseApi extends DcToolsRequest {
 }
 
 export type { ApiError, ApiResult } from './types'
-export { getApiErrorMessage, normalizeApiResult, toApiError } from './result'

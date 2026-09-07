@@ -1,5 +1,4 @@
-import { BaseApi, normalizeApiResult } from '@/request'
-import type { ApiResult } from '@/request'
+import { BaseApi } from '@/request'
 import { GATEWAY_URL, USE_CRY_PTO } from '@/request/config'
 
 export interface OrgUser {
@@ -18,12 +17,9 @@ interface OrgUserResponse {
 
 const api = new BaseApi({ baseURL: GATEWAY_URL, crypto: USE_CRY_PTO })
 
-export const getOrgUsers = (): Promise<ApiResult<OrgUserResponse>> =>
-  normalizeApiResult(
-    api.get<OrgUserResponse>(
-      '/api/BaseData/User/user-query',
-      { distinct: true, page: 1, limit: 20000 },
-      true
-    ),
-    '组织用户加载失败'
+export const getOrgUsers = () =>
+  api.get<OrgUserResponse>(
+    '/api/BaseData/User/user-query',
+    { distinct: true, page: 1, limit: 20000 },
+    true
   )

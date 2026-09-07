@@ -1,3 +1,5 @@
+import type { ResponseError } from '@dczy/tie-tools'
+
 /**
  * request配置
  */
@@ -30,16 +32,7 @@ export interface ConfigOptions {
   }
 }
 
-export interface ApiErrorObject {
-  message?: string
-  Message?: string
-  error?: string
-  error_description?: string
-  code?: string | number
-  [key: string]: unknown
-}
-
-export type ApiError = Error | string | ApiErrorObject
+export type ApiError = Error | string | ResponseError
 
 export type ApiResult<T> = [ApiError | null, T | null]
 

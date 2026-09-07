@@ -4,7 +4,6 @@
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/modules/user'
   import { usePermissionStore } from '@/store/modules/permission'
-  import { getApiErrorMessage } from '@/request'
 
   const userStore = useUserStore()
   const permissionStore = usePermissionStore()
@@ -33,7 +32,7 @@
     const [error] = await userStore.switchAccount(accountId)
     switchingAccountId.value = ''
     if (error) {
-      ElMessage.error(getApiErrorMessage(error, '账号切换失败'))
+      ElMessage.error((typeof error === 'string' ? error : error.message) || '账号切换失败')
       return
     }
     await router.replace(permissionStore.homePath)
