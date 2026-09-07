@@ -16,11 +16,11 @@ const monitor = vi.hoisted(() => ({
 }))
 const dictionary = vi.hoisted(() => ({
   reset: vi.fn(),
-  loadAll: vi.fn(async () => [null, {}])
+  loadAll: vi.fn(async () => undefined)
 }))
 const orgUser = vi.hoisted(() => ({
   reset: vi.fn(),
-  prefetch: vi.fn(async () => [null, []])
+  prefetch: vi.fn(async () => undefined)
 }))
 
 vi.mock('@/api/login', () => loginApi)
@@ -32,8 +32,8 @@ import { useUserStore } from './user'
 import { usePermissionStore } from './permission'
 import router from '@/router'
 
-const createToken = (userId: string): string => {
-  const payload = btoa(JSON.stringify({ erp_userid: userId, exp: 4_102_444_800 }))
+const createToken = (userId: string, exp = 4_102_444_800): string => {
+  const payload = btoa(JSON.stringify({ erp_userid: userId, exp }))
     .replace(/=/g, '')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
@@ -56,7 +56,7 @@ describe('user authentication store', () => {
     const userStore = useUserStore()
     const result = await userStore.loginByPassword({ username: 'a', password: 'p' })
 
-    expect(result[0]).toBeNull()
+    expect(result.erp_userid).toBe('user-a')
     expect(userStore.token).toBe(accessToken)
     expect(usePermissionStore().isAddRouters).toBe(true)
     expect(loginApi.getUserMenus).toHaveBeenCalledWith(accessToken)
@@ -70,7 +70,7 @@ describe('user authentication store', () => {
     const userStore = useUserStore()
 
     const externalToken = createToken('external-user')
-    expect((await userStore.loginByExternalToken(externalToken))[0]).toBeNull()
+    expect((await userStore.loginByExternalToken(externalToken)).erp_userid).toBe('external-user')
     expect(monitor.track).toHaveBeenLastCalledWith('$LoginSuccess', {
       module: 'login',
       auth_source: 'external-token'
@@ -78,7 +78,7 @@ describe('user authentication store', () => {
 
     const erpToken = createToken('erp-user')
     loginApi.exchangeErpCookie.mockResolvedValue([null, { access_token: erpToken }])
-    expect((await userStore.loginByErpCookie('erp-cookie'))[0]).toBeNull()
+    expect((await userStore.loginByErpCookie('erp-cookie')).erp_userid).toBe('erp-user')
     expect(loginApi.exchangeErpCookie).toHaveBeenCalledWith('erp-cookie')
     expect(monitor.track).toHaveBeenLastCalledWith('$LoginSuccess', {
       module: 'login',
@@ -88,8 +88,8 @@ describe('user authentication store', () => {
     const oaToken = createToken('oa-user')
     loginApi.loginByOa.mockResolvedValue([null, { access_token: oaToken }])
     expect(
-      (await userStore.loginByOa({ username: 'oa-name', password: 'oa-password' }))[0]
-    ).toBeNull()
+      (await userStore.loginByOa({ username: 'oa-name', password: 'oa-password' })).erp_userid
+    ).toBe('oa-user')
     expect(loginApi.loginByOa).toHaveBeenCalledWith({
       username: 'oa-name',
       password: 'oa-password'
@@ -108,7 +108,18 @@ describe('user authentication store', () => {
     monitor.track.mockRejectedValueOnce(new Error('transport failed'))
 
     const result = await useUserStore().loginByPassword({ username: 'a', password: 'p' })
-    expect(result[0]).toBeNull()
+    expect(result.erp_userid).toBe('tracked-user')
+  })
+
+  it('throws the request error without committing a failed login', async () => {
+    const requestError = { error_description: '账号或密码错误' }
+    loginApi.accountLogin.mockResolvedValue([requestError, null])
+    const userStore = useUserStore()
+
+    await expect(userStore.loginByPassword({ username: 'a', password: 'wrong' })).rejects.toBe(
+      requestError
+    )
+    expect(userStore.token).toBe('')
   })
 
   it('keeps the previous account when the new menu fails', async () => {
@@ -120,9 +131,9 @@ describe('user authentication store', () => {
     const newToken = createToken('new-user')
     loginApi.switchLinkedAccount.mockResolvedValue([null, { access_token: newToken }])
     loginApi.getUserMenus.mockResolvedValueOnce([new Error('menu failed'), null])
-    const result = await userStore.switchAccount('new-user')
+    const result = userStore.switchAccount('new-user')
 
-    expect(result[0]).toBeInstanceOf(Error)
+    await expect(result).rejects.toThrow('menu failed')
     expect(userStore.token).toBe(oldToken)
     expect(userStore.currentUserId).toBe('old-user')
     expect(monitor.track).not.toHaveBeenCalledWith('$AccountSwitch', expect.anything())
@@ -139,7 +150,7 @@ describe('user authentication store', () => {
     loginApi.switchLinkedAccount.mockResolvedValue([null, { access_token: newToken }])
     const result = await userStore.switchAccount('new-user')
 
-    expect(result[0]).toBeNull()
+    expect(result.erp_userid).toBe('new-user')
     expect(userStore.token).toBe(newToken)
     expect(monitor.track).toHaveBeenCalledTimes(1)
     expect(monitor.track).toHaveBeenCalledWith('$AccountSwitch', {
@@ -149,8 +160,8 @@ describe('user authentication store', () => {
     })
   })
 
-  it('restores a persisted session without recording a new login', async () => {
-    const accessToken = createToken('restored-user')
+  it('restores a persisted session without checking exp or recording a new login', async () => {
+    const accessToken = createToken('restored-user', 1)
     const userStore = useUserStore()
     userStore.$patch({
       token: accessToken,
@@ -159,7 +170,7 @@ describe('user authentication store', () => {
     monitor.track.mockClear()
 
     const result = await userStore.restoreSession()
-    expect(result).toEqual([null, true])
+    expect(result).toBe(true)
     expect(monitor.setUser).toHaveBeenCalled()
     expect(monitor.track).not.toHaveBeenCalled()
   })
@@ -176,8 +187,8 @@ describe('user authentication store', () => {
       userStore.restoreSession(),
       userStore.restoreSession()
     ])
-    expect(first).toEqual([null, true])
-    expect(second).toEqual([null, true])
+    expect(first).toBe(true)
+    expect(second).toBe(true)
     expect(loginApi.getUserMenus).toHaveBeenCalledTimes(1)
   })
 

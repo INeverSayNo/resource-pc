@@ -4,11 +4,11 @@
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/modules/user'
   import { usePermissionStore } from '@/store/modules/permission'
-import { storeToRefs } from 'pinia'
+  import { storeToRefs } from 'pinia'
 
   const userStore = useUserStore()
 
-  const {userInfo, accounts} = storeToRefs(userStore)
+  const { userInfo, accounts } = storeToRefs(userStore)
 
   const permissionStore = usePermissionStore()
   const router = useRouter()
@@ -33,13 +33,16 @@ import { storeToRefs } from 'pinia'
   const changeAccount = async (accountId: string) => {
     if (!accountId || accountId === currentUserId.value || switchingAccountId.value) return
     switchingAccountId.value = accountId
-    const [error] = await userStore.switchAccount(accountId)
-    switchingAccountId.value = ''
-    if (error) {
-      ElMessage.error((typeof error === 'string' ? error : error.message) || '账号切换失败')
-      return
+    try {
+      await userStore.switchAccount(accountId)
+      await router.replace(permissionStore.homePath)
+    } catch (error) {
+      const message =
+        typeof error === 'object' && error ? String(Reflect.get(error, 'message') || '') : ''
+      ElMessage.error(message || '账号切换失败')
+    } finally {
+      switchingAccountId.value = ''
     }
-    await router.replace(permissionStore.homePath)
   }
   onMounted(userStore.loadAccounts)
 </script>
@@ -53,9 +56,9 @@ import { storeToRefs } from 'pinia'
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />
       <span class="<lg:hidden text-14px pl-[5px] text-[var(--top-header-text-color)]">{{
-            `${userInfo?.given_name}(${userInfo?.erp_area_name || ""}${userInfo?.erp_area_name?'-':''}${userInfo?.erp_org_name})` ||
-            ""
-          }}</span>
+        `${userInfo?.given_name}(${userInfo?.erp_area_name || ''}${userInfo?.erp_area_name ? '-' : ''}${userInfo?.erp_org_name})` ||
+        ''
+      }}</span>
     </div>
     <template #dropdown>
       <ElDropdownMenu>
@@ -70,7 +73,7 @@ import { storeToRefs } from 'pinia'
             }}）
           </div>
         </ElDropdownItem>
-        
+
         <ElDropdownItem divided>
           <div @click="loginOut">退出系统</div>
         </ElDropdownItem>

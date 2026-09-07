@@ -1,15 +1,10 @@
 <script setup lang="ts">
   import { LoginForm } from './components'
-  import { ThemeSwitch } from '@/components/base'
-  import { useAppStore } from '@/store/modules/app'
   import { appConfig } from '@/config/app'
-
-  const appStore = useAppStore()
 </script>
 
 <template>
-  <main class="login-page" >
-
+  <main class="login-page">
     <header class="login-header">
       <div class="brand">
         <span class="brand-mark">
@@ -17,14 +12,12 @@
         </span>
         <span class="brand-name c-#145ca8">{{ appConfig.title }}</span>
       </div>
-
     </header>
-
 
     <section class="form-stage">
       <div class="form-card">
         <Transition name="form-swap" mode="out-in">
-          <LoginForm key="login"  />
+          <LoginForm key="login" />
         </Transition>
       </div>
     </section>
@@ -465,9 +458,7 @@
       0 30px 80px rgb(42 57 91 / 13%),
       0 2px 10px rgb(42 57 91 / 5%);
     align-items: center;
-   
   }
-
 
   .form-swap-enter-active,
   .form-swap-leave-active {
@@ -530,7 +521,6 @@
       box-shadow: 0 30px 80px rgb(0 0 0 / 24%);
     }
   }
-
 
   @media (width <= 860px) {
     .login-page {

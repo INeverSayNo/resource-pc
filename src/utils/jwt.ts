@@ -1,4 +1,3 @@
-import type { ApiResult } from '@/request'
 import type { UserInfo } from '@/types/user'
 
 const decodeBase64Url = (value: string): string => {
@@ -7,7 +6,9 @@ const decodeBase64Url = (value: string): string => {
   }
 
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/')
-  return decodeURIComponent(window.atob(escape(normalized)))
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+  const binary = window.atob(padded)
+  return new TextDecoder().decode(Uint8Array.from(binary, (value) => value.charCodeAt(0)))
 }
 
 export const getUserId = (userInfo: UserInfo): string => {
@@ -15,23 +16,23 @@ export const getUserId = (userInfo: UserInfo): string => {
   return typeof value === 'string' ? value.trim() : ''
 }
 
-export const decodeJwtUser = (token: string, now = Date.now()): [Error | null, UserInfo | null] => {
-  if (typeof token !== 'string' || !token.trim()) return [new Error('Token 不能为空'), null]
+export const decodeJwtUser = (token: string): UserInfo | null => {
+  if (typeof token !== 'string' || !token.trim()) return null
 
   const segments = token.split('.')
-  if (segments.length !== 3) return [new Error('Token 必须包含三段'), null]
+  if (segments.length !== 3) return null
   if (segments.some((segment) => !segment || !/^[A-Za-z0-9_-]+$/.test(segment))) {
-    return [new Error('Token 包含无效的 Base64URL 分段'), null]
+    return null
   }
 
   try {
     const parsed: unknown = JSON.parse(decodeBase64Url(segments[1]))
     if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      return [new Error('Token Payload 必须是对象'), null]
+      return null
     }
 
-    return [null, parsed as UserInfo]
-  } catch (error) {
-    return [error instanceof Error ? error : new Error('Token 解析失败'), null]
+    return parsed as UserInfo
+  } catch {
+    return null
   }
 }

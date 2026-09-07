@@ -1,21 +1,18 @@
 import type { BackendMenuNode, BackendMenuResponse } from '@/api/login/types'
-import type { ApiResult } from '@/request'
 import { isUrl, pathResolve } from './routerHelper'
 
 const isMenuNode = (value: unknown): value is BackendMenuNode =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-export const normalizeBackendMenus = (value: BackendMenuResponse): ApiResult<BackendMenuNode[]> => {
+export const normalizeBackendMenus = (value: BackendMenuResponse): BackendMenuNode[] | null => {
   try {
     const parsed: unknown = typeof value === 'string' ? JSON.parse(value) : value
     if (Array.isArray(parsed)) {
-      if (!parsed.every(isMenuNode)) return [new Error('菜单响应包含无效节点'), null]
-      return [null, parsed]
+      return parsed.every(isMenuNode) ? parsed : null
     }
-    if (isMenuNode(parsed)) return [null, [parsed]]
-    return [new Error('菜单响应格式无效'), null]
+    return isMenuNode(parsed) ? [parsed] : null
   } catch {
-    return [new Error('菜单响应不是合法 JSON'), null]
+    return null
   }
 }
 

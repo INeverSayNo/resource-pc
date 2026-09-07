@@ -9,7 +9,6 @@ import {
   switchLinkedAccount
 } from '@/api/login'
 import type { LinkedAccount, LoginCredentials, OaLoginCredentials } from '@/api/login'
-import type { ApiResult } from '@/request'
 import type { LoginResponse, UserInfo } from '@/types/user'
 import { decodeJwtUser, getUserId } from '@/utils/jwt'
 import { monitor } from '@/plugins/monitor'
@@ -27,17 +26,9 @@ interface UserState {
   accounts: LinkedAccount[]
 }
 
-let restorePromise: Promise<ApiResult<boolean>> | null = null
-let accountsPromise: Promise<ApiResult<LinkedAccount[]>> | null = null
+let restorePromise: Promise<boolean> | null = null
+let accountsPromise: Promise<void> | null = null
 let sessionGeneration = 0
-
-const trackNonBlocking = (event: string, properties: Record<string, unknown>): void => {
-  try {
-    void monitor.track(event, properties).catch(() => undefined)
-  } catch {
-    // 埋点异常不能中断登录、恢复或账号切换。
-  }
-}
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
@@ -54,25 +45,21 @@ export const useUserStore = defineStore('user', {
     }
   },
   actions: {
-    
     async completeAuthentication(
       response: LoginResponse,
       source: AuthSource,
       previousUserId = ''
-    ): Promise<ApiResult<UserInfo>> {
+    ): Promise<UserInfo> {
       const token = response.access_token
-      const [jwtError, userInfo] = decodeJwtUser(token)
-      if (jwtError || !userInfo) return [jwtError || new Error('Token 解析失败'), null]
+      const userInfo = decodeJwtUser(token)
+      if (!userInfo) throw new Error('Token 解析失败')
 
       const [menuError, menuResponse] = await getUserMenus(token)
-      if (menuError || !menuResponse) return [menuError || new Error('菜单加载失败'), null]
+      if (menuError || !menuResponse) throw menuError || new Error('菜单加载失败')
 
       const permissionStore = usePermissionStore()
-      const [prepareError, routes] = permissionStore.prepareRoutes(menuResponse)
-      if (prepareError || !routes) return [prepareError || new Error('菜单转换失败'), null]
-
-      const [installError] = permissionStore.replaceRoutes(routes)
-      if (installError) return [installError, null]
+      const routes = permissionStore.prepareRoutes(menuResponse)
+      permissionStore.replaceRoutes(routes)
 
       this.token = token
       this.userInfo = userInfo
@@ -93,54 +80,56 @@ export const useUserStore = defineStore('user', {
       void orgUserStore.prefetch(generation)
 
       if (source === 'account-switch') {
-        trackNonBlocking('$AccountSwitch', {
-          module: 'login',
-          from_user_id: previousUserId,
-          to_user_id: getUserId(userInfo)
-        })
+        void monitor
+          .track('$AccountSwitch', {
+            module: 'login',
+            from_user_id: previousUserId,
+            to_user_id: getUserId(userInfo)
+          })
+          .catch(() => undefined)
       } else {
-        trackNonBlocking('$LoginSuccess', { module: 'login', auth_source: source })
+        void monitor
+          .track('$LoginSuccess', { module: 'login', auth_source: source })
+          .catch(() => undefined)
       }
-      return [null, userInfo]
+      return userInfo
     },
-    async loginByPassword(credentials: LoginCredentials): Promise<ApiResult<UserInfo>> {
+    async loginByPassword(credentials: LoginCredentials): Promise<UserInfo> {
       const [error, response] = await accountLogin(credentials)
-      if (error || !response) return [error || new Error('登录失败'), null]
+      if (error || !response) throw error || new Error('登录失败')
       return this.completeAuthentication(response, 'password')
     },
-    loginByExternalToken(token: string): Promise<ApiResult<UserInfo>> {
+    loginByExternalToken(token: string): Promise<UserInfo> {
       return this.completeAuthentication({ access_token: token }, 'external-token')
     },
-    async loginByErpCookie(cookie: string): Promise<ApiResult<UserInfo>> {
+    async loginByErpCookie(cookie: string): Promise<UserInfo> {
       const [error, response] = await exchangeErpCookie(cookie)
-      if (error || !response) return [error || new Error('ERP 登录失败'), null]
+      if (error || !response) throw error || new Error('ERP 登录失败')
       return this.completeAuthentication(response, 'erp-cookie')
     },
-    async loginByOa(credentials: OaLoginCredentials): Promise<ApiResult<UserInfo>> {
+    async loginByOa(credentials: OaLoginCredentials): Promise<UserInfo> {
       const [error, response] = await requestOaLogin(credentials)
-      if (error || !response) return [error || new Error('OA 登录失败'), null]
+      if (error || !response) throw error || new Error('OA 登录失败')
       return this.completeAuthentication(response, 'oa')
     },
-    async switchAccount(accountId: string): Promise<ApiResult<UserInfo>> {
-      if (!this.token) return [new Error('当前会话不存在'), null]
+    async switchAccount(accountId: string): Promise<UserInfo> {
+      if (!this.token) throw new Error('当前会话不存在')
       const previousUserId = this.currentUserId
       const [error, response] = await switchLinkedAccount(accountId, this.token)
-      if (error || !response) return [error || new Error('账号切换失败'), null]
+      if (error || !response) throw error || new Error('账号切换失败')
       return this.completeAuthentication(response, 'account-switch', previousUserId)
     },
-    async loadAccounts(): Promise<ApiResult<LinkedAccount[]>> {
+    async loadAccounts(): Promise<void> {
       if (accountsPromise) return accountsPromise
       const generation = sessionGeneration
-      const pending = (async (): Promise<ApiResult<LinkedAccount[]>> => {
+      const pending = (async (): Promise<void> => {
         const [error, response] = await getLinkedAccounts()
-        if (generation !== sessionGeneration) return [new Error('关联账号请求已失效'), null]
-        if (error || !response) return [error || new Error('关联账号加载失败'), null]
+        if (generation !== sessionGeneration || error || !response) return
         try {
           const parsed = typeof response === 'string' ? JSON.parse(response) : response
           this.accounts = Array.isArray(parsed) ? parsed : [parsed]
-          return [null, this.accounts]
         } catch {
-          return [new Error('关联账号响应格式无效'), null]
+          return
         }
       })().finally(() => {
         if (accountsPromise === pending) accountsPromise = null
@@ -148,18 +137,18 @@ export const useUserStore = defineStore('user', {
       accountsPromise = pending
       return pending
     },
-    restoreSession(): Promise<ApiResult<boolean>> {
+    restoreSession(): Promise<boolean> {
       if (restorePromise) return restorePromise
-      const pending = (async (): Promise<ApiResult<boolean>> => {
+      const pending = (async (): Promise<boolean> => {
         if (!this.token || !this.userInfo) {
           if (this.token || this.userInfo) this.clearSession()
-          return [null, false]
+          return false
         }
 
-        const [jwtError, decodedUser] = decodeJwtUser(this.token)
-        if (jwtError || !decodedUser ) {
+        const decodedUser = decodeJwtUser(this.token)
+        if (!decodedUser) {
           this.clearSession()
-          return [jwtError || new Error('登录会话已过期'), null]
+          return false
         }
 
         const permissionStore = usePermissionStore()
@@ -167,17 +156,14 @@ export const useUserStore = defineStore('user', {
           const [menuError, menuResponse] = await getUserMenus(this.token)
           if (menuError || !menuResponse) {
             this.clearSession()
-            return [menuError || new Error('菜单恢复失败'), null]
+            return false
           }
-          const [prepareError, routes] = permissionStore.prepareRoutes(menuResponse)
-          if (prepareError || !routes) {
+          try {
+            const routes = permissionStore.prepareRoutes(menuResponse)
+            permissionStore.replaceRoutes(routes)
+          } catch {
             this.clearSession()
-            return [prepareError || new Error('菜单恢复失败'), null]
-          }
-          const [installError] = permissionStore.replaceRoutes(routes)
-          if (installError) {
-            this.clearSession()
-            return [installError, null]
+            return false
           }
         }
 
@@ -192,7 +178,7 @@ export const useUserStore = defineStore('user', {
         void this.loadAccounts()
         void useDictionaryStore().loadAll(generation)
         void useOrgUserStore().prefetch(generation)
-        return [null, true]
+        return true
       })().finally(() => {
         if (restorePromise === pending) restorePromise = null
       })

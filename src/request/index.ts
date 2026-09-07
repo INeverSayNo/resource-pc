@@ -87,5 +87,3 @@ export class BaseApi extends DcToolsRequest {
     })
   }
 }
-
-export type { ApiError, ApiResult } from './types'

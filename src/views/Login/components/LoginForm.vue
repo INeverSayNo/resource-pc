@@ -30,15 +30,14 @@
   })
 
   const login = async (formData: Record<'username' | 'password', string>) => {
-    const [error] = await userStore.loginByPassword(formData)
-    if (error) {
-      let msg = "";
-      if(typeof error === 'object' && error && Reflect.has(error,'error_description')) {
-        msg = (error as any)?.error_description
+    try {
+      await userStore.loginByPassword(formData)
+    } catch (error) {
+      let message = ''
+      if (typeof error === 'object' && error && Reflect.has(error, 'error_description')) {
+        message = String(Reflect.get(error, 'error_description') || '')
       }
-      ElMessage.error(
-        msg || '登录失败，请检查账号密码是否有误'
-      )
+      ElMessage.error(message || '登录失败，请检查账号密码是否有误')
       return
     }
     saveLoginPreferences(formData.username, remember.value)

@@ -9,12 +9,6 @@ import 'nprogress/nprogress.css'
 
 NProgress.configure({ showSpinner: false })
 
-export const ensureDynamicRoutes = async () => {
-  const permissionStore = usePermissionStoreWithOut()
-  if (permissionStore.isAddRouters) return [null, false] as const
-  return useUserStoreWithOut().restoreSession()
-}
-
 export const setupPermission = async (): Promise<void> => {
   const userStore = useUserStoreWithOut()
   if (userStore.token && userStore.userInfo) await userStore.restoreSession()
@@ -31,22 +25,24 @@ export const setupPermission = async (): Promise<void> => {
       window.history.replaceState(window.history.state, '', href)
     }
 
-    if (userStore.token || userStore.userInfo) {
+    if (Boolean(userStore.token) !== Boolean(userStore.userInfo)) {
       userStore.clearSession()
     }
 
     if (!userStore.isAuthenticated) {
       if (external.request) {
-        const result =
-          external.request.type === 'external-token'
-            ? await userStore.loginByExternalToken(external.request.token)
-            : external.request.type === 'erp-cookie'
-              ? await userStore.loginByErpCookie(external.request.cookie)
-              : await userStore.loginByOa({
-                  username: external.request.username,
-                  password: external.request.password
-                })
-        if (result[0]) {
+        try {
+          if (external.request.type === 'external-token') {
+            await userStore.loginByExternalToken(external.request.token)
+          } else if (external.request.type === 'erp-cookie') {
+            await userStore.loginByErpCookie(external.request.cookie)
+          } else {
+            await userStore.loginByOa({
+              username: external.request.username,
+              password: external.request.password
+            })
+          }
+        } catch {
           return {
             path: '/login',
             query: sanitizedFullPath === '/login' ? undefined : { redirect: sanitizedFullPath },
@@ -67,9 +63,9 @@ export const setupPermission = async (): Promise<void> => {
     if (to.path === '/login') return { path: usePermissionStoreWithOut().homePath, replace: true }
     if (external.hasSensitiveParams) return { ...sanitizedLocation, replace: true }
 
-    const [routeError, routesAdded] = await ensureDynamicRoutes()
-    if (routeError) {
-      userStore.clearSession()
+    const permissionStore = usePermissionStoreWithOut()
+    const routesAdded = permissionStore.isAddRouters ? false : await userStore.restoreSession()
+    if (!userStore.isAuthenticated) {
       return { path: '/login', query: { redirect: sanitizedFullPath } }
     }
     if (routesAdded) return { path: sanitizedFullPath, replace: true }

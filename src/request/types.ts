@@ -1,5 +1,3 @@
-import type { ResponseError } from '@dczy/tie-tools'
-
 /**
  * request配置
  */

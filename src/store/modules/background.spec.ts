@@ -29,9 +29,8 @@ describe('login background data generation', () => {
 
     dictionaryStore.reset(2)
     resolveRequest([null, { stale: true }])
-    const [error] = await pending
+    await pending
 
-    expect(error).toBeInstanceOf(Error)
     expect(dictionaryStore.filters).toEqual({})
     expect(dictionaryStore.loaded).toBe(false)
   })
@@ -49,9 +48,8 @@ describe('login background data generation', () => {
 
     orgUserStore.reset(2)
     resolveRequest([null, { rows: [{ id: 'stale-user' }] }])
-    const [error] = await pending
+    await pending
 
-    expect(error).toBeInstanceOf(Error)
     expect(orgUserStore.users).toEqual([])
     expect(orgUserStore.loaded).toBe(false)
   })
