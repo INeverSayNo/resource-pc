@@ -7,32 +7,22 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard/index',
+    redirect: '/dashboard',
     name: 'Root',
-    meta: {
-      hidden: true
-    }
-  },
-  {
-    path: '/dashboard',
-    component: Layout,
-    redirect: '/dashboard/index',
-    name: 'Dashboard',
-    meta: {
-      title: '首页',
-      icon: 'mdi:view-dashboard'
-    },
     children: [
       {
-        path: 'index',
-        name: 'DashboardIndex',
+        path: '/dashboard',
+        name: 'Dashboard',
         component: () => import('@/views/Dashboard/index.vue'),
         meta: {
           title: '首页',
           affix: true
         }
       }
-    ]
+    ],
+    meta: {
+      hidden: true
+    }
   },
   {
     path: '/redirect',

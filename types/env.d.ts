@@ -15,7 +15,7 @@ declare global {
     readonly VITE_SOURCEMAP: string
     readonly VITE_OUT_DIR: string
     readonly VITE_USE_CSS_SPLIT: string
-    readonly VITE_ENV_TYPE: string
+    readonly VITE_ENV_TYPE: 'dev' | 'pro' | 'test'
   }
 
   interface ImportMeta {

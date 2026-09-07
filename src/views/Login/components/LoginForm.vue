@@ -32,8 +32,12 @@
   const login = async (formData: Record<'username' | 'password', string>) => {
     const [error] = await userStore.loginByPassword(formData)
     if (error) {
+      let msg = "";
+      if(typeof error === 'object' && error && Reflect.has(error,'error_description')) {
+        msg = (error as any)?.error_description
+      }
       ElMessage.error(
-        (typeof error === 'string' ? error : error.message) || '登录失败，请检查账号密码是否有误'
+        msg || '登录失败，请检查账号密码是否有误'
       )
       return
     }
@@ -54,7 +58,7 @@
     @submit.prevent="signIn()"
   >
     <div class="form-intro">
-      <span class="form-kicker">欢迎使用本系统</span>
+      <span class="form-kicker">欢迎使用道臣智运</span>
       <h2>登录</h2>
       <p>开箱即用的中后台管理系统</p>
     </div>

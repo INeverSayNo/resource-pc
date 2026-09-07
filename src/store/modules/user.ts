@@ -54,10 +54,7 @@ export const useUserStore = defineStore('user', {
     }
   },
   actions: {
-    isSessionValid(): boolean {
-      if (!this.token || !this.userInfo) return false
-      return decodeJwtUser(this.token)[0] === null
-    },
+    
     async completeAuthentication(
       response: LoginResponse,
       source: AuthSource,
@@ -160,7 +157,7 @@ export const useUserStore = defineStore('user', {
         }
 
         const [jwtError, decodedUser] = decodeJwtUser(this.token)
-        if (jwtError || !decodedUser || !this.isSessionValid()) {
+        if (jwtError || !decodedUser ) {
           this.clearSession()
           return [jwtError || new Error('登录会话已过期'), null]
         }

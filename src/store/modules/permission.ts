@@ -7,6 +7,8 @@ import { adaptBackendMenus, normalizeBackendMenus } from '@/utils/menuAdapter'
 import { generateRoutesByServer, isUrl } from '@/utils/routerHelper'
 import { store } from '../index'
 
+const env = import.meta.env.VITE_ENV_TYPE || 'dev'
+
 let dynamicRouteRemovers: Array<() => void> = []
 
 export interface PermissionState {
@@ -58,10 +60,14 @@ export const usePermissionStore = defineStore('permission', {
     isAddRouters: false
   }),
   getters: {
-    homePath: () => '/dashboard/index'
+    homePath: () => '/dashboard'
   },
   actions: {
     prepareRoutes(response: BackendMenuResponse): ApiResult<AppRouteRecordRaw[]> {
+      console.log(env)
+      if (env === 'pro') {
+        return [null, []]
+      }
       const [normalizeError, menus] = normalizeBackendMenus(response)
       if (normalizeError || !menus) return [normalizeError || new Error('菜单解析失败'), null]
       const adapted = adaptBackendMenus(menus, getStaticPaths(constantRouterMap))

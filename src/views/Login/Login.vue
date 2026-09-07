@@ -8,61 +8,18 @@
 </script>
 
 <template>
-  <main class="login-page" :class="{ 'is-dark': appStore.isDark }">
-    <div class="ambient ambient--cyan" aria-hidden="true"></div>
-    <div class="ambient ambient--pink" aria-hidden="true"></div>
+  <main class="login-page" >
 
     <header class="login-header">
       <div class="brand">
         <span class="brand-mark">
           <img src="@/assets/imgs/logo.png" alt="" />
         </span>
-        <span class="brand-name">{{ appConfig.title }}</span>
+        <span class="brand-name c-#145ca8">{{ appConfig.title }}</span>
       </div>
 
-      <div class="login-tools">
-        <ThemeSwitch v-model="appStore.isDark" />
-      </div>
     </header>
 
-    <section class="login-visual">
-      <div class="visual-copy">
-        <div class="visual-kicker"><span></span>工作台 / V3</div>
-        <h1>欢迎使用本系统</h1>
-        <p>开箱即用的中后台管理系统</p>
-      </div>
-
-      <div class="workspace-scene" aria-hidden="true">
-        <div class="scene-orbit"></div>
-        <div class="scene-beam scene-beam--cyan"></div>
-        <div class="scene-beam scene-beam--pink"></div>
-
-        <div class="scene-window scene-window--main">
-          <div class="window-bar"><i></i><i></i><i></i><span></span></div>
-          <div class="window-body">
-            <div class="window-nav"><i></i><i></i><i></i><i></i></div>
-            <div class="window-content">
-              <span class="content-line content-line--wide"></span>
-              <span class="content-line"></span>
-              <div class="mini-chart"> <i></i><i></i><i></i><i></i><i></i> </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="scene-window scene-window--signal">
-          <span>流程</span>
-          <strong>24/7</strong>
-          <div class="signal-line"><i></i></div>
-        </div>
-
-        <div class="scene-window scene-window--route">
-          <i></i><span></span><i></i><span></span><i></i>
-        </div>
-
-        <span class="scene-node scene-node--one"></span>
-        <span class="scene-node scene-node--two"></span>
-      </div>
-    </section>
 
     <section class="form-stage">
       <div class="form-card">
@@ -92,45 +49,6 @@
     --login-blue: #347edf;
     --login-pink: #df2aa7;
     --login-tool-color: #34405a;
-
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 56%) minmax(420px, 44%);
-    height: 100vh;
-    height: 100dvh;
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow: clip;
-    color: var(--login-ink);
-    background: var(--login-panel);
-    isolation: isolate;
-
-    &::before {
-      position: absolute;
-      inset: 0 auto 0 0;
-      z-index: -3;
-      width: 61%;
-      background:
-        radial-gradient(circle at 21% 18%, rgb(25 198 223 / 20%), transparent 28%),
-        radial-gradient(circle at 72% 78%, rgb(223 42 167 / 17%), transparent 30%),
-        linear-gradient(142deg, #0c1224 0%, #111a32 52%, #17213c 100%);
-      clip-path: polygon(0 0, 92% 0, 100% 100%, 0 100%);
-      content: '';
-    }
-
-    &::after {
-      position: absolute;
-      z-index: -2;
-      width: 58%;
-      background-image:
-        linear-gradient(rgb(255 255 255 / 8%) 1px, transparent 1px),
-        linear-gradient(90deg, rgb(255 255 255 / 8%) 1px, transparent 1px);
-      background-size: 48px 48px;
-      content: '';
-      opacity: 0.26;
-      inset: 0 auto 0 0;
-      mask-image: linear-gradient(to right, #000 30%, transparent 94%);
-    }
   }
 
   .login-header {
@@ -537,8 +455,8 @@
   .form-card {
     position: relative;
     display: flex;
-    width: min(100%, 440px);
-    min-height: 610px;
+    width: min(100%, 540px);
+    min-height: 410px;
     padding: clamp(32px, 4vw, 48px);
     background: var(--login-card);
     border: 1px solid rgb(255 255 255 / 86%);
@@ -547,42 +465,9 @@
       0 30px 80px rgb(42 57 91 / 13%),
       0 2px 10px rgb(42 57 91 / 5%);
     align-items: center;
-
-    &::before {
-      position: absolute;
-      top: 0;
-      left: 30px;
-      width: 82px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--login-pink), var(--login-cyan));
-      border-radius: 0 0 99px 99px;
-      content: '';
-    }
+   
   }
 
-  .ambient {
-    position: absolute;
-    z-index: -1;
-    pointer-events: none;
-    border-radius: 50%;
-    filter: blur(1px);
-
-    &--cyan {
-      top: -110px;
-      left: 42%;
-      width: 280px;
-      height: 280px;
-      background: rgb(25 198 223 / 8%);
-    }
-
-    &--pink {
-      right: -100px;
-      bottom: -120px;
-      width: 300px;
-      height: 300px;
-      background: rgb(223 42 167 / 7%);
-    }
-  }
 
   .form-swap-enter-active,
   .form-swap-leave-active {
@@ -646,33 +531,12 @@
     }
   }
 
-  @media (width <= 1080px) {
-    .login-page {
-      grid-template-columns: minmax(0, 51%) minmax(420px, 49%);
-
-      &::before {
-        width: 57%;
-      }
-    }
-
-    .workspace-scene {
-      width: 44vw;
-    }
-
-    .login-visual {
-      padding-right: 54px;
-      padding-left: 46px;
-    }
-  }
 
   @media (width <= 860px) {
     .login-page {
       display: block;
       height: 100dvh;
       overflow: hidden auto;
-      background:
-        radial-gradient(circle at 12% 8%, rgb(25 198 223 / 18%), transparent 28%),
-        radial-gradient(circle at 90% 88%, rgb(223 42 167 / 14%), transparent 30%), #0e1629;
 
       &::before {
         display: none;
@@ -706,7 +570,6 @@
       display: none;
     }
 
-    .ambient,
     .form-stage::before {
       display: none;
     }

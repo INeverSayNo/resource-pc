@@ -31,7 +31,7 @@ export const setupPermission = async (): Promise<void> => {
       window.history.replaceState(window.history.state, '', href)
     }
 
-    if ((userStore.token || userStore.userInfo) && !userStore.isSessionValid()) {
+    if (userStore.token || userStore.userInfo) {
       userStore.clearSession()
     }
 

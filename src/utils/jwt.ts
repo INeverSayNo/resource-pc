@@ -2,15 +2,12 @@ import type { ApiResult } from '@/request'
 import type { UserInfo } from '@/types/user'
 
 const decodeBase64Url = (value: string): string => {
-  if (!value || !/^[A-Za-z0-9_-]+$/.test(value) || value.length % 4 === 1) {
+  if (!value) {
     throw new Error('Token Payload 不是合法的 Base64URL')
   }
 
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/')
-  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
-  const binary = window.atob(padded)
-  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
+  return decodeURIComponent(window.atob(escape(normalized)))
 }
 
 export const getUserId = (userInfo: UserInfo): string => {
@@ -18,7 +15,7 @@ export const getUserId = (userInfo: UserInfo): string => {
   return typeof value === 'string' ? value.trim() : ''
 }
 
-export const decodeJwtUser = (token: string, now = Date.now()): ApiResult<UserInfo> => {
+export const decodeJwtUser = (token: string, now = Date.now()): [Error | null, UserInfo | null] => {
   if (typeof token !== 'string' || !token.trim()) return [new Error('Token 不能为空'), null]
 
   const segments = token.split('.')
@@ -33,22 +30,7 @@ export const decodeJwtUser = (token: string, now = Date.now()): ApiResult<UserIn
       return [new Error('Token Payload 必须是对象'), null]
     }
 
-    const claims = parsed as UserInfo
-    const nowInSeconds = Math.floor(now / 1000)
-    if (claims.exp !== undefined) {
-      if (typeof claims.exp !== 'number' || !Number.isFinite(claims.exp)) {
-        return [new Error('Token exp 声明无效'), null]
-      }
-      if (claims.exp <= nowInSeconds) return [new Error('登录会话已过期'), null]
-    }
-    if (claims.nbf !== undefined) {
-      if (typeof claims.nbf !== 'number' || !Number.isFinite(claims.nbf)) {
-        return [new Error('Token nbf 声明无效'), null]
-      }
-      if (claims.nbf > nowInSeconds) return [new Error('Token 尚未生效'), null]
-    }
-    if (!getUserId(claims)) return [new Error('Token 缺少用户标识'), null]
-    return [null, claims]
+    return [null, parsed as UserInfo]
   } catch (error) {
     return [error instanceof Error ? error : new Error('Token 解析失败'), null]
   }

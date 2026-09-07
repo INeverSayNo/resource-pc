@@ -45,8 +45,7 @@
               ) : undefined}
             </div>
           ) : undefined}
-          <div class="h-full flex items-center">¬
-            
+          <div class="h-full flex items-center">
             <UserInfo></UserInfo>
           </div>
         </div>

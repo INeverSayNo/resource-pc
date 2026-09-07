@@ -32,10 +32,6 @@ export interface ConfigOptions {
   }
 }
 
-export type ApiError = Error | string | ResponseError
-
-export type ApiResult<T> = [ApiError | null, T | null]
-
 export interface UrlObject {
   dev: string
   pro: string

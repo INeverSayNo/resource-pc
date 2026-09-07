@@ -31,7 +31,7 @@ const loginBase = {
 }
 
 export const accountLogin = (data: LoginCredentials) =>
-  loginApi.post<LoginResponse>(
+  loginApi.post<LoginResponse, Record<'error' | 'error_description', string>>(
     '/connect/token',
     {
       ...loginBase,

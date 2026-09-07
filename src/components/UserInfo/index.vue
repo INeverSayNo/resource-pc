@@ -4,8 +4,12 @@
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/store/modules/user'
   import { usePermissionStore } from '@/store/modules/permission'
+import { storeToRefs } from 'pinia'
 
   const userStore = useUserStore()
+
+  const {userInfo, accounts} = storeToRefs(userStore)
+
   const permissionStore = usePermissionStore()
   const router = useRouter()
   const switchingAccountId = ref('')
@@ -37,44 +41,36 @@
     }
     await router.replace(permissionStore.homePath)
   }
-
-  const toDocument = () => {
-    window.open('https://docs.element-plus-admin.cn/')
-  }
-
-  onMounted(() => {
-    void userStore.loadAccounts()
-  })
+  onMounted(userStore.loadAccounts)
 </script>
 
 <template>
-  <ElDropdown class="header-action" :class="prefixCls" trigger="click">
+  <ElDropdown class="header-action" :class="prefixCls">
     <div class="flex items-center">
       <img
-        src="@/assets/imgs/avatar.jpg"
+        src="https://gateway.dczhiyun.com/api/abp/minio/wechat/icon/dczy-default-header.png"
         alt=""
         class="w-[calc(var(--logo-height)-25px)] rounded-[50%]"
       />
       <span class="<lg:hidden text-14px pl-[5px] text-[var(--top-header-text-color)]">{{
-        userStore.userInfo?.erp_username
-      }}</span>
+            `${userInfo?.given_name}(${userInfo?.erp_area_name || ""}${userInfo?.erp_area_name?'-':''}${userInfo?.erp_org_name})` ||
+            ""
+          }}</span>
     </div>
     <template #dropdown>
       <ElDropdownMenu>
         <ElDropdownItem
-          v-for="account in userStore.accounts"
+          v-for="account in accounts"
           :key="account.id"
           :disabled="account.id === currentUserId || Boolean(switchingAccountId)"
         >
           <div @click="changeAccount(account.id)">
-            {{ userStore.userInfo?.given_name || userStore.userInfo?.erp_username }}（{{
+            {{ userInfo?.given_name || userInfo?.erp_username }}（{{
               [account.areaName, account.organizationName].filter(Boolean).join('-')
             }}）
           </div>
         </ElDropdownItem>
-        <ElDropdownItem>
-          <div @click="toDocument">项目文档</div>
-        </ElDropdownItem>
+        
         <ElDropdownItem divided>
           <div @click="loginOut">退出系统</div>
         </ElDropdownItem>
