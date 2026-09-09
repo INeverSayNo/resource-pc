@@ -1,6 +1,7 @@
 import { BaseApi } from '@/request'
 import {
   ApplicationId,
+  ABPBASE_URL,
   GATEWAY_URL,
   LOGIN_CLIENT_ID,
   LOGIN_CLIENT_SECRET,
@@ -16,6 +17,7 @@ import type {
 } from './types'
 
 const api = new BaseApi({ baseURL: GATEWAY_URL, crypto: USE_CRY_PTO })
+const abpApi = new BaseApi({ baseURL: ABPBASE_URL, crypto: USE_CRY_PTO })
 const loginApi = new BaseApi({ baseURL: LOGIN_URL, isJwt: false }, {}, false)
 
 const formConfig = {
@@ -90,6 +92,27 @@ export const getLinkedAccounts = () =>
   api.get<LinkedAccount[] | LinkedAccount | string>(
     '/api/BaseData/User/GetUserAccounts',
     undefined,
+    true
+  )
+
+export interface AuthorityParam {
+  controllerName: string
+  features: string[]
+}
+
+export interface FeatureAuthority {
+  feature: string
+  visible: boolean
+  [key: string]: unknown
+}
+
+export const getFeatureAuthority = (params: AuthorityParam) =>
+  abpApi.get<string | FeatureAuthority[]>(
+    '/api/BaseData/FeatureAuthority/GetFeatureAuthorityList',
+    {
+      controllerName: params.controllerName,
+      featureString: params.features.join(',')
+    },
     true
   )
 

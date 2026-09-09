@@ -1,11 +1,9 @@
 <script lang="tsx">
   import { defineComponent } from 'vue'
-  import { ThemeSwitch } from '@/components/base'
   import Collapse from '@/components/Collapse/index.vue'
   import UserInfo from '@/components/UserInfo/index.vue'
   import Breadcrumb from '@/components/Breadcrumb/index.vue'
   import { appConfig } from '@/config/app'
-  import { useAppStore } from '@/store/modules/app'
 
   const prefixCls = 'v-tool-header'
 
@@ -22,11 +20,6 @@
       }
     },
     setup(props) {
-      const appStore = useAppStore()
-      const updateTheme = (isDark: boolean) => {
-        appStore.isDark = isDark
-      }
-
       return () => (
         <div
           id="v-tool-header"

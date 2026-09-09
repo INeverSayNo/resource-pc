@@ -13,6 +13,7 @@ export interface OrgUser {
 
 interface OrgUserResponse {
   rows?: OrgUser[]
+  total?: number
 }
 
 const api = new BaseApi({ baseURL: GATEWAY_URL, crypto: USE_CRY_PTO })

@@ -16,6 +16,9 @@ import { useDictionaryStore } from './dictionary'
 import { useOrgUserStore } from './orgUser'
 import { usePermissionStore } from './permission'
 import { useTagsViewStore } from './tagsView'
+import { useFunPermissionStoreWithOut } from './funPermission'
+import { useRailwayStationStoreWithOut } from '@/views/railway/station/store/index'
+import { useWaterwayStationStoreWithOut } from '@/views/waterway/station/store/index'
 import { store } from '../index'
 
 type AuthSource = 'password' | 'external-token' | 'erp-cookie' | 'oa' | 'account-switch'
@@ -66,6 +69,9 @@ export const useUserStore = defineStore('user', {
       this.accounts = []
       accountsPromise = null
       useTagsViewStore().removeAllViews(false)
+      useFunPermissionStoreWithOut().reset()
+      useRailwayStationStoreWithOut().reset()
+      useWaterwayStationStoreWithOut().reset()
 
       sessionGeneration += 1
       const generation = sessionGeneration
@@ -193,6 +199,9 @@ export const useUserStore = defineStore('user', {
       accountsPromise = null
       usePermissionStore().reset()
       useTagsViewStore().removeAllViews(false)
+      useFunPermissionStoreWithOut().reset()
+      useRailwayStationStoreWithOut().reset()
+      useWaterwayStationStoreWithOut().reset()
       useDictionaryStore().reset(sessionGeneration)
       useOrgUserStore().reset(sessionGeneration)
       monitor.clearUser()

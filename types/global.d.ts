@@ -12,4 +12,6 @@ declare global {
   interface Location {
     hrefWithToken: string
   }
+
+  function embedpano(options: Record<string, unknown>): void
 }

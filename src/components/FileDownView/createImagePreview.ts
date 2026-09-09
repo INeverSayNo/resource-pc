@@ -2,7 +2,11 @@ import { createVNode, render } from 'vue'
 import { ElImageViewer } from 'element-plus'
 import type { ImageViewerProps } from 'element-plus'
 
-export const createImagePreview = (options: Partial<ImageViewerProps>) => {
+type ImagePreviewOptions = Partial<ImageViewerProps> & {
+  onClose?: () => void
+}
+
+export const createImagePreview = (options: ImagePreviewOptions) => {
   const container = document.createElement('div')
   document.body.appendChild(container)
   const destroy = () => {

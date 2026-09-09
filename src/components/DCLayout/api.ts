@@ -15,6 +15,7 @@ export async function ExportExcel(
     builded = true,
     fileName = ""
   ) {
+    void builded
     const localMethod = (method || "POST").toLowerCase() as requestMethod
     const [_err, res] = await api[localMethod](`/api/resource/${apiMethod}`, params)
     if (res) {

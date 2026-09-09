@@ -57,7 +57,7 @@ export const defaultColums: DCTableColumn[] = [
     label: "是否作废",
     align: "center",
     width: "80px",
-    formatter: (row: any, column: any, cellValue: any) => {
+    formatter: (_row: any, _column: any, cellValue: any) => {
       return cellValue ? "是" : "否";
     }
   },
@@ -65,7 +65,7 @@ export const defaultColums: DCTableColumn[] = [
     name: "creationTime",
     label: "创建日期",
     width: "140px",
-    formatter: (row: any, column: any, cellValue: any) => {
+    formatter: (_row: any, _column: any, cellValue: any) => {
       return DcDate.format(cellValue, "yyyy-MM-dd HH:mm");
     }
   },

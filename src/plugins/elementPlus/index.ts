@@ -1,7 +1,12 @@
 import type { App } from 'vue'
 
-import { ElLoading } from 'element-plus'
+import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import 'element-plus/dist/index.css'
 
 export const setupElementPlus = (app: App<Element>) => {
-  app.use(ElLoading)
+  app.use(ElementPlus, {
+    locale: zhCn,
+    zIndex: 2000
+  })
 }

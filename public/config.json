@@ -1,5 +1,10 @@
 {
   "applicationId": "8A901230-C89A-4237-9C4F-D4C66F1BA5A4",
+  "base_url": {
+    "dev": "http://test.cddc56.com:8002",
+    "pro": "https://rapi.daochen.com",
+    "test": "http://test.cddc56.com:8002"
+  },
   "auth": {
     "clientId": "resource-admin",
     "clientSecret": "1q2w3e*"
@@ -68,6 +73,66 @@
     "dev": "http://test.cddc56.com:40080",
     "pro": "https://d.daochen.com",
     "test": "http://test.cddc56.com:40080"
+  },
+  "esb_url": {
+    "dev": "https://esb.cddc56.com",
+    "pro": "https://esb.cddc56.com",
+    "test": "https://esb.cddc56.com"
+  },
+  "ocr_url": {
+    "dev": "http://test.cddc56.com:40100",
+    "pro": "https://p.daochen.com",
+    "test": "http://test.cddc56.com:40100"
+  },
+  "systemBaseData_url": {
+    "dev": "http://test.cddc56.com:40100",
+    "pro": "https://gateway.daochen.com",
+    "test": "http://test.cddc56.com:40100"
+  },
+  "taskCenter": {
+    "dev": "http://test.cddc56.com:44370",
+    "pro": "https://gateway.daochen.com",
+    "test": "http://test.cddc56.com:44370"
+  },
+  "customer": {
+    "dev": "http://test.cddc56.com:8010",
+    "pro": "https://capi.daochen.com",
+    "test": "http://test.cddc56.com:8010"
+  },
+  "signalR_url": {
+    "dev": "http://test.cddc56.com:59998",
+    "pro": "https://notify.daochen.com",
+    "test": "http://test.cddc56.com:59998"
+  },
+  "tgsSolutionV2_url": {
+    "dev": "http://test.cddc56.com:46002",
+    "pro": "https://tgsfa-api.daochen.com",
+    "test": "http://test.cddc56.com:46002"
+  },
+  "estimatePrice_url": {
+    "dev": "http://test.cddc56.com:46010",
+    "pro": "https://ygcost-api.daochen.com",
+    "test": "http://test.cddc56.com:46010"
+  },
+  "businessDataSync_url": {
+    "dev": "http://test.cddc56.com:46002",
+    "pro": "https://outdata-sync-api.daochen.com",
+    "test": "http://test.cddc56.com:46002"
+  },
+  "baseDataDCZY_url": {
+    "dev": "http://test.cddc56.com:46002",
+    "pro": "https://d.dczhiyun.com",
+    "test": "http://test.cddc56.com:46002"
+  },
+  "pmDCZY_url": {
+    "dev": "http://test.cddc56.com:46002",
+    "pro": "https://gateway.dczhiyun.com",
+    "test": "http://test.cddc56.com:46002"
+  },
+  "platform_url": {
+    "dev": "http://test.cddc56.com:8008",
+    "pro": "https://m.dczhiyun.com",
+    "test": "http://test.cddc56.com:8008"
   },
   "system_config": {
     "#comment": "系统配置,主要针对外部系统进行主题配置",

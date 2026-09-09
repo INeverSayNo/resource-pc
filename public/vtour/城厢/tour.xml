@@ -1,0 +1,596 @@
+﻿<krpano version="1.19" title="城厢站">
+
+	<include url="skin/vtourskin.xml" />
+
+	<!-- customize skin settings: maps, gyro, webvr, thumbnails, tooltips, layout, design, ... -->
+	<skin_settings maps="false"
+	               maps_type="google"
+	               maps_bing_api_key=""
+	               maps_google_api_key=""
+	               maps_zoombuttons="false"
+	               gyro="true"
+	               webvr="true"
+	               webvr_gyro_keeplookingdirection="false"
+	               webvr_prev_next_hotspots="true"
+	               littleplanetintro="false"
+	               title="true"
+	               thumbs="true"
+	               thumbs_width="120" thumbs_height="80" thumbs_padding="10" thumbs_crop="0|40|240|160"
+	               thumbs_opened="true"
+	               thumbs_text="false"
+	               thumbs_dragging="true"
+	               thumbs_onhoverscrolling="false"
+	               thumbs_scrollbuttons="false"
+	               thumbs_scrollindicator="false"
+	               thumbs_loop="false"
+	               tooltips_buttons="false"
+	               tooltips_thumbs="false"
+	               tooltips_hotspots="false"
+	               tooltips_mapspots="false"
+	               deeplinking="false"
+	               loadscene_flags="MERGE"
+	               loadscene_blend="OPENBLEND(0.5, 0.0, 0.75, 0.05, linear)"
+	               loadscene_blend_prev="SLIDEBLEND(0.5, 180, 0.75, linear)"
+	               loadscene_blend_next="SLIDEBLEND(0.5,   0, 0.75, linear)"
+	               loadingtext="loading..."
+	               layout_width="100%"
+	               layout_maxwidth="814"
+	               controlbar_width="-24"
+	               controlbar_height="40"
+	               controlbar_offset="20"
+	               controlbar_offset_closed="-40"
+	               controlbar_overlap.no-fractionalscaling="10"
+	               controlbar_overlap.fractionalscaling="0"
+	               design_skin_images="vtourskin.png"
+	               design_bgcolor="0x2D3E50"
+	               design_bgalpha="0.8"
+	               design_bgborder="0"
+	               design_bgroundedge="1"
+	               design_bgshadow="0 4 10 0x000000 0.3"
+	               design_thumbborder_bgborder="3 0xFFFFFF 1.0"
+	               design_thumbborder_padding="2"
+	               design_thumbborder_bgroundedge="0"
+	               design_text_css="color:#FFFFFF; font-family:Arial;"
+	               design_text_shadow="1"
+	               />
+
+	<!--
+	    For an alternative skin design either change the <skin_settings> values 
+	    from above or optionally include one of the predefined designs from below.
+	-->
+	<!-- <include url="skin/vtourskin_design_flat_light.xml"  /> -->
+	<!-- <include url="skin/vtourskin_design_glass.xml"       /> -->
+	<!-- <include url="skin/vtourskin_design_ultra_light.xml" /> -->
+	<!-- <include url="skin/vtourskin_design_117.xml"         /> -->
+	<!-- <include url="skin/vtourskin_design_117round.xml"    /> -->
+	<!-- <include url="skin/vtourskin_design_black.xml"       /> -->
+
+
+	<!-- startup action - load the first scene -->
+	<action name="startup" autorun="onstart">
+		if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[0].name); );
+		loadscene(get(startscene), null, MERGE);
+		if(startactions !== null, startactions() );
+	</action>
+
+
+	
+	<scene name="scene_01_______" title="大门" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/01_______.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/01_______.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/01_______.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/01_______.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/01_______.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="24.952" atv="6.645" linkedscene="scene_02______________________1" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="34.870" atv="1.014" linkedscene="scene_03_____________" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="60.084" atv="1.834" linkedscene="scene_04__________" />
+
+	</scene>
+
+	<scene name="scene_02______________________-______" title="集装箱共享基地-出口" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________-______.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________-______.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________-______.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________-______.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________-______.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-96.974" atv="1.294" linkedscene="scene_18____15___16___-______" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-74.003" atv="0.905" linkedscene="scene_04__________" />
+
+	</scene>
+
+	<scene name="scene_02______________________1" title="集装箱共享基地" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________1.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________1.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________1.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________1.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/02______________________1.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="57.026" atv="0.359" linkedscene="scene_03_____________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="91.923" atv="1.163" linkedscene="scene_04__________" />
+
+	</scene>
+
+	<scene name="scene_03_____________" title="制票大厅" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/03_____________.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/03_____________.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/03_____________.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/03_____________.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/03_____________.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="113.589" atv="0.560" linkedscene="scene_02______________________1" />
+
+	</scene>
+
+	<scene name="scene_04__________" title="大门内" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/04__________.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/04__________.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/04__________.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/04__________.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/04__________.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="107.973" atv="2.215" linkedscene="scene_01_______" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="25.219" atv="1.049" linkedscene="scene_05____15___16___" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-127.287" atv="2.685" linkedscene="scene_06____1___" />
+
+	</scene>
+
+	<scene name="scene_05____15___16___" title="货15、16线" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/05____15___16___.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/05____15___16___.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/05____15___16___.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/05____15___16___.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/05____15___16___.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-35.425" atv="-0.836" linkedscene="scene_04__________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-58.349" atv="0.106" linkedscene="scene_01_______" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="44.342" atv="0.051" linkedscene="scene_07__________1" />
+		<hotspot name="spot4" style="skin_hotspotstyle" ath="112.483" atv="1.899" linkedscene="scene_08__________2" />
+
+	</scene>
+
+	<scene name="scene_06____1___" title="特1线" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/06____1___.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/06____1___.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/06____1___.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/06____1___.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/06____1___.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="153.623" atv="0.454" linkedscene="scene_04__________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="88.392" atv="2.707" linkedscene="scene_18____15___16___-______" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-122.237" atv="3.001" linkedscene="scene_02______________________-______" />
+
+	</scene>
+
+	<scene name="scene_07__________1" title="线下库左侧" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/07__________1.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/07__________1.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/07__________1.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/07__________1.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/07__________1.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="100.751" atv="2.755" linkedscene="scene_05____15___16___" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="22.295" atv="0.708" linkedscene="scene_08__________2" />
+
+	</scene>
+
+	<scene name="scene_08__________2" title="线下库右侧" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/08__________2.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/08__________2.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/08__________2.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/08__________2.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/08__________2.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-75.663" atv="1.168" linkedscene="scene_07__________1" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-112.728" atv="-0.087" linkedscene="scene_05____15___16___" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="51.329" atv="1.035" linkedscene="scene_09____5~14_________1" />
+
+	</scene>
+
+	<scene name="scene_09____5~14_________1" title="货5~14线路牌" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/09____5~14_________1.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/09____5~14_________1.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/09____5~14_________1.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/09____5~14_________1.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/09____5~14_________1.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="137.788" atv="0.645" linkedscene="scene_08__________2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="25.686" atv="1.693" linkedscene="scene_10____8~14_________" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-88.564" atv="1.094" linkedscene="scene_13____11___12___" />
+		<hotspot name="spot4" style="skin_hotspotstyle" ath="34.841" atv="0.051" linkedscene="scene_11____11~16_________" />
+
+	</scene>
+
+	<scene name="scene_10____8~14_________" title="货8~14线路牌" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/10____8~14_________.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/10____8~14_________.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/10____8~14_________.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/10____8~14_________.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/10____8~14_________.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="12.652" atv="0.001" linkedscene="scene_11____11~16_________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="163.083" atv="1.002" linkedscene="scene_09____5~14_________1" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="-115.183" atv="1.123" linkedscene="scene_13____11___12___" />
+
+	</scene>
+
+	<scene name="scene_11____11~16_________" title="货11~16线路牌" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/11____11~16_________.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/11____11~16_________.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/11____11~16_________.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/11____11~16_________.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/11____11~16_________.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="56.494" atv="0.471" linkedscene="scene_10____8~14_________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="38.334" atv="1.587" linkedscene="scene_09____5~14_________1" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="81.374" atv="0.153" linkedscene="scene_13____11___12___" />
+		<hotspot name="spot4" style="skin_hotspotstyle" ath="159.593" atv="1.060" linkedscene="scene_12____5~9_________" />
+
+	</scene>
+
+	<scene name="scene_12____5~9_________" title="货5~9线路牌" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/12____5~9_________.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/12____5~9_________.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/12____5~9_________.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/12____5~9_________.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/12____5~9_________.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-172.328" atv="0.917" linkedscene="scene_11____11~16_________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="4.398" atv="-1.217" linkedscene="scene_15____5___6___7___" />
+
+	</scene>
+
+	<scene name="scene_13____11___12___" title="货11、12线" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/13____11___12___.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/13____11___12___.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/13____11___12___.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/13____11___12___.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/13____11___12___.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-138.118" atv="-0.164" linkedscene="scene_10____8~14_________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="38.771" atv="3.105" linkedscene="scene_14____13___14___" />
+
+	</scene>
+
+	<scene name="scene_14____13___14___" title="货13、14线" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/14____13___14___.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/14____13___14___.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/14____13___14___.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/14____13___14___.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/14____13___14___.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-131.553" atv="0.808" linkedscene="scene_13____11___12___" />
+
+	</scene>
+
+	<scene name="scene_15____5___6___7___" title="货5、6、7线" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/15____5___6___7___.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/15____5___6___7___.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/15____5___6___7___.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/15____5___6___7___.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/15____5___6___7___.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="3.240" atv="1.691" linkedscene="scene_12____5~9_________" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="123.422" atv="2.424" linkedscene="scene_16____8___9___1" />
+
+	</scene>
+
+	<scene name="scene_16____8___9___1" title="货8、9线头部" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___1.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___1.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___1.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___1.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___1.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="61.638" atv="-1.627" linkedscene="scene_15____5___6___7___" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="99.943" atv="-1.281" linkedscene="scene_12____5~9_________" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="10.044" atv="0.102" linkedscene="scene_17____8___9_________(___)" />
+
+	</scene>
+
+	<scene name="scene_16____8___9___2" title="货8、9线尾部" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___2.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___2.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___2.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___2.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/16____8___9___2.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-1.526" atv="1.238" linkedscene="scene_17____8___9_________(___)" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="56.161" atv="1.330" linkedscene="scene_17____9_________(___)" />
+
+	</scene>
+
+	<scene name="scene_17____8___9_________(___)" title="货8、9线仓库(中间通道)" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____8___9_________(___).tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____8___9_________(___).tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____8___9_________(___).tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____8___9_________(___).tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____8___9_________(___).tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-22.300" atv="1.028" linkedscene="scene_16____8___9___2" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-61.136" atv="0.170" linkedscene="scene_17____9_________(___1)" />
+		<hotspot name="spot3" style="skin_hotspotstyle" ath="149.711" atv="1.584" linkedscene="scene_16____8___9___1" />
+
+	</scene>
+
+	<scene name="scene_17____9_________(___1)" title="货9线仓库(内)" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___1).tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___1).tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___1).tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___1).tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___1).tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-55.934" atv="3.938" linkedscene="scene_17____8___9_________(___)" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="51.724" atv="5.682" linkedscene="scene_17____9_________(___)" />
+
+	</scene>
+
+	<scene name="scene_17____9_________(___)" title="货9线仓库(外)" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___).tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___).tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___).tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___).tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/17____9_________(___).tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-50.235" atv="10.079" linkedscene="scene_17____9_________(___1)" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-141.791" atv="3.624" linkedscene="scene_16____8___9___2" />
+
+	</scene>
+
+	<scene name="scene_18____15___16___-______" title="货15、16线-出口" onstart="" havevrimage="true" thumburl="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/18____15___16___-______.tiles/thumb.jpg" lat="" lng="" heading="">
+
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+
+		<preview url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/18____15___16___-______.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="2048" tiledimageheight="2048">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/18____15___16___-______.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1024" tiledimageheight="1024">
+				<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/18____15___16___-______.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="https://rapi.daochen.com/UploadFile/StationVR/vtour/chengxiang/panos/18____15___16___-______.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="153.608" atv="2.821" linkedscene="scene_02______________________-______" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="58.229" atv="2.544" linkedscene="scene_05____15___16___" />
+
+	</scene>
+
+
+</krpano>

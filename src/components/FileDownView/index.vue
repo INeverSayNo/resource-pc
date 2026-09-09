@@ -1,15 +1,15 @@
 <template>
   <el-space :size="10" spacer="|">
-    <!-- <el-link type="primary" icon="el-icon-view" @click.prevent="showpop = true">
+    <!-- <el-link type="primary" @click.prevent="showpop = true">
       {{ text }}</el-link> -->
-    <el-link type="primary" icon="el-icon-view" @click.prevent="handleView">
+    <el-link type="primary" @click.prevent="handleView">
       {{ text }}
     </el-link>
     &nbsp; &nbsp;
     <el-link
       v-if="down"
       type="primary"
-      icon="el-icon-download"
+
       @click.prevent="Download(url, text)"
     >
       下载

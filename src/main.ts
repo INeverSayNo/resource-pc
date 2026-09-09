@@ -23,6 +23,15 @@ import App from './App.vue'
 import { setupPermission } from './permission'
 import { setupAuth } from './auth/setup'
 import { setupMonitor } from './plugins/monitor'
+import { setupDirectives } from './directives'
+import { createPrivatePhone } from '@/components/PrivatePhone/createPrivatePhone'
+import { TMapController } from '@/utils/useLoadTMap'
+
+const getPrivatePhone = (value: string | number): string => {
+  if (!value) return ''
+  const phone = String(value)
+  return `${phone.slice(0, 3)}${'*'.repeat(4)}${phone.slice(-4)}`
+}
 
 // 创建实例
 const setupAll = async () => {
@@ -34,6 +43,13 @@ const setupAll = async () => {
 
   setupAuth()
 
+  app.config.globalProperties.getPrivatePhone = getPrivatePhone
+  app.config.globalProperties.createPrivatePhone = (value: string | number) =>
+    createPrivatePhone(String(value))
+  window.getPrivatePhone = getPrivatePhone
+
+  setupDirectives(app)
+
   await setupPermission()
 
   setupGlobCom(app)
@@ -41,6 +57,8 @@ const setupAll = async () => {
   setupElementPlus(app)
 
   setupRouter(app)
+
+  void TMapController.insertTMapEle()
 
   app.mount('#app')
 }

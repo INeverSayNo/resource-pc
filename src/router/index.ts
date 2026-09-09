@@ -73,47 +73,39 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   }
 ]
 
+// Railway pilot routes are merged into the matching server-authorized menu branch.
 export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/resource-app',
     component: Layout,
-    name: 'ResourceApp',
-    redirect: '/resource-app/station',
-    meta: {
-      alwaysShow: true,
-      icon: 'example',
-      title: '资源应用工具'
-    },
+    name: 'ResourceAppRailwayPilot',
+    meta: { hidden: true },
     children: [
       {
         path: 'station',
         component: () => import('@/views/railway/station/listNew.vue'),
-        name: 'station',
-        meta: {
-          title: '车站信息'
-        }
+        name: 'RailwayStation',
+        meta: { title: '车站信息' }
       },
       {
         path: 'station-dt',
         component: () => import('@/views/railway/station/index.vue'),
-        name: 'stationDt',
+        name: 'RailwayStationDetail',
         meta: {
-          noTagsView: false,
-          noCache: true,
+          title: '车站详情',
           hidden: true,
+          noCache: true,
+          noTagsView: false,
           showMainRoute: true,
           followRoute: '/resource-app/station',
-          activeMenu: '/resource-app/station',
-          title: '车站详情'
+          activeMenu: '/resource-app/station'
         }
       },
       {
         path: 'station-map',
         component: () => import('@/views/railway/stationMap/map.vue'),
-        name: 'station-map',
-        meta: {
-          title: '站点地图'
-        }
+        name: 'RailwayStationMap',
+        meta: { title: '站点地图' }
       }
     ]
   }

@@ -1,0 +1,87 @@
+.notice{
+  width: 100%;
+  margin-bottom: 10px;
+}
+.gap-notice{
+  color: var(--theme-warning);
+  font-size: 12px;
+  padding: 0 10px;
+}
+.gap-title{
+  font-weight: bold;
+}
+.contact-item{
+  padding: 10px 5px;
+  line-height: 40px;
+}
+.bank-content{
+  padding: 10px 0;
+  .bank-list-btn{
+    margin-bottom: 10px;
+  }
+}
+// 联系人
+.contact-item{
+  width: 100%;
+  font-size: 12px;
+  display: inline-flex; 
+  .left{
+    width: 100%;
+  }
+  .items{
+    background-color: #409eff14; 
+    border:1px solid var(--theme-color);
+    border-radius: 5px;
+    padding: 3px;
+    margin-right:10px;
+    &.row-first{
+      margin-left: 52px;
+    }
+    .edit{
+      cursor: pointer;  
+      margin-left:5px;
+    }
+  }
+}
+
+.dt-view{
+  padding: 5px 0; 
+  :deep(.el-col){
+    border: 1px solid  #EBEEF5;
+    &:nth-child(even){
+      border-left: 0px;
+    }
+    &:nth-child(1){
+      border-top: 1px solid  #EBEEF5;
+    }
+    &:nth-child(2){
+      border-top: 1px solid  #EBEEF5;
+    }
+    border-top: 0px ;
+  }
+  .item{
+    display: inline-flex; 
+    .img-content{ 
+      padding: 8px 0px 8px 10px; 
+      height: 200px;
+      &.tc{
+        text-align: center;
+      }
+    }
+    .title{
+      padding: 8px 10px;
+      color: #909399;
+      font-weight: bold;
+      font-size: 12px;
+      width: 80px;
+      border-right: 1px solid  #EBEEF5;
+      background-color: #fafafa;
+    }
+    .text-content{
+      padding: 8px 0px 8px 10px; 
+    }
+    .no-image{
+      color: var(--theme-info);
+    }
+  } 
+}

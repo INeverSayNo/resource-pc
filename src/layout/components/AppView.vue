@@ -2,8 +2,6 @@
   import { useTagsViewStore } from '@/store/modules/tagsView'
   // import Footer from '@/components/Footer/index.vue'
   import { computed } from 'vue'
-  import { appConfig } from '@/config/app'
-
   const tagsViewStore = useTagsViewStore()
 
   const cachedViews = computed(() => tagsViewStore.cachedViews)

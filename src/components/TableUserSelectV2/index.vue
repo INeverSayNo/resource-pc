@@ -39,7 +39,7 @@
                 >
                   <template #append>
                     <div class="search-outer" @click="getStaffList(checkedIds, keywords)">
-                      <i class="el-icon-search" />
+                      <DLegacyIcon name="search" class=""  />
                     </div>
                   </template>
                 </el-input>
@@ -55,7 +55,7 @@
                 stripe
                 border
                 highlight-current-row
-                :row-key="(row) => row.id"
+                :row-key="getRowKey"
                 @selection-change="select"
                 @current-change="currentChange"
                 @select-all="selectAll"
@@ -149,6 +149,16 @@
   import { GetOrgList, GetOrgUsers } from '@/api/orgUser'
 
   type Tree = InstanceType<typeof ElTree>
+  interface Table {
+    data: TStaff[]
+    clearSelection: () => void
+    toggleRowSelection: (row: TStaff, selected?: boolean) => void
+  }
+  interface OrgNode {
+    id: string
+    OAId?: number
+    children: OrgNode[]
+  }
   export type TStaff = Record<'userName' | 'code' | 'logonName' | 'phone' | 'id', string> & {
     [prop: string]: string | number
   }
@@ -214,7 +224,7 @@
     setup(props: Props, { emit }) {
       // #region 左侧机构树组件
       const orgTreeRef = ref<Tree | null>(null)
-      const orgData = ref([])
+      const orgData = ref<OrgNode[]>([])
       const checkedIds = ref<string[]>([])
       const defaultExpanded = ref<any>([])
       const orgProps = {
@@ -226,9 +236,9 @@
         if (props.showTree) {
           const [err, res] = await GetOrgList()
           if (err || !res) return
-          const { children } = JSON.parse(res)
-          children[0].children.sort((x, y) => {
-            return x.OAId - y.OAId > 0 ? -1 : 1
+          const { children } = JSON.parse(res) as { children: OrgNode[] }
+          children[0].children.sort((x: OrgNode, y: OrgNode) => {
+            return (x.OAId ?? 0) - (y.OAId ?? 0) > 0 ? -1 : 1
           })
           defaultExpanded.value = [children[0].id]
           orgData.value = children
@@ -250,6 +260,7 @@
       const keywords = ref('')
       const staffTableRef = ref<Table | null>(null)
       const staffData = ref<any>([])
+      const getRowKey = (row: TStaff): string => row.id
       const getStaffList = async (ids: string[], keyword = '') => {
         const [err, res] = await GetOrgUsers(
           {
@@ -264,8 +275,8 @@
           'post'
         )
         if (err || !res) return
-        staffData.value = res.rows
-        totalCount.value = res.total
+        staffData.value = res.rows ?? []
+        totalCount.value = res.total ?? 0
         nextTick(() => {
           const checked = JSON.parse(sessionStorage.getItem('_dc_yk_checkedStaffs') as string)
           if (checked) {
@@ -423,6 +434,7 @@
         keywords,
         staffData,
         getStaffList,
+        getRowKey,
         // handleSelectionChange,
         rowClick,
         currentPage,

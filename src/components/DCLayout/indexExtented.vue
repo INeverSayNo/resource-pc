@@ -3,22 +3,18 @@
     <el-header v-if="showMoreQuery" :class="{ 'dt-query-container': true, hidden: !showQuery }">
       <div :style="showQuery ? 'margin-bottom:10px;' : ''">
         <span style="cursor: pointer" @click="handleOptionShowQuery">
-          <i class="el-icon-search" :title="showQuery ? '点击隐藏' : '点击显示'" />
+          <DLegacyIcon name="search" class="" :title="showQuery ? '点击隐藏' : '点击显示'"  />
           查询条件
         </span>
         <span v-if="$slots.queryBarCenter">
           <slot name="queryBarCenter"></slot>
         </span>
-        <i
+        <DLegacyIcon
           :title="showQuery ? '隐藏' : '显示'"
-          :class="{
-            'el-icon-arrow-down': !showQuery,
-            'el-icon-arrow-up': showQuery,
-            fr: true,
-            'query-show-action': true
-          }"
+          :name="showQuery ? 'arrow-up' : 'arrow-down'"
+          class="fr query-show-action"
           @click="handleOptionShowQuery"
-        />
+         />
       </div>
       <div v-show="showQuery">
         <el-form
@@ -61,9 +57,9 @@
                 <el-button
                   v-if="showExportBtn"
                   type="success"
-                  icon="el-icon-circle-check"
                   @click="handleExportExcelDialog"
                 >
+                  <DLegacyIcon name="circle-check" />
                   导出
                 </el-button>
               </el-button-group>
@@ -79,7 +75,7 @@
                 @clear="quickClear"
               >
                 <template #append>
-                  <el-button icon="el-icon-search" @click="handleQuickQuery" />
+                  <el-button @click="handleQuickQuery"><DLegacyIcon name="search" /></el-button>
                 </template>
               </el-input>
             </el-form-item>

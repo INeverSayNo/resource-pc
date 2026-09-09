@@ -24,7 +24,7 @@ export default {
       default: () => []
     }
   },
-  setup(props, { emit }) {
+  setup(props) {
     const scrollRef = ref<HTMLDivElement>();
     const currentIndex = ref(0);
     function scorll() {

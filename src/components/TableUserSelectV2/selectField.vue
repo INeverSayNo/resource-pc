@@ -10,7 +10,7 @@
       :multiple="multiple"
       v-bind="getBindValue"
       popper-class="dc-user-select-v3-popper"
-      suffix-icon="el-icon-search"
+
     >
       <el-option
         v-for="(item, index) in cValue"
@@ -143,7 +143,7 @@
       /** 获取input 默认绑定属性 */
       const getBindValue = computed((): any => {
         const delArr: string[] = ['title', 'modelValue', 'multiple', 'filterable']
-        const obj = { ...attrs, ...props }
+        const obj: Record<string, unknown> = { ...attrs, ...props }
         for (const key in obj) {
           if (delArr.indexOf(key) !== -1) {
             delete obj[key]

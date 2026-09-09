@@ -1,54 +1,50 @@
-import type { ConfigOptions } from './types'
+import type { ConfigOptions, RuntimeEnv } from './types'
+import { normalizeRuntimeEndpoints } from './runtimeConfig'
 
-const data: ConfigOptions = await fetch(`/config.json?t=${Date.now()}`).then((res) => res.json())
+const response = await fetch(`/config.json?t=${Date.now()}`)
+if (!response.ok) throw new Error(`运行配置加载失败：HTTP ${response.status}`)
 
-if (Reflect.has(data, 'system_config')) {
-  window['system_config'] = data.system_config
-}
+const data = (await response.json()) as ConfigOptions
 
-const {
-  login_url,
-  file_url,
-  getfile_url,
-  applicationId,
-  self_url,
-  jssdk_url,
-  gateway_url,
-  Resource_url,
-  Supplier_url,
-  trace_url,
-  stream_url,
-  useCrypto,
-  cryptoType,
-  auth,
-  v8_baseData_url,
-  view_url,
-  abpBase_url
-} = data
+if (Reflect.has(data, 'system_config')) window.system_config = data.system_config
 
 const configuredEnv = import.meta.env.VITE_ENV_TYPE
-type RuntimeEnv = 'dev' | 'test' | 'pro'
 export const env: RuntimeEnv = ['dev', 'test', 'pro'].includes(configuredEnv)
   ? (configuredEnv as RuntimeEnv)
   : 'pro'
 
-export const JSSDK_URL: string = jssdk_url[env]
-export const PATH_URL: string = gateway_url[env]
-export const GATEWAY_URL: string = gateway_url[env]
-export const LOGIN_URL: string = login_url[env]
-export const FILE_URL: string = file_url[env]
-export const GETFILE_URL: string = getfile_url[env]
-export const ApplicationId: string = applicationId
-export const SELF_URL: string = self_url[env]
-export const RESOURCE_URL: string = Resource_url[env]
-export const SUPPLIER_URL: string = Supplier_url[env]
-export const TRACE_URL: string = trace_url[env]
-export const STREAM_URL: string = stream_url[env]
-export const V8_BASEDATA_URL: string = v8_baseData_url[env]
-export const ABPBASE_URL: string = abpBase_url[env]
-export const VIEW_URL:string = view_url[env]
-export const USE_CRY_PTO: boolean = useCrypto
-export const CRYPT_TYPE: number = cryptoType
-export const LOGIN_CLIENT_ID: string = auth.clientId
-// 浏览器端 clientSecret 仅用于兼容现有后端协议，属于公开运行配置，不具备保密性。
-export const LOGIN_CLIENT_SECRET: string = auth.clientSecret
+export const runtimeEndpoints = normalizeRuntimeEndpoints(data, env)
+
+export const PATH_URL = runtimeEndpoints.resourceApi
+export const GATEWAY_URL = runtimeEndpoints.gateway
+export const LOGIN_URL = runtimeEndpoints.login
+export const FILE_URL = runtimeEndpoints.file
+export const GETFILE_URL = runtimeEndpoints.getFile
+export const SELF_URL = runtimeEndpoints.self
+export const JSSDK_URL = runtimeEndpoints.jsSdk
+export const RESOURCE_URL = runtimeEndpoints.resource
+export const SUPPLIER_URL = runtimeEndpoints.supplier
+export const TRACE_URL = runtimeEndpoints.trace
+export const STREAM_URL = runtimeEndpoints.stream
+export const V8_BASEDATA_URL = runtimeEndpoints.v8BaseData
+export const VIEW_URL = runtimeEndpoints.view
+export const ABPBASE_URL = runtimeEndpoints.abpBase
+export const ESB_URL = runtimeEndpoints.esb
+export const OCR_URL = runtimeEndpoints.ocr
+export const SYSTEM_BASE_DATA_URL = runtimeEndpoints.systemBaseData
+export const TASK_CENTER_URL = runtimeEndpoints.taskCenter
+export const CUSTOMER_URL = runtimeEndpoints.customer
+export const SIGNALR_URL = runtimeEndpoints.signalR
+export const TGS_SOLUTION_V2_URL = runtimeEndpoints.tgsSolutionV2
+export const ESTIMATE_PRICE_URL = runtimeEndpoints.estimatePrice
+export const BUSINESS_DATA_SYNC_URL = runtimeEndpoints.businessDataSync
+export const BASE_DATA_DCZY_URL = runtimeEndpoints.baseDataDczy
+export const PM_DCZY_URL = runtimeEndpoints.pmDczy
+export const PLATFORM_URL = runtimeEndpoints.platform
+
+export const ApplicationId = data.applicationId
+export const USE_CRY_PTO = data.useCrypto
+export const CRYPT_TYPE = data.cryptoType
+export const LOGIN_CLIENT_ID = data.auth.clientId
+// 浏览器端 clientSecret 仅兼容既有后端协议，不具备保密性。
+export const LOGIN_CLIENT_SECRET = data.auth.clientSecret

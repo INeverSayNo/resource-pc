@@ -27,7 +27,7 @@ export default defineComponent({
       type: [Number, String] as PropType<number | string>
     }
   },
-  setup(props, ctx) {
+  setup(props) {
     const { name, width, height, className, color, size } = toRefs(props)
 
     const iconWidth = computed(()=> size.value || width.value )

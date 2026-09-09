@@ -94,7 +94,7 @@
 
       const getBindValue = computed((): any => {
         const delArr: string[] = ['showFullscreen', 'draggable', 'defaultFullscreen']
-        const obj = { ...attrs, ...props }
+        const obj: Record<string, unknown> = { ...attrs, ...props }
         for (const key in obj) {
           if (delArr.indexOf(key) !== -1) {
             delete obj[key]
@@ -124,7 +124,7 @@
               const dialogHeaderEl = dragDom?.querySelector('.el-dialog__header') as HTMLElement
               dragDom.style.cssText += ';top:0px;'
               dialogHeaderEl.style.cssText += ';cursor:move;user-select:none;'
-              dialogHeaderEl.onmousedown = (e) => {
+              dialogHeaderEl.onmousedown = (e: MouseEvent) => {
                 const disX = e.clientX - (dialogHeaderEl?.offsetLeft || 0)
                 const disY = e.clientY - (dialogHeaderEl?.offsetTop || 0)
 
@@ -155,7 +155,7 @@
                   styleTop = +styleTopStr.replace(/px/g, '')
                 }
 
-                document.onmousemove = (e) => {
+                document.onmousemove = (e: MouseEvent) => {
                   let left = e.clientX - disX
                   let top = e.clientY - disY
 
@@ -194,10 +194,6 @@
         }
         emit('opened')
       }
-      function handleTrigger(e) {
-        console.log(e)
-      }
-
       return {
         dialogRef,
         fullscreen,
@@ -205,8 +201,7 @@
         slots,
         toggleFull,
         initDraggable,
-        handleOpened,
-        handleTrigger
+        handleOpened
       }
     }
   })
