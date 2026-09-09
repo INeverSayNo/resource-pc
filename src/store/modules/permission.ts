@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
-import router, { constantRouterMap } from '@/router'
+import router, { asyncRouterMap, constantRouterMap } from '@/router'
 import type { BackendMenuResponse } from '@/api/login/types'
 import { adaptBackendMenus, normalizeBackendMenus } from '@/utils/menuAdapter'
 import { generateRoutesByServer, isUrl } from '@/utils/routerHelper'
@@ -64,10 +64,8 @@ export const usePermissionStore = defineStore('permission', {
     prepareRoutes(response: BackendMenuResponse): AppRouteRecordRaw[] {
       const menus = normalizeBackendMenus(response)
       if (!menus) throw new Error('菜单解析失败')
-      const adapted = adaptBackendMenus(menus, getStaticPaths(constantRouterMap))
+      const adapted = adaptBackendMenus(menus, getStaticPaths([...constantRouterMap]))
       for (const warning of adapted.warnings) console.warn(warning)
-      console.log(adapted.routes)
-      console.log(generateRoutesByServer(adapted.routes))
       return generateRoutesByServer(adapted.routes)
     },
     replaceRoutes(routes: AppRouteRecordRaw[]): void {

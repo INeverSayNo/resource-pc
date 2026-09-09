@@ -42,7 +42,7 @@
       :aria-expanded="open"
       @click="open = !open"
     >
-      <SvgIcon icon="view-quilt-outline" :size="18" />
+      <DAliIcon name="view-quilt-outline" :size="18" />
       <span>{{ currentLabel }}</span>
     </button>
 
@@ -66,7 +66,7 @@
           <i class="layout-switcher__preview-content"></i>
         </span>
         <span>{{ item.label }}</span>
-        <SvgIcon v-if="appStore.layout === item.value" icon="check" :size="16" />
+        <DAliIcon v-if="appStore.layout === item.value" name="check" :size="16" />
       </button>
     </div>
   </div>

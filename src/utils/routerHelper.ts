@@ -24,11 +24,11 @@ export const generateRoutesByServer = (routes: AppCustomRouteRecordRaw[]): AppRo
     } else if (component.startsWith('##')) {
       resolvedComponent = createParentView(component.slice(2))
     } else {
-      // resolvedComponent = modules[`../${component}.vue`] || modules[`../${component}.tsx`]
-      // if (!resolvedComponent) {
-      //   console.error(`未找到 ${component}.vue 或 ${component}.tsx，已跳过该菜单`)
-      //   continue
-      // }
+      resolvedComponent = modules[`../${component}.vue`] || modules[`../${component}.tsx`]
+      if (!resolvedComponent) {
+        console.error(`未找到 ${component}.vue 或 ${component}.tsx，已跳过该菜单`)
+        continue
+      }
     }
 
     const children = route.children ? generateRoutesByServer(route.children) : undefined

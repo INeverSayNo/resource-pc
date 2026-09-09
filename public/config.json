@@ -59,6 +59,16 @@
     "pro": "http://test.cddc56.com:30000",
     "test": "http://test.cddc56.com:30000"
   },
+  "view_url": {
+    "dev": "http://test.cddc56.com:8888",
+    "pro": "https://fpv.daochen.com",
+    "test": "http://test.cddc56.com:8888"
+  },
+  "abpBase_url": {
+    "dev": "http://test.cddc56.com:40080",
+    "pro": "https://d.daochen.com",
+    "test": "http://test.cddc56.com:40080"
+  },
   "system_config": {
     "#comment": "系统配置,主要针对外部系统进行主题配置",
     "solutionTitle": "欢迎使用智慧物流方案",

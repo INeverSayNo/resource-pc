@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getOrgUsers } from '@/api/orgUser'
+import { GetOrgUsers } from '@/api/orgUser'
 import type { OrgUser } from '@/api/orgUser'
 import { store } from '../index'
 
@@ -20,7 +20,7 @@ export const useOrgUserStore = defineStore('orgUser', {
   actions: {
     async prefetch(generation: number): Promise<void> {
       this.loading = true
-      const [error, data] = await getOrgUsers()
+      const [error, data] = await GetOrgUsers()
       if (this.generation !== generation) return
       this.loading = false
       if (error || !data) return

@@ -21,7 +21,9 @@ const {
   useCrypto,
   cryptoType,
   auth,
-  v8_baseData_url
+  v8_baseData_url,
+  view_url,
+  abpBase_url
 } = data
 
 const configuredEnv = import.meta.env.VITE_ENV_TYPE
@@ -43,6 +45,8 @@ export const SUPPLIER_URL: string = Supplier_url[env]
 export const TRACE_URL: string = trace_url[env]
 export const STREAM_URL: string = stream_url[env]
 export const V8_BASEDATA_URL: string = v8_baseData_url[env]
+export const ABPBASE_URL: string = abpBase_url[env]
+export const VIEW_URL:string = view_url[env]
 export const USE_CRY_PTO: boolean = useCrypto
 export const CRYPT_TYPE: number = cryptoType
 export const LOGIN_CLIENT_ID: string = auth.clientId

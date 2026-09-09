@@ -87,3 +87,16 @@ export class BaseApi extends DcToolsRequest {
     })
   }
 }
+
+export async function Download(fileUrl: any, fileName = '') {
+  return fetch(fileUrl).then((res) =>
+    res.blob().then((blob) => {
+      const link = document.createElement('a')
+      const url = window.URL.createObjectURL(blob)
+      link.href = url
+      link.download = fileName
+      link.click()
+      window.URL.revokeObjectURL(url)
+    })
+  )
+}

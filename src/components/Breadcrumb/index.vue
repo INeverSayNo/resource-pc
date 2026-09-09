@@ -2,7 +2,7 @@
   import { ElBreadcrumb, ElBreadcrumbItem } from 'element-plus'
   import { computed, defineComponent } from 'vue'
   import { useRoute } from 'vue-router'
-  import SvgIcon from "@/components/SvgIcon/index.vue"
+  import DAliIcon from "@/components/SvgIcon/AliIcon"
 
   import { appConfig } from '@/config/app'
   const prefixCls = 'v-breadcrumb'
@@ -33,7 +33,7 @@
             >
               {meta.icon && appConfig.ui.breadcrumbIcon ? (
                 <>
-                  <SvgIcon icon={meta.icon} class="mr-[5px]"></SvgIcon> {meta.title || ''}
+                  <DAliIcon name={meta.icon} class="mr-[5px]"></DAliIcon> {meta.title || ''}
                 </>
               ) : (
                 meta.title || ''

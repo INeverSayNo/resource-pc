@@ -36,7 +36,7 @@
           :disabled="item.disabled"
           :command="item"
         >
-          <SvgIcon :icon="item.icon" /> {{ item.label }}
+          <DAliIcon :name="item.icon" /> {{ item.label }}
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>

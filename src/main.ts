@@ -1,5 +1,4 @@
 import 'vue/jsx'
-import 'virtual:svg-icons-register'
 import 'virtual:uno.css'
 
 // 引入状态管理

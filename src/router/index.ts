@@ -73,6 +73,52 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   }
 ]
 
+export const asyncRouterMap: AppRouteRecordRaw[] = [
+  {
+    path: '/resource-app',
+    component: Layout,
+    name: 'ResourceApp',
+    redirect: '/resource-app/station',
+    meta: {
+      alwaysShow: true,
+      icon: 'example',
+      title: '资源应用工具'
+    },
+    children: [
+      {
+        path: 'station',
+        component: () => import('@/views/railway/station/listNew.vue'),
+        name: 'station',
+        meta: {
+          title: '车站信息'
+        }
+      },
+      {
+        path: 'station-dt',
+        component: () => import('@/views/railway/station/index.vue'),
+        name: 'stationDt',
+        meta: {
+          noTagsView: false,
+          noCache: true,
+          hidden: true,
+          showMainRoute: true,
+          followRoute: '/resource-app/station',
+          activeMenu: '/resource-app/station',
+          title: '车站详情'
+        }
+      },
+      {
+        path: 'station-map',
+        component: () => import('@/views/railway/stationMap/map.vue'),
+        name: 'station-map',
+        meta: {
+          title: '站点地图'
+        }
+      }
+    ]
+  }
+]
+
 const router = createRouter({
   history: createWebHashHistory(),
   strict: true,

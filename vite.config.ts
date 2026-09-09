@@ -5,7 +5,6 @@ import Vue from '@vitejs/plugin-vue'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import ElementPlus from 'unplugin-element-plus/vite'
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 const root = process.cwd()
 
@@ -20,14 +19,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
     plugins: [
       Vue(),
       VueJsx(),
-      ElementPlus(),
+      ElementPlus({}),
       UnoCSS(),
-      createSvgIconsPlugin({
-        iconDirs: [pathResolve('src/assets/icons/svg')],
-        symbolId: 'icon-[name]',
-        inject: 'body-last',
-        customDomId: '__svg__icons__'
-      })
+      
     ],
 
     resolve: {

@@ -1,6 +1,8 @@
 import type { App } from 'vue'
-import SvgIcon from './SvgIcon/index.vue'
+import DAliIcon from './SvgIcon/AliIcon'
+import ComDialog from './ComDialog/index.vue'
 
 export const setupGlobCom = (app: App<Element>): void => {
-  app.component('SvgIcon', SvgIcon)
+  app.component('DAliIcon', DAliIcon)
+  app.component('ComDialog', ComDialog)
 }

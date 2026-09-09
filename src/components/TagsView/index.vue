@@ -161,7 +161,7 @@
       aria-label="向左滚动标签页"
       @click="scrollTags(-200)"
     >
-      <SvgIcon icon="chevron-double-left" />
+      <DAliIcon name="chevron-double-left" />
     </button>
 
     <div :class="`${prefixCls}__viewport`">
@@ -178,7 +178,7 @@
           >
             <div :class="`${prefixCls}__item-body`">
               <RouterLink :to="item.fullPath" :class="`${prefixCls}__link`">
-                <SvgIcon v-if="appConfig.ui.tagsViewIcon && item.icon" :icon="item.icon" :size="13" />
+                <DAliIcon v-if="appConfig.ui.tagsViewIcon && item.icon" :name="item.icon" :size="13" />
                 <span>{{ item.title || '' }}</span>
               </RouterLink>
               <button
@@ -188,7 +188,7 @@
                 :aria-label="`关闭标签页：${item.title || ''}`"
                 @click.stop="closeTag(item)"
               >
-                <SvgIcon icon="close" :size="13" />
+                <DAliIcon name="close" :size="13" />
               </button>
             </div>
           </ContextMenu>
@@ -203,7 +203,7 @@
       aria-label="向右滚动标签页"
       @click="scrollTags(200)"
     >
-      <SvgIcon icon="chevron-double-right" />
+      <DAliIcon name="chevron-double-right" />
     </button>
     <button
       :class="`${prefixCls}__tool`"
@@ -213,7 +213,7 @@
       :disabled="!activeTag"
       @click="refreshTag(activeTag)"
     >
-      <SvgIcon icon="reload" />
+      <DAliIcon name="reload" />
     </button>
     <ContextMenu trigger="click" :schema="activeTag ? createContextMenu(activeTag) : []">
       <button
@@ -223,7 +223,7 @@
         aria-label="更多标签页操作"
         :disabled="!activeTag"
       >
-        <SvgIcon icon="dots-horizontal" />
+        <DAliIcon name="dots-horizontal" />
       </button>
     </ContextMenu>
   </div>

@@ -16,6 +16,8 @@ export interface ConfigOptions {
   Supplier_url: UrlObject
   Resource_url: UrlObject
   v8_baseData_url: UrlObject
+  view_url: UrlObject
+  abpBase_url: UrlObject
   useCrypto: boolean
   cryptoType: number
   auth: {
