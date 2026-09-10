@@ -69,7 +69,7 @@ function uploadSuccess(payload: UploadSuccessParams) {
       站点图片
       <span class="theme-color">(共{{ previewFileList?.length || 0 }}张)</span>
       <span class="bar-btn fr" @click="handleAdd">
-        <el-icon :name="isEdit ? 'close' : 'edit'" />
+        <DAliIcon :name="isEdit ? 'close' : 'edit'" />
         {{ isEdit ? "取消" : "新增" }}
       </span>
     </DcGap>

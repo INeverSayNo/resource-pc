@@ -9,7 +9,7 @@
     @opened="handleOpened"
     @close="showDetails = false"
   >
-    <el-form :model="edit" label-suffix=":" inline size="small">
+    <el-form :model="edit" label-suffix=":" inline >
       <el-form-item label="地址">
         <el-input
           v-model="edit.address"
@@ -26,7 +26,6 @@
       :data="nearList"
       border
       stripe
-      size="small"
       highlight-current-row
       @current-change="handleCurrentChange"
     >
@@ -65,8 +64,8 @@
       <el-table-column label="办理限制" prop="BusinessLimit"></el-table-column>
     </el-table>
     <template #footer>
-      <el-button size="small" @click="showDetails = false">取消</el-button>
-      <el-button type="primary" size="small" @click="handleOk">确定</el-button>
+      <el-button  @click="showDetails = false">取消</el-button>
+      <el-button type="primary"  @click="handleOk">确定</el-button>
     </template>
   </com-dialog>
 </template>

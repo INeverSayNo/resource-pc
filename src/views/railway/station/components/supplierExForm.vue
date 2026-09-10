@@ -37,7 +37,6 @@
         ref="formRef"
         :model="edit"
         class="form-container"
-        size="small"
         :rules="rules"
         label-width="130px"
         label-suffix=":"
@@ -115,9 +114,9 @@ import PersonForm from "@/views/supplierV2/person/createForm.vue";
 import DcGap from "@/components/Gap/index.vue";
 import { SetSupplierEx } from "../api";
 import { Message } from "@/components/Message";
-import { deepClone } from "@/utils";
 import { useStatisticTrace } from "@/hooks/useStatisticTrace";
 import { useAnalyticsTrack } from "@/plugins/monitor";
+import { DcDeep } from "@dczy/tie-tools";
 
 type stateProp = {
   edit: RailWaySupplerExCrudDto;
@@ -277,7 +276,7 @@ export default defineComponent({
 
     async function saveSupplier() {
       state.loading = true;
-      const param = deepClone<RailWaySupplerExCrudDto>(state.edit);
+      const param = DcDeep.clone<RailWaySupplerExCrudDto>(state.edit);
       await supplierFormRef.value?.saveData(
         true,
         (res, supplier: SupplierHeadDto) => {

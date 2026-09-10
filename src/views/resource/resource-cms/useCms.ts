@@ -1,8 +1,9 @@
 import { GETFILE_URL, VIEW_URL } from "@/request";
-import { deepClone, isUrlPath } from "@/utils";
+import { isUrlPath } from "@/utils";
 import { Ref } from "vue"; 
 import resourceCmsApi from "./api";
 import { CmsHeadDto } from "./types";
+import { DcDeep } from "@dczy/tie-tools";
 
 export function useCms(list?: Ref<CmsHeadDto[]>) {
   function renderKeywords(keywords?: string) {
@@ -74,7 +75,7 @@ export function useCms(list?: Ref<CmsHeadDto[]>) {
     resourceCmsApi.Read(id).then((res) => {
       if (res && list?.value?.length) {
         const index = list.value.findIndex((x) => x.id === id);
-        const temp = deepClone<CmsHeadDto[]>(list.value);
+        const temp = DcDeep.clone<CmsHeadDto[]>(list.value);
         temp.splice(index, 1);
         list.value = temp;
       }

@@ -17,6 +17,7 @@ html:root {
   --el-text-color-primary: #273142;
   --el-text-color-regular: #526077;
   --el-text-color-secondary: #7a879c;
+  --el-component-size-small: 34px;
 
   /* Navigation */
   --left-menu-max-width: 224px;
@@ -46,6 +47,13 @@ html:root {
   --app-content-bg-color: #f6f7fb;
   --app-footer-height: 50px;
   --transition-time-02: 0.2s;
+
+  --theme-success:#67C23A;
+  --theme-color: #145ca8;
+  --theme-warning:#E6A23C;
+  --theme-danger:#F56C6C;
+  --theme-info: #909399
+
 }
 
 html:root.dark {

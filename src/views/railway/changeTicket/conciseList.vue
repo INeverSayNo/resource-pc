@@ -10,7 +10,7 @@ import type { ChangeTicketDetail, EnumItem } from "./type";
 import { GetFileListByIds } from "@/api/fileApi";
 import { FileAttach } from "@/utils/base-entity";
 import { GETFILE_URL } from "@/request";
-import { formatDateTime } from "@/utils";
+import { DcDate } from "@dczy/tie-tools";
 
 const props = defineProps({
   stationId: {
@@ -119,13 +119,12 @@ function addChangeTicket() {
     <DcGap class="bar">
       换装信息
       <span class="bar-btn fr" @click="addChangeTicket">
-        <DLegacyIcon name="plus" class="" />
+        <DAliIcon name="plus" class="" />
         新增
       </span>
     </DcGap>
 
     <el-table
-      size="small"
       :data="changeTicketList"
       highlight-current-row
       border
@@ -144,11 +143,9 @@ function addChangeTicket() {
                   </div>
                   <div v-else>
                     <div v-if="!hasFile(row.id)" class="no-data-wrap">
-                      <DcIcon
-                        name="news-no-data"
-                        :width="4"
-                        :height="4"
-                      ></DcIcon>
+                      <DAliIcon
+                        name="no-data"
+                      ></DAliIcon>
                       <span class="label">暂无附件</span>
                     </div>
                     <template v-else>
@@ -265,7 +262,7 @@ function addChangeTicket() {
           </span>
           <span>
             {{
-              formatDateTime(
+              DcDate.format(
                 row.lastModificationTime || row.creationTime,
                 "YYYY-MM-DD"
               )
@@ -285,7 +282,6 @@ function addChangeTicket() {
             <el-button
               link
               type="warning"
-              size="small"
               @click="editChangeTicket(row)"
             >
               编辑

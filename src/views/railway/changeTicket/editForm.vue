@@ -259,7 +259,6 @@ export default defineComponent({
     <el-form
       ref="formRef"
       class="form-container"
-      size="small"
       :model="formModel"
       :rules="rules"
       label-width="100px"

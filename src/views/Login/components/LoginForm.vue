@@ -86,7 +86,7 @@
     </ElFormItem>
 
     <div class="login-options">
-      <ElCheckbox v-model="remember" label="记住我" size="small" />
+      <ElCheckbox v-model="remember" label="记住我"  />
       <span class="secure-note"><i></i>SSL</span>
     </div>
 

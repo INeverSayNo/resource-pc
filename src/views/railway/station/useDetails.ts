@@ -281,6 +281,7 @@ export function useDetails(needInit = true) {
   }
 
   function loadData() {
+    console.log('load')
     if (route.query?.id && needInit) {
       loadBureau();
       const loading = ElLoading.service({ text: "数据加载中..." });

@@ -9,7 +9,7 @@ import {
   PricePolicyQueryParam,
   PricePolicyResult
 } from "./types";
-import { deepClone } from "@/utils";
+import { DcDeep } from "@dczy/tie-tools";
 
 const api = new BaseService("railway");
 
@@ -64,7 +64,7 @@ function SearchPolicyLine(param: PricePolicyQueryLineParam) {
  * @returns
  */
 function UpdatePolicyContainerTypeAndRemark(param: PolicyAllSimpleUpdateDto) {
-  const postParam = deepClone<PolicyAllSimpleUpdateDto>(param);
+  const postParam = DcDeep.clone<PolicyAllSimpleUpdateDto>(param);
   if (param.containerTypes.length) {
     postParam.containerType = param.containerTypes.join(",");
   }

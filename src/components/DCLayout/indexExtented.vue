@@ -1,15 +1,15 @@
 <template>
   <el-container class="dt-container">
-    <el-header v-if="showMoreQuery" :class="{ 'dt-query-container': true, hidden: !showQuery }">
+    <el-header v-if="showMoreQuery" :class="{ 'dt-query-container': true,  }">
       <div :style="showQuery ? 'margin-bottom:10px;' : ''">
         <span style="cursor: pointer" @click="handleOptionShowQuery">
-          <DLegacyIcon name="search" class="" :title="showQuery ? '点击隐藏' : '点击显示'"  />
+          <DAliIcon name="search" class="" :title="showQuery ? '点击隐藏' : '点击显示'"  />
           查询条件
         </span>
         <span v-if="$slots.queryBarCenter">
           <slot name="queryBarCenter"></slot>
         </span>
-        <DLegacyIcon
+        <DAliIcon
           :title="showQuery ? '隐藏' : '显示'"
           :name="showQuery ? 'arrow-up' : 'arrow-down'"
           class="fr query-show-action"
@@ -59,7 +59,7 @@
                   type="success"
                   @click="handleExportExcelDialog"
                 >
-                  <DLegacyIcon name="circle-check" />
+                  <DAliIcon name="circle-check" />
                   导出
                 </el-button>
               </el-button-group>
@@ -75,7 +75,7 @@
                 @clear="quickClear"
               >
                 <template #append>
-                  <el-button @click="handleQuickQuery"><DLegacyIcon name="search" /></el-button>
+                  <el-button @click="handleQuickQuery"><DAliIcon name="search" /></el-button>
                 </template>
               </el-input>
             </el-form-item>
@@ -136,7 +136,7 @@
               label="序号"
               fixed
               type="index"
-              width="50"
+              width="70"
               align="center"
             />
             <template v-for="(item, index) in columns" :key="index">
@@ -329,7 +329,6 @@
               v-if="dtCloumns && dtCloumns.length > 0"
               class="margin-top"
               :column="dtCloumnNum"
-              size="small"
               :direction="direction"
               border
             >
@@ -564,23 +563,7 @@
   })
 
   const handleDtOpen = () => {
-    // const { dtCloumns, dtData } = props;
-    // const showData = [];
-    // if (dtCloumns && dtData) {
-    //   for (const key in dtCloumns) {
-    //     showData.push({
-    //       label: dtCloumns[key].label,
-    //       value: dtCloumns[key].formatter
-    //         ? dtCloumns[key].formatter(dtData[dtCloumns[key].name], dtData)
-    //         : dtData[dtCloumns[key].name],
-    //       icon: dtCloumns[key].icon || "",
-    //       span: dtCloumns[key].span || 1
-    //     });
-    //   }
-    //   showDtData.value = deepClone(showData);
-    // } else {
-    //   showDtData.value = [{ label: "数据错误", value: "" }];
-    // }
+   
   }
 
   const handleOptionShowQuery = () => {

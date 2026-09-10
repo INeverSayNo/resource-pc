@@ -13,7 +13,7 @@
       v-if="edit"
       class="form-container"
       :model="edit"
-      size="small"
+      
       label-suffix=":"
       label-width="110px"
     >
@@ -76,20 +76,20 @@
       <DcGap class="mb-05">
         暂存费收费标准
         <span class="fr theme-color cu-pointer" @click="handleAddCharge">
-          <DLegacyIcon name="plus" class="" />
+          <DAliIcon name="plus" class="" />
           新增行
         </span>
         <span
           class="fr mr-10 theme-danger cu-pointer"
           @click="handleDeleteCharge"
         >
-          <DLegacyIcon name="delete" class="" />
+          <DAliIcon name="delete" class="" />
           删除选中
         </span>
       </DcGap>
       <el-table
         :data="edit.yardChargeItem"
-        size="small"
+        
         border
         stripe
         highlight-current-row
@@ -105,7 +105,7 @@
           <template #default="scoped">
             <el-select
               v-model="scoped.row.chargeType"
-              size="small"
+              
               placeholder="请选择办理类型"
               @change="(val) => handleChargeTypeChange(val, scoped.row)"
             >
@@ -122,13 +122,13 @@
           <template #default="scoped">
             <el-input
               v-model="scoped.row.freeTime"
-              size="small"
+              
               placeholder="请输入免费时间"
             >
               <template #append>
                 <el-select
                   v-model="scoped.row.freeTimeUnit"
-                  size="small"
+                  
                   style="width: 80px !important"
                   placeholder="单位"
                 >
@@ -144,13 +144,13 @@
             <el-input
               v-model="scoped.row.overdueFee"
               type="number"
-              size="small"
+              
               placeholder="请输入超期收费标准"
             >
               <template #append>
                 <el-select
                   v-model="scoped.row.overdueFeeUnit"
-                  size="small"
+                  
                   style="width: 100px !important"
                   placeholder="单位"
                 >
@@ -172,7 +172,7 @@
           <template #default="scoped">
             <el-input
               v-model="scoped.row.chargeRemark"
-              size="small"
+              
               show-word-limit
               placeholder="请输入收费说明"
             ></el-input>
@@ -221,17 +221,17 @@
       <DcGap class="mb-05">
         危险品办理
         <span class="fr theme-color cu-pointer" @click="handleAdd">
-          <DLegacyIcon name="plus" class="" />
+          <DAliIcon name="plus" class="" />
           新增行
         </span>
         <span class="fr mr-10 theme-danger cu-pointer" @click="handleDelete">
-          <DLegacyIcon name="delete" class="" />
+          <DAliIcon name="delete" class="" />
           删除选中
         </span>
       </DcGap>
       <el-table
         :data="edit.danger"
-        size="small"
+        
         border
         stripe
         highlight-current-row
@@ -247,7 +247,7 @@
           <template #default="scoped">
             <el-input
               v-model="scoped.row.type"
-              size="small"
+              
               placeholder="请输入办理类型"
             ></el-input>
           </template>
@@ -256,7 +256,7 @@
           <template #default="scoped">
             <el-input
               v-model="scoped.row.fsInfo"
-              size="small"
+              
               placeholder="请输入发送货物"
             ></el-input>
           </template>
@@ -265,7 +265,7 @@
           <template #default="scoped">
             <el-input
               v-model="scoped.row.ddInfo"
-              size="small"
+              
               placeholder="请输入到达货物"
             ></el-input>
           </template>
@@ -289,7 +289,7 @@ import {
   YardChargeItem,
   YardHandleScope
 } from "../types";
-import { deepClone, guid, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import { UpdateGoodsYard } from "../api";
 import { ContainerType, YardChargeType } from "../store";
 import { useStatisticTrace } from "@/hooks/useStatisticTrace";
@@ -298,6 +298,7 @@ import { ElMessageBox } from "element-plus";
 import DcGap from "@/components/Gap/index.vue";
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import ContributionInput from "@/views/railway/contribution/index.vue"
+import { DcCommon, DcDeep } from "@dczy/tie-tools";
 
 const props = defineProps({
   show: {
@@ -346,12 +347,12 @@ const currentChargeRows = ref<YardChargeItem[]>([]);
 const saveLoading = ref(false);
 function handleOpen() {
   businessOperationStart();
-  const dataTemp = deepClone<RailWayGoodsYard>(props.data);
+  const dataTemp = DcDeep.clone<RailWayGoodsYard>(props.data);
   dataTemp.danger?.forEach((d) => {
-    d._gId = guid();
+    d._gId = DcCommon.guid();
   });
   dataTemp.yardChargeItem?.forEach((d) => {
-    d._gId = guid();
+    d._gId = DcCommon.guid();
   });
   if (!dataTemp.handleScope) {
     dataTemp.handleScope = {} as YardHandleScope;
@@ -384,7 +385,7 @@ function handleAdd() {
     edit.value!.danger = [];
   }
   edit.value?.danger.push({
-    _gId: guid(),
+    _gId: DcCommon.guid(),
     type: "",
     ddInfo: "",
     fsInfo: ""
@@ -399,7 +400,7 @@ function handleDelete() {
     "是否删除选中行的信息，删除后不能恢复!",
     "提示信息"
   ).then(() => {
-    const temp = deepClone<DangerScope[]>(edit.value?.danger || []);
+    const temp = DcDeep.clone<DangerScope[]>(edit.value?.danger || []);
     const result: DangerScope[] = temp.filter(
       (x) => !currentRows.value.some((c) => c._gId === x._gId)
     );
@@ -420,7 +421,7 @@ function handleAddCharge() {
     edit.value!.yardChargeItem = [];
   }
   edit.value?.yardChargeItem.push({
-    _gId: guid(),
+    _gId: DcCommon.guid(),
     chargeType: "",
     freeTimeUnit: "小时",
     overdueFeeUnit: "",
@@ -436,7 +437,7 @@ function handleDeleteCharge() {
     "是否删除选中行的信息，删除后不能恢复!",
     "提示信息"
   ).then(() => {
-    const temp = deepClone<YardChargeItem[]>(edit.value?.yardChargeItem || []);
+    const temp = DcDeep.clone<YardChargeItem[]>(edit.value?.yardChargeItem || []);
     const result: YardChargeItem[] = temp.filter(
       (x) => !currentChargeRows.value.some((c) => c._gId === x._gId)
     );
@@ -463,7 +464,7 @@ function handleSave() {
     Message.warning("数据错误，请填写表单信息!");
     return;
   }
-  const temp = deepClone<RailWayGoodsYard>(edit.value);
+  const temp = DcDeep.clone<RailWayGoodsYard>(edit.value);
   /** 重置 */
   scopeOption.value.forEach((x) => {
     temp.handleScope[x.value] = false;

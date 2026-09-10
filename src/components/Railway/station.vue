@@ -21,9 +21,9 @@
 
 <script lang="ts">
 import { getSystemDataShow } from "@/api/systemDataShowApi";
-import { deepClone } from "@/utils";
 import { reactive, toRefs, defineComponent, computed, nextTick } from "vue";
 import StationQuery from "./stationQuery.vue";
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   name: "DcRailwayStation",
@@ -88,7 +88,7 @@ export default defineComponent({
             };
           })
           .filter((x: any) => x.value.includes(keyWords));
-        state.station = deepClone(res);
+        state.station = DcDeep.clone(res);
         cb(data);
       });
     }

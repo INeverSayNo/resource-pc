@@ -13,7 +13,6 @@
       ref="formRef"
       class="form-container"
       :model="edit"
-      size="small"
       label-suffix=":"
       label-width="100px"
       :rules="rules"
@@ -126,7 +125,7 @@
 
 <script lang="ts" setup>
 import { Message } from "@/components/Message";
-import { formatTime, deepClone, validatePhone } from "@/utils";
+import { formatTime, validatePhone } from "@/utils";
 import { computed, ref, watch } from "vue";
 import {
   resourceObject,
@@ -140,6 +139,7 @@ import { useStatisticTrace } from "@/hooks/useStatisticTrace";
 import ResourceVisitApi from "@/views/resource-visit/api";
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import ContributionInput from "@/views/railway/contribution/index.vue"
+import { DcDeep } from "@dczy/tie-tools";
 const props = defineProps({
   show: {
     type: Boolean,
@@ -237,7 +237,7 @@ function handleSave() {
   formRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       loading.value = true;
-      const temp = deepClone<StationVisitRecordCrud>(edit.value);
+      const temp = DcDeep.clone<StationVisitRecordCrud>(edit.value);
       temp.visitDate = formatTime(temp.visitDate, "yyyy-MM-ddTHH:mm:ss");
       const res = await api.Create(temp);
       loading.value = false;

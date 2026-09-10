@@ -355,7 +355,7 @@ import {
   SupplierHeadCreateDto
 } from "../types";
 import { useSupplier } from "../useSupplier";
-import { deepClone, formatDateTime, isUrlPath } from "@/utils";
+import { isUrlPath } from "@/utils";
 import { GetDefaultBankBySupplierId, supplierHeadApi } from "../api";
 import { AccountTypeEnum, FileAttach } from "@/utils/base-entity";
 import { OcrIdCardBack, OcrIdCardFont } from "@/api/ocrApi";
@@ -369,6 +369,7 @@ import { Message } from "@/components/Message";
 import DcUploadImage from "@/components/UploadImg/uploadImage.vue";
 import DcGap from "@/components/Gap/index.vue";
 import useSupplierIsExist from "../useSupplierIsExist";
+import { DcDate, DcDeep } from "@dczy/tie-tools";
 
 // 个体主营业务显示控制
 const personMainBusinessTypeFilter = ["1", "3", "5", "6", "99"];
@@ -516,7 +517,6 @@ export default defineComponent({
             state.edit.personExtend.idCardAddress = res.address;
             state.edit.personExtend.contact = res.name || "";
           }
-          console.log(res);
         });
       } else {
         state.edit.personExtend.idCardFrontFile = fileObj;
@@ -537,7 +537,7 @@ export default defineComponent({
     /** 加载编辑数据 */
     function loadEditData(val?: string) {
       GetSupplierById(val || props.supplierId).then((res) => {
-        state.edit = Object.assign(deepClone(res), {
+        state.edit = Object.assign(DcDeep.clone(res), {
           ownerOrgRelationShipId: isInner.value
             ? ""
             : res.lastOwnerOrgRelationShipId,
@@ -578,7 +578,7 @@ export default defineComponent({
       });
       if (props.showBank) {
         GetDefaultBankBySupplierId(val || props.supplierId).then((res) => {
-          state.editBank = deepClone(res);
+          state.editBank = DcDeep.clone(res);
         });
       }
     }
@@ -612,7 +612,7 @@ export default defineComponent({
           }
         });
         if (result) {
-          const old = deepClone<SupplierHeadCreateDto>(state.edit);
+          const old = DcDeep.clone<SupplierHeadCreateDto>(state.edit);
           if (
             !Reflect.has(old.personExtend.idCardFrontFile || {}, "fileName")
           ) {
@@ -678,8 +678,8 @@ export default defineComponent({
       }
     }
     const renderIdCardExpiryDate = computed(() => {
-      const date = formatDateTime(
-        state.edit.personExtend.idCardExpiryDate,
+      const date = DcDate.format(
+        state.edit.personExtend.idCardExpiryDate || "",
         "YYYY-MM-DD"
       );
 

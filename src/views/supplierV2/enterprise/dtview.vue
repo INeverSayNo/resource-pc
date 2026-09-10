@@ -9,7 +9,6 @@
       :data="contactData"
       stripe
       highlight-current-row
-      size="small"
     >
       <el-table-column
         header-align="center"
@@ -59,7 +58,6 @@
       style="margin: 5px 0"
       stripe
       highlight-current-row
-      size="small"
       :data="bankData"
     >
       <el-table-column

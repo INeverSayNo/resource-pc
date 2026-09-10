@@ -7,7 +7,7 @@ import { QueryWarehousePage } from "./api";
 import type { WarehouseItem } from "./type";
 import { useRouter } from "vue-router";
 import { useRailwayStationStore } from '../station/store/index'
-import { formatDateTime } from "@/utils";
+import { DcDate } from "@dczy/tie-tools";
 
 const props = defineProps({
   stationId: {
@@ -115,12 +115,12 @@ function toStationDetail(row: WarehouseItem) {
     <DcGap class="bar">
       仓库/堆场资源
       <span class="bar-btn fr" @click="addWarehouse">
-        <DLegacyIcon name="plus" class="" />
+        <DAliIcon name="plus" class="" />
         新增
       </span>
     </DcGap>
 
-    <el-table size="small" :data="warehouseList" highlight-current-row border :max-height="tableHeight">
+    <el-table  :data="warehouseList" highlight-current-row border :max-height="tableHeight">
       <el-table-column type="expand">
         <template #default="{ row }">
           <div class="expand-container">
@@ -190,7 +190,7 @@ function toStationDetail(row: WarehouseItem) {
       >
         <template #default="{ row }">
           <p class="affiliation-name" @click="toStationDetail(row)">
-            <DcIcon v-if="row.affiliation.afId" name="railway"></DcIcon>
+            <DAliIcon v-if="row.affiliation.afId" name="railway"></DAliIcon>
             <span>{{ row.affiliation.afName }}</span>
           </p>
         </template>
@@ -271,7 +271,7 @@ function toStationDetail(row: WarehouseItem) {
           </span>
           <span>
             {{
-              formatDateTime(
+              DcDate.format(
                 row.lastModificationTime || row.creationTime,
                 "YYYY-MM-DD"
               )
@@ -291,7 +291,6 @@ function toStationDetail(row: WarehouseItem) {
             <el-button
               link
               type="warning"
-              size="small"
               @click="editWarehouse(row)"
             >
               编辑

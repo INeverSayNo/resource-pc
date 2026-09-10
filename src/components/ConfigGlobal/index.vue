@@ -31,7 +31,7 @@
 </script>
 
 <template>
-  <ElConfigProvider namespace="el" :locale="zhCn" :message="{ max: 1 }">
+  <ElConfigProvider namespace="el" :locale="zhCn" :message="{ max: 1 }" size="default">
     <slot></slot>
   </ElConfigProvider>
 </template>

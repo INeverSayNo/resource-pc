@@ -1,5 +1,6 @@
 @import './var.css';
 @import 'element-plus/theme-chalk/dark/css-vars.css';
+@import './override.less';
 
 *,
 ::after,
@@ -12,4 +13,32 @@
 // 解决抽屉弹出时，body 宽度变化的问题
 .el-popup-parent--hidden {
   width: 100% !important;
+}
+
+.dashboard-info-window-last-p {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
+.dashboard-send-there-wrap {
+  margin: 0 0.4rem;
+}
+.dashboard-send-there-label {
+  color: #409eff;
+  cursor: pointer;
+}
+.dashboard-arrive-there-label {
+  color: #e6a23c;
+  cursor: pointer;
+}
+.dashboard-operate-btn-text-wrap {
+  display: inline-flex;
+  align-items: center;
+  & > :first-child {
+    margin-right: 4px;
+  }
+  &:not(:last-child) {
+    margin-right: 0.6rem;
+  }
 }

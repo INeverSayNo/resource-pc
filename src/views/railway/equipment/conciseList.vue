@@ -10,7 +10,7 @@ import { GetFileListByIds } from "@/api/fileApi";
 import { FileAttach } from "@/utils/base-entity";
 import { GETFILE_URL } from "@/request";
 import { useRailwayStationStore } from '../station/store/index'
-import { formatDateTime } from "@/utils";
+import { DcDate } from "@dczy/tie-tools";
 
 const props = defineProps({
   stationId: {
@@ -110,13 +110,13 @@ function addEquipment() {
     <DcGap class="bar">
       设备资源
       <span class="bar-btn fr" @click="addEquipment">
-        <DLegacyIcon name="plus" class="" />
+        <DAliIcon name="plus" class="" />
         新增
       </span>
     </DcGap>
 
     <el-table
-      size="small"
+      
       :data="equipmentList"
       highlight-current-row
       :max-height="tableHeight"
@@ -135,11 +135,9 @@ function addEquipment() {
                   </div>
                   <div v-else>
                     <div v-if="!hasFile(row.id)" class="no-data-wrap">
-                      <DcIcon
-                        name="news-no-data"
-                        :width="4"
-                        :height="4"
-                      ></DcIcon>
+                      <DAliIcon
+                        name="no-data"
+                      ></DAliIcon>
                       <span class="label">暂无附件</span>
                     </div>
                     <template v-else>
@@ -242,7 +240,7 @@ function addEquipment() {
           </span>
           <span>
             {{
-              formatDateTime(
+              DcDate.format(
                 row.lastModificationTime || row.creationTime,
                 "YYYY-MM-DD"
               )
@@ -262,7 +260,7 @@ function addEquipment() {
             <el-button
               link
               type="warning"
-              size="small"
+              
               @click="editEquipment(row)"
             >
               编辑

@@ -92,11 +92,12 @@ export default defineComponent({
             >
               <el-button
                 style="margin-left: 0.5rem"
-
                 size="small"
                 circle
                 @click="deleteImg(item)"
-              ></el-button>
+              >
+            <d-ali-icon name="delete" width="12" height="12"></d-ali-icon>
+            </el-button>
             </el-tooltip>
           </div>
         </div>

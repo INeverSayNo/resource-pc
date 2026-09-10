@@ -1,0 +1,102 @@
+.dt-container {
+  height: calc(100vh - 100px);
+  border: 1px solid #eee;
+  .dt-query-container {
+    padding: 10px;
+    // width: calc(100%- 30px) !important;
+    width: 100%;
+    background-color: #fff;
+    height: auto !important;
+    // margin: 0px 5px;
+    .query-show-action {
+      cursor: pointer;
+      margin-top: 0px;
+    }
+    .el-form-item {
+      margin-bottom: 10px !important;
+    }
+  }
+
+  .dt-query-container.hidden {
+    padding: 0 10px !important;
+    line-height: 30px;
+    height: 30px !important;
+    margin-bottom: 0px;
+    .query-show-action {
+      margin-top: 5px;
+    }
+  }
+
+  .dt-header {
+    text-align: left;
+    font-size: 12px;
+    padding: 0;
+    // background-color: #fff;
+    .el-col {
+      padding-top: 15px;
+    }
+    .quick-query {
+      margin-right: 0px !important;
+    }
+    &.top-hidden {
+      background: #fff;
+      padding: 0 5px;
+      .el-col {
+        padding-top: 2px;
+      }
+    }
+    .el-form-item {
+      margin-bottom: 0px !important;
+    }
+  }
+
+  .dt-main-container {
+    padding: 0px;
+    &.tree {
+      padding: 0px 5px;
+    }
+  }
+  .main-container {
+    margin-top: 5px;
+    padding: 0px;
+  }
+
+  .el-descriptions__label {
+    min-width: 100px;
+  }
+}
+
+.el-dialog__body {
+  .dt-container {
+    height: auto;
+  }
+}
+.dialog-form {
+  .el-form-item {
+    width: 100%;
+    .el-form-item__content {
+      width: calc(100% - 120px) !important;
+      .el-select,
+      .el-cascader,
+      .el-input-number,
+      .el-autocomplete,
+      .el-date-editor,
+      .el-input {
+        width: 100%;
+      }
+    }
+    .el-form-item__label {
+      display: inline;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      &::-webkit-scrollbar {
+        height: 2px;
+      }
+    }
+  }
+}
+
+.full-container-dt-container {
+  height: calc(100vh - 10px) !important;
+}

@@ -14,16 +14,14 @@
     v-if="inputVisible"
     ref="InputRef"
     v-model="inputValue"
-    class="ml-5 w-20"
-    size="small"
+    class="ml-5px w-20"
     placeholder="请输入标签内容"
     @keyup.enter="handleInputConfirm"
     @blur="handleInputConfirm"
   />
   <el-button
     v-else
-    class="button-new-tag ml-5"
-    size="small"
+    class="button-new-tag ml-5px"
     @click="handleShowInput"
   >
     +新增
@@ -32,12 +30,12 @@
 
 <script lang="ts">
 import { Message } from "@/components/Message";
-import { deepClone, guid } from "@/utils";
 import { ElInput, ElMessageBox } from "element-plus";
 import { ref, onMounted, defineComponent, nextTick } from "vue";
 import { GetTags, CreateTagBatch, DeteleTag } from "../api";
 import { SupplierTagTypeEnum } from "../Enum";
 import { SupplierTagDto, SupplierTagCrudDto } from "../types";
+import { DcCommon, DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   props: {
@@ -63,7 +61,7 @@ export default defineComponent({
     function handleClose(tag: SupplierTagDto) {
       ElMessageBox.confirm("是否删除此标签，删除后无法恢复？", "提示信息").then(
         () => {
-          const temp = deepClone<SupplierTagDto[]>(list.value);
+          const temp = DcDeep.clone<SupplierTagDto[]>(list.value);
           const index = temp.findIndex((x) => x.id === tag.id);
           if (!tag.isNew) {
             DeteleTag(tag.id).then((res) => {
@@ -92,7 +90,7 @@ export default defineComponent({
         return;
       }
       list.value.push({
-        id: guid(),
+        id: DcCommon.guid(),
         supplierId: props.supplierId,
         tagType: SupplierTagTypeEnum.Custom as number,
         tagValue: inputValue.value,
@@ -113,7 +111,7 @@ export default defineComponent({
           resolve(false);
           return;
         }
-        const newTags = deepClone<SupplierTagDto[]>(list.value)
+        const newTags = DcDeep.clone<SupplierTagDto[]>(list.value)
           .filter((x) => x.isNew)
           .map((x) => {
             x.supplierId = supplierId || props.supplierId;

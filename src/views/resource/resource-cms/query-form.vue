@@ -2,7 +2,6 @@
   <div class="dt-query-container">
     <el-form
       :model="param"
-      size="small"
       label-suffix=":"
       label-width="80px"
       inline
@@ -55,13 +54,13 @@
         />
       </el-form-item> -->
       <span style="margin-left: 80px">
-        <el-button type="primary" size="small" @click="handleSearch">
+        <el-button type="primary"  @click="handleSearch">
           查询
         </el-button>
-        <el-button type="warning" size="small" @click="handleReset">
+        <el-button type="warning"  @click="handleReset">
           重置
         </el-button>
-        <el-button v-if="showAdd" size="small" type="success" @click="handleAdd">
+        <el-button v-if="showAdd"  type="success" @click="handleAdd">
           新增
         </el-button>
       </span>

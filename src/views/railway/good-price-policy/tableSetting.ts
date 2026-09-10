@@ -1,6 +1,7 @@
 import { DCTableColumn } from "@/components/DCLayout/store";
-import { deepClone, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import { RailwayNatureEnum } from "./types";
+import { DcDeep } from "@dczy/tie-tools";
 const mainTableCols: DCTableColumn[] = [
   {
     name: "xfkey",
@@ -204,7 +205,7 @@ const mainTableCols: DCTableColumn[] = [
   }
 ];
 
-export const mainDetailsCols = deepClone<DCTableColumn[]>(mainTableCols)
+export const mainDetailsCols = DcDeep.clone<DCTableColumn[]>(mainTableCols)
   .filter((x) => !Reflect.has(x, "dtShow") || x.dtShow)
   .map((col) => {
     if (col.hidden) col.hidden = false;
@@ -241,7 +242,7 @@ const detailsTableCols: DCTableColumn[] = [
   }
 ];
 
-const detailsTableCols2: DCTableColumn[] = deepClone<DCTableColumn[]>(
+const detailsTableCols2: DCTableColumn[] = DcDeep.clone<DCTableColumn[]>(
   detailsTableCols
 ).map((r) => {
   if (r.name === "chargeTypeName") {

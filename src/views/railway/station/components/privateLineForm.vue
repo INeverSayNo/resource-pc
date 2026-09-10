@@ -13,7 +13,6 @@
       ref="formRef"
       :model="edit"
       class="form-container"
-      size="small"
       label-width="100px"
       label-suffix=":"
       :rules="rules"
@@ -390,7 +389,7 @@ import {
 } from "vue";
 import { SetPrivateLine } from "../api";
 import { RailWayPrivatelLine, RailWayPrivatelLineCrudDto } from "../types";
-import { deepClone, GetAddress, validatorNoHZZM } from "@/utils";
+import { GetAddress, validatorNoHZZM } from "@/utils";
 import { useStatisticTrace } from "@/hooks/useStatisticTrace";
 import { ContainerType } from "../store";
 import { FILE_URL } from "@/request";
@@ -403,6 +402,7 @@ import { QueryPrivateLineDetailById } from "../../privateLine/api";
 import DcRailwayStation from "@/components/Railway/station.vue";
 import ContributionInput from "@/views/railway/contribution/index.vue"
 import { formatTime } from "@/utils";
+import { DcDeep } from "@dczy/tie-tools";
 type stateProp = {
   edit: RailWayPrivatelLineCrudDto;
   loading: boolean;
@@ -504,7 +504,7 @@ export default defineComponent({
           props.privateLine?.containerArriveHS?.split(",") || [];
         state.containerSend =
           props.privateLine?.containerSendHS?.split(",") || [];
-        // state.fileAttacies = deepClone<FileAttach[]>(
+        // state.fileAttacies = DcDeep.clone<FileAttach[]>(
         //   props.privateLine.fileAttach || []
         // );
         getFileList(props.privateLine.id);
@@ -540,7 +540,7 @@ export default defineComponent({
       formRef.value?.validate((valid) => {
         if (valid) {
           state.loading = true;
-          const param = deepClone<RailWayPrivatelLineCrudDto>(state.edit);
+          const param = DcDeep.clone<RailWayPrivatelLineCrudDto>(state.edit);
           param.address = JSON.stringify(param.addressFormat);
           param.fileAttach = state.fileAttacies;
           SetPrivateLine(id, param, !isEdit.value)

@@ -24,7 +24,7 @@
     :on-exceed="handleExceed"
   >
     <template #default>
-      <DLegacyIcon name="plus" class=""  />
+      <DAliIcon name="plus" class=""  />
     </template>
     <template #file="{ file }">
       <div>
@@ -41,21 +41,21 @@
             class="el-upload-list__item-preview"
             @click="handlePreview(file)"
           >
-            <DLegacyIcon name="zoom-in" class=""  />
+            <DAliIcon name="unscale" class=""  />
           </span>
           <span
             v-if="!disabled"
             class="el-upload-list__item-delete"
             @click="handleDownload(file)"
           >
-            <DLegacyIcon name="download" class=""  />
+            <DAliIcon name="download" class=""  />
           </span>
           <span
             v-if="!disabled"
             class="el-upload-list__item-delete"
             @click="handleRemove(file, [])"
           >
-            <DLegacyIcon name="delete" class=""  />
+            <DAliIcon name="delete" class=""  />
           </span>
         </span>
       </div>

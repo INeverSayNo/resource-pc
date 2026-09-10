@@ -14,7 +14,7 @@
         :style="`--imgpreview-zIndex:${zIndex + 2}`"
         @click="hide"
       >
-        <DLegacyIcon name="circle-close" class=" iconfont"  />
+        <DAliIcon name="circle-close" class=" iconfont"  />
       </span>
       <div class="image-viewer__canvas">
         <div v-if="loading" class="loading" :style="`z-index:${zIndex + 3}`">

@@ -30,7 +30,7 @@
               class="fr theme-color fs-12"
               @click="nearState.showNearList = !nearState.showNearList"
             >
-              <DLegacyIcon :name="nearState.showNearList ? 'arrow-up' : 'arrow-down'" />
+              <DAliIcon :name="nearState.showNearList ? 'arrow-up' : 'arrow-down'" />
               {{ nearState.showNearList ? "收起" : "展开" }}
             </span>
           </div>
@@ -40,7 +40,7 @@
                 <el-form-item
                   label="办理品名"
                   class="filter-form-goods-item"
-                  size="small"
+                  
                 >
                   <RailwayGoods
                     v-model="filterState.goodsName"
@@ -50,7 +50,7 @@
                 </el-form-item>
                 <el-form-item
                   label=""
-                  size="small"
+                  
                   class="filter-form-type-item"
                 >
                   <el-checkbox-group
@@ -70,19 +70,19 @@
                 <el-checkbox
                   v-model="filterState.hasGoodPricePolicy"
                   label="有优价"
-                  size="small"
+                  
                 />
                 <el-checkbox
                   v-model="filterState.isContainer"
                   label="集装箱办理"
-                  size="small"
+                  
                 />
                 <el-checkbox
                   v-model="filterState.isDangerous"
                   label="危险品办理"
-                  size="small"
+                  
                 />
-                <el-button type="primary" size="small" @click="filterStation">
+                <el-button type="primary"  @click="filterStation">
                   筛选
                 </el-button>
               </el-form-item>
@@ -175,7 +175,7 @@
               class="fr theme-color fs-12"
               @click="nearState.showNearList = !nearState.showNearList"
             >
-              <DLegacyIcon :name="nearState.showNearList ? 'arrow-up' : 'arrow-down'" />
+              <DAliIcon :name="nearState.showNearList ? 'arrow-up' : 'arrow-down'" />
               {{ nearState.showNearList ? "收起" : "展开" }}
             </span>
           </div>
@@ -254,7 +254,7 @@
           @click="cmsState.cmsExpaned = !cmsState.cmsExpaned"
         >
           {{ cmsState.cmsExpaned ? "收起" : "展开" }}
-          <DLegacyIcon :name="cmsState.cmsExpaned ? 'arrow-up' : 'arrow-down'" />
+          <DAliIcon :name="cmsState.cmsExpaned ? 'arrow-up' : 'arrow-down'" />
         </span>
       </div>
       <div
@@ -295,7 +295,7 @@ import {
   IAddressState
 } from "@/components/StationAddressSelect/type";
 import { useRouter } from "vue-router";
-import { deepClone } from "@/utils";
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   components: {
@@ -333,7 +333,7 @@ export default defineComponent({
 
     function filterStation() {
       const data = {
-        ...deepClone(searchNearStationParams.value),
+        ...DcDeep.clone(searchNearStationParams.value),
         ...filterState,
         goodsCode: filterState.goodsName ? filterState.goodsCode : ""
       };

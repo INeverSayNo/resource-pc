@@ -3,14 +3,13 @@
     停限装公告
     <span class="theme-color">(共{{ list?.length || 0 }}条)</span>
     <span class="bar-btn fr" @click="handleAdd">
-      <DLegacyIcon name="plus" class="" />
+      <DAliIcon name="plus" class="" />
       新增
     </span>
   </DcGap>
   <el-table
     :data="list"
     :max-height="360"
-    size="small"
     border
     stripe
     highlight-current-row

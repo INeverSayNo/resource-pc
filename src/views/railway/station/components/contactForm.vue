@@ -15,7 +15,6 @@
       label-width="100px"
       label-suffix=":"
       class="form-container"
-      size="small"
     >
       <el-form-item label="服务类型">
         <el-select v-model="edit.serviceType" placeholder="请选择服务类型">
@@ -83,7 +82,7 @@
       </el-form-item>
       <el-form-item label="是否有效">
         <el-switch v-model="edit.isValid"></el-switch>
-        <span class="theme-warning ml-10">
+        <span class="theme-warning ml-10px">
           请电联确认联系方式有效后再勾选此项
         </span>
       </el-form-item>

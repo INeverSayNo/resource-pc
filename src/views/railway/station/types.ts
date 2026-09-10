@@ -875,11 +875,11 @@ export interface RailwayStationParam {
   /** 是否行包快运*/
   isHbExpress?: boolean;
   /** 是否与车站签订发运协议*/
-  isAgreement?: boolean;
+  isAgreement?: boolean | string;
   /** 是否优势站点*/
   isAdvantage?: boolean;
   /** 是否有驻站人员*/
-  isStationary?: boolean;
+  isStationary?: boolean | string;
   /** 区域公司 */
   areaCompanyId?: string;
   /** 集装箱办理*/

@@ -13,7 +13,7 @@ export function createPrivatePhone(phone: string, extraStr?: string, noClick = f
       )}</span>`;
     div.children[div.children.length - 1].insertAdjacentHTML(
       "afterend",
-      ' <span class="copy-icon" aria-label="复制">⧉</span>'
+      ' <span class="copy-icon cursor-pointer" aria-label="复制">⧉</span>'
     );
     const id = generateRandomString(32);
     ids.set(id, phone);

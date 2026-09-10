@@ -185,7 +185,6 @@ export default defineComponent({
             equipmentTypeState.equipmentTypeName = item.equipmentTypeName;
             if(item.fileAttachIds) {
               GetFileListByIds(item.fileAttachIds.split(",")).then(res=>{
-                console.log(res)
                 if(Array.isArray(res)) {
                   fileAttachs.value = res
                 }
@@ -234,7 +233,6 @@ export default defineComponent({
     <el-form
       ref="formRef"
       class="form-container"
-      size="small"
       :model="formModel"
       :rules="rules"
       label-width="100px"

@@ -9,7 +9,7 @@
       class="bar-btn fr fs-14 cu-pointer theme-danger"
       @click="handleDelRow"
     >
-      <DLegacyIcon name="delete" class="" />
+      <DAliIcon name="delete" class="" />
       删除
     </span>
     <span
@@ -17,13 +17,12 @@
       class="bar-btn fr fs-14 mr-10 theme-color cu-pointer"
       @click="handleAddRow"
     >
-      <DLegacyIcon name="plus" class="" />
+      <DAliIcon name="plus" class="" />
       新增
     </span>
   </DcGap>
   <el-table
     :data="data"
-    size="small"
     border
     stripe
     highlight-current-row
@@ -37,7 +36,7 @@
           v-model="scoped.row.userId"
           :show-tree="false"
           placeholder="请选择人员信息"
-          size="small"
+          
           @change="(_, item) => handleChange(item, scoped.row)"
         />
         <span v-else>
@@ -50,7 +49,7 @@
         <el-input
           v-if="scoped.$index === editIndex"
           v-model="scoped.row.phone"
-          size="small"
+          
           placeholder="请输入人员电话"
         ></el-input>
         <span v-else>
@@ -88,9 +87,10 @@ import { PropType, ref, watch, defineComponent } from "vue";
 import { RailwayStationaryUser } from "../types";
 import DcOrgUserSelect from "@/components/TableUserSelectV2/selectField.vue";
 import DcGap from "@/components/Gap/index.vue";
-import { deepClone, guid, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import { Message } from "@/components/Message";
 import { ElMessageBox } from "element-plus";
+import { DcCommon, DcDeep } from "@dczy/tie-tools";
 export default defineComponent({
   components: {
     DcOrgUserSelect,
@@ -145,7 +145,7 @@ export default defineComponent({
         return;
       }
       data.value.push({
-        _id: guid()
+        _id: DcCommon.guid()
       } as RailwayStationaryUser);
       editIndex.value = data.value.length - 1;
     }
@@ -176,10 +176,10 @@ export default defineComponent({
     watch(
       () => props.list,
       (val) => {
-        const temp = deepClone<RailwayStationaryUser[]>(val || []);
+        const temp = DcDeep.clone<RailwayStationaryUser[]>(val || []);
         data.value = temp.map((x) => {
           if (x.id) x._id = x.id;
-          else x._id = guid();
+          else x._id = DcCommon.guid();
           return x;
         });
       },
@@ -187,7 +187,7 @@ export default defineComponent({
     );
 
     function GetData() {
-      const temp = deepClone<RailwayStationaryUser[]>(data.value);
+      const temp = DcDeep.clone<RailwayStationaryUser[]>(data.value);
       return temp.filter((x) => x.userId);
     }
     return {

@@ -13,7 +13,6 @@
         v-if="columns && columns.length > 0"
         class="margin-top"
         :column="columnNum"
-        size="small"
         :direction="direction"
         border
       >

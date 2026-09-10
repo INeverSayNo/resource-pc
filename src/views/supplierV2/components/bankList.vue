@@ -1,12 +1,11 @@
 <template>
   <div class="bank-content">
     <div class="bank-list-btn tr">
-      <el-button type="primary" size="small" @click="showEdit = true">
+      <el-button type="primary"  @click="showEdit = true">
         增加
       </el-button>
       <el-button
         type="danger"
-        size="small"
         :loading="deleteLoading"
         @click="handleDel"
       >
@@ -17,7 +16,6 @@
       border
       stripe
       highlight-current-row
-      size="small"
       :data="bankData"
       @current-change="handleCurrentChange"
     >
@@ -63,7 +61,6 @@
 
 <script lang="ts">
 import { Message } from "@/components/Message";
-import { deepClone } from "@/utils";
 import { AccountTypeEnum, CurrencyEnum } from "@/utils/base-entity";
 import { ElMessageBox } from "element-plus";
 import { reactive, toRefs, defineComponent, onMounted } from "vue";
@@ -73,6 +70,7 @@ import {
   SupplierBankInfoDto
 } from "../types";
 import CreateBankForm from "./createBankForm.vue";
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   components: {
@@ -131,7 +129,7 @@ export default defineComponent({
               state.deleteLoading = false;
             });
         } else {
-          const old = deepClone<SupplierBankInfoDto[]>(state.bankData);
+          const old = DcDeep.clone<SupplierBankInfoDto[]>(state.bankData);
           const index = old.findIndex(
             (x) => x.bankNo === state.currentRow.bankNo
           );

@@ -3,7 +3,7 @@
     拜访记录
     <span class="theme-color">(共{{ listOptions.total }}个)</span>
     <span class="bar-btn fr" @click="visitAdd">
-      <DLegacyIcon name="plus" class="" />
+      <DAliIcon name="plus" class="" />
       新增
     </span>
   </DcGap>
@@ -11,7 +11,6 @@
     v-loading="listOptions.loading"
     :data="list"
     :max-height="tableHeight"
-    size="small"
     border
     stripe
     highlight-current-row
@@ -98,7 +97,6 @@
   ></VisitRecordForm>
 </template>
 <script lang="ts" setup>
-import { deepClone } from "@/utils";
 import { ref, reactive, onMounted } from "vue";
 import {
   StationVisitRecord,
@@ -109,6 +107,7 @@ import { VisitRecordParam } from "@/views/resource-visit/types";
 import { formatTime } from "@/utils";
 import DcGap from "@/components/Gap/index.vue";
 import VisitRecordForm from "./visitRecordForm2.vue";
+import { DcDeep } from "@dczy/tie-tools";
 
 const props = defineProps({
   stationId: {
@@ -146,7 +145,7 @@ function loadData() {
       if (listOptions.page === 1) {
         list.value = data;
       } else {
-        const temp = deepClone<StationVisitRecord[]>(list.value);
+        const temp = DcDeep.clone<StationVisitRecord[]>(list.value);
         temp.push(...data);
         list.value = temp;
       }

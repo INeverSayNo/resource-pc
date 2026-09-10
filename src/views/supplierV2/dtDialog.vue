@@ -13,7 +13,6 @@
         <el-button
           v-if="isEnterprise"
           type="warning"
-          size="small"
           plain
           @click="companyDialogVisible = true"
         >
@@ -80,7 +79,7 @@ import {
 } from "vue";
 import { createImgPreview } from "@/components/Preview";
 import { GETFILE_URL } from "@/request";
-import { deepClone, isUrlPath } from "@/utils";
+import {  isUrlPath } from "@/utils";
 import { GetFileListByIds } from "../../api/fileApi";
 import { ElLoading } from "element-plus";
 import { SupplierHeadDto, SupplierOwnerOrgShip } from "./types";
@@ -93,6 +92,7 @@ import DtDialog from "@/components/DCLayout/detailsDialog.vue";
 import PersonDt from "./person/dtview.vue";
 import EnterpriseDt from "./enterprise/dtview.vue";
 import CompanyBase from "./components/CompanyBase.vue";
+import { DcDeep } from "@dczy/tie-tools";
 
 type stateProp = {
   detailsData: SupplierHeadDto | undefined;
@@ -140,7 +140,7 @@ export default defineComponent({
       );
     });
     const tbColumn = computed(() => {
-      return deepClone<DCTableColumn[]>(EnterpriseTbCols).map((col) => {
+      return DcDeep.clone<DCTableColumn[]>(EnterpriseTbCols).map((col) => {
         const activeName = isEnterprise.value ? "enterprise" : "person";
         if (showColSetting.get(activeName)?.includes(col.name || "")) {
           col.hidden = false;

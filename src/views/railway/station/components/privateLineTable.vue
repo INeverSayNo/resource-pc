@@ -2,7 +2,6 @@
   <el-table
     :data="list"
     stripe
-    size="small"
     :max-height="360"
     show-overflow-tooltip
     highlight-current-row
@@ -22,7 +21,7 @@
             style="color: var(--theme-color)"
             @click="handleEdit(scoped.row)"
           >
-            <DLegacyIcon name="edit" class="" />
+            <DAliIcon name="edit" class="" />
             编辑
           </el-button>
         </div>

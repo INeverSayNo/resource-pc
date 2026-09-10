@@ -13,7 +13,7 @@
       ref="formRef"
       :model="edit"
       :rules="rules"
-      size="small"
+      
       class="dialog-form"
       label-width="120px"
     >
@@ -58,8 +58,8 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button size="small" @click="showDetails = false">取消</el-button>
-      <el-button size="small" type="primary" @click="handleSave">
+      <el-button  @click="showDetails = false">取消</el-button>
+      <el-button  type="primary" @click="handleSave">
         保存
       </el-button>
     </template>
@@ -68,7 +68,6 @@
 
 <script lang="ts">
 import { Message } from "@/components/Message";
-import { deepClone } from "@/utils";
 import { CurrencyEnum, AccountTypeEnum } from "@/utils/base-entity";
 import {
   computed,
@@ -83,6 +82,7 @@ import {
   SupplierBankInfoCreateOrUpdateDto,
   SupplierBankInfoDto
 } from "../types";
+import { DcDeep } from "@dczy/tie-tools";
 export default defineComponent({
   name: "",
   props: {
@@ -130,7 +130,7 @@ export default defineComponent({
 
     const handleOpen = () => {
       if (props.modelValue?.id) {
-        const temp = deepClone<SupplierBankInfoDto>(props.modelValue);
+        const temp = DcDeep.clone<SupplierBankInfoDto>(props.modelValue);
         state.edit = {
           isScrap: temp.isScrap,
           supplierHeadId: temp.supplierHeadId,

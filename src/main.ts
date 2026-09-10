@@ -25,7 +25,7 @@ import { setupAuth } from './auth/setup'
 import { setupMonitor } from './plugins/monitor'
 import { setupDirectives } from './directives'
 import { createPrivatePhone } from '@/components/PrivatePhone/createPrivatePhone'
-import { TMapController } from '@/utils/useLoadTMap'
+import setupDczyTiePC from './plugins/tiePc'
 
 const getPrivatePhone = (value: string | number): string => {
   if (!value) return ''
@@ -50,6 +50,8 @@ const setupAll = async () => {
 
   setupDirectives(app)
 
+  setupDczyTiePC(app)
+
   await setupPermission()
 
   setupGlobCom(app)
@@ -57,8 +59,6 @@ const setupAll = async () => {
   setupElementPlus(app)
 
   setupRouter(app)
-
-  void TMapController.insertTMapEle()
 
   app.mount('#app')
 }

@@ -31,10 +31,10 @@
             title="预览/下载"
             @click="handlePreview(file)"
           >
-            <DLegacyIcon name="view" class="" />
+            <DAliIcon name="view" class="" />
           </span>
         </template>
-          <DLegacyIcon name="close" class=" file-item-operate-delete"  @click="handleRemoveFile(file)" />
+          <DAliIcon name="close" class=" file-item-operate-delete"  @click="handleRemoveFile(file)" />
         </p>
       </div>
     </template>
@@ -46,12 +46,12 @@ import { PropType, ref } from "vue";
 import { defineComponent, watch } from "vue";
 import { ElLoading, ElMessageBox } from "element-plus";
 import { fileView } from "@/utils/fileView";
-import { deepClone } from "@/utils";
 import {
   GETFILE_URL,
   SYSTEM_BASE_DATA_URL
 } from "@/request";
 import { Message } from "../Message";
+import { DcDeep } from "@dczy/tie-tools";
 
 type FileAttach = any;
 type FileResponse = any;
@@ -96,7 +96,7 @@ export default defineComponent({
               url: `${GETFILE_URL}${e.filePath}`
             };
           });
-          fileList.value = deepClone(oldFile);
+          fileList.value = DcDeep.clone(oldFile);
         }
       }
     );

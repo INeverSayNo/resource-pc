@@ -25,7 +25,7 @@
       </el-option>
     </el-select>
     <span v-if="!disabled" class="search-icon" @click="showUser = true">
-      <svg-icon icon-class="search" />
+      <DAliIcon name="search" />
     </span>
     <table-user-select-v2
       v-model:visable="showUser"
@@ -47,7 +47,6 @@
 <script lang="ts">
   import { reactive, toRefs, defineComponent, computed, onMounted, nextTick, PropType } from 'vue'
   import tableUserSelectV2 from './index.vue'
-  import SvgIcon from '@/formCreate/components/SvgIcon.vue'
   import { DcDeep } from '@dczy/tie-tools'
   import { GetOrgUsers } from '@/api/orgUser/index'
   type valueType = Record<
@@ -59,7 +58,6 @@
     name: 'UserSelectV2',
     components: {
       tableUserSelectV2,
-      SvgIcon
     },
     props: {
       title: {
@@ -187,7 +185,8 @@
           userIds
         }, "post")
         state.loading = false
-        if (err || !Array.isArray(res)) return
+        if (err || !Array.isArray(res?.rows)) return
+         setValue(res.rows, true, val);
         if (userIds && userIds.length > 0) {
           nextTick(() => {
             emit('update:label', getLabels(selectValue.value).showLabel)

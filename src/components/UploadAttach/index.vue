@@ -16,11 +16,11 @@
     "
     v-bind="$attrs"
   >
-    <el-button v-if="isSpan===false" size="small" type="primary">
+    <el-button v-if="isSpan===false"  type="primary">
       {{buttonName}}
     </el-button>
-    <span v-if="isSpan===true" size="small" type="primary">
-      <DLegacyIcon name="upload" class="" />
+    <span v-if="isSpan===true"  type="primary">
+      <DAliIcon name="upload" class="" />
       {{buttonName}}
     </span>
     <template #tip>
@@ -39,9 +39,9 @@ import {
   PropType,
   ref
 } from 'vue'
-import { deepClone } from "@/utils";
 import { ElLoading, ElMessageBox } from "element-plus";
 import { Message } from "@/components/Message";
+import { DcDeep } from '@dczy/tie-tools';
 export interface FileAttach {
   id?: string;
   fileRealName?: string;
@@ -117,7 +117,7 @@ export default {
     const handleSuccess = (response: FileResponse, file: any) => {
       loading.value?.close();
       console.log(fileList.value);
-      const oldFile: FileAttach[] = deepClone(fileList.value);
+      const oldFile: FileAttach[] = DcDeep.clone(fileList.value);
       if (file && response) {
         if (!oldFile.some((it) => it.filePath === response.path)) {
           oldFile.push({
@@ -149,7 +149,7 @@ export default {
       });
     };
     const handleRemove = (file: FileAttach) => {
-      const oldFile: FileAttach[] = deepClone(fileList.value);
+      const oldFile: FileAttach[] = DcDeep.clone(fileList.value);
       const index = oldFile.findIndex((it) => it.filePath === file.filePath);
       if (index !== -1) {
         oldFile.splice(index, 1);

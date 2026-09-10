@@ -24,7 +24,7 @@
       />
       <el-form
         :model="edit"
-        size="small"
+        
         label-width="100px"
         label-suffix=":"
         class="form-container"
@@ -283,7 +283,7 @@
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import ContributionInput from "@/views/railway/contribution/index.vue";
 import { Message } from "@/components/Message";
-import { deepClone, GetAddress, formatTime } from "@/utils";
+import { GetAddress, formatTime } from "@/utils";
 import {
   computed,
   reactive,
@@ -314,6 +314,7 @@ import { QueryLogisticCenter } from "../../logisticCenter/api";
 import { on } from "@/utils/dom-utils";
 import { LogisticCenterItem } from "../../logisticCenter/type";
 import { EnumItemType } from "@/utils/CustomEnum";
+import { DcDeep } from "@dczy/tie-tools";
 
 type stateProp = {
   edit: RailwayStationCrudDto;
@@ -456,7 +457,7 @@ export default defineComponent({
           natureTypes: natureTypesFormat,
           serviceTypes: serviceFormat,
           transactTypes: transactFormat,
-          stationaryUsers: deepClone<RailwayStationaryUser[]>(
+          stationaryUsers: DcDeep.clone<RailwayStationaryUser[]>(
             props.stationaryUsers
           ),
           AddressFormat: GetAddress(address, true)
@@ -518,7 +519,7 @@ export default defineComponent({
         module: "铁路站点",
         page_title: "站点信息编辑"
       });
-      const param = deepClone<RailwayStationCrudDto>(state.edit);
+      const param = DcDeep.clone<RailwayStationCrudDto>(state.edit);
       param.address = JSON.stringify(param.AddressFormat);
       state.loading = true;
       const stationaryData = stationaryUserRef.value?.GetData();

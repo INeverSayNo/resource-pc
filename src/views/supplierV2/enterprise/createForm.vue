@@ -219,7 +219,6 @@
             </p>
             <el-switch
               v-model="isUploadFile"
-              size="small"
               inactive-text="立即完善:"
             />
           </DcGap>
@@ -354,7 +353,7 @@ import BankList from "../components/bankList.vue";
 import CompanyBase from "../components/CompanyBase.vue";
 import { supplierHeadApi } from "../api";
 import { FileAttach } from "@/utils/base-entity";
-import { deepClone, isUrlPath } from "@/utils";
+import { isUrlPath } from "@/utils";
 import { ElLoading } from "element-plus";
 import {
   GetCompanyAutoAsync,
@@ -373,6 +372,7 @@ import { getPinYinFirst } from "@/utils/pinYin";
 import useSupplierIsExist from "../useSupplierIsExist";
 
 import { OcrBuinessLicense } from "@/api/ocrApi";
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   components: {
@@ -502,7 +502,7 @@ export default defineComponent({
       type: "transitLicenseImg" | "licenseFileImg"
     ) {
       if (type === "transitLicenseImg") {
-        state.edit.enterpriseExtend.cmdcFile = deepClone(file) as FileAttach;
+        state.edit.enterpriseExtend.cmdcFile = DcDeep.clone(file) as FileAttach;
       } else {
         const loadingInstance = ElLoading.service({
           fullscreen: true,
@@ -531,7 +531,7 @@ export default defineComponent({
           .finally(() => {
             loadingInstance?.close();
           });
-        state.edit.licenseFile = deepClone(file) as FileAttach;
+        state.edit.licenseFile = DcDeep.clone(file) as FileAttach;
       }
     }
 
@@ -591,7 +591,7 @@ export default defineComponent({
           }
         });
         if (result) {
-          const old = deepClone<SupplierHeadCreateDto>(state.edit);
+          const old = DcDeep.clone<SupplierHeadCreateDto>(state.edit);
           old.businessTypeIds = state.businessTypeIds.join(",");
           old.businessTypeNames = state.businessTypeIds
             .map((x) => {
@@ -784,7 +784,7 @@ export default defineComponent({
           ? ""
           : data.lastOwnerOrgRelationShipId,
         ownerOrgName: isInner.value ? "" : data.lastOwnerOrgName,
-        enterpriseExtend: deepClone(
+        enterpriseExtend: DcDeep.clone(
           data.enterpriseExtend || {}
         ) as SupplierEnterpriseExtendCreateOrUpdateDto
       } as SupplierHeadCreateDto;
@@ -801,7 +801,7 @@ export default defineComponent({
       state.contributorIds = isInner.value
         ? []
         : state.editData.contributorId
-        ? deepClone(state.editData.contributorId)
+        ? DcDeep.clone(state.editData.contributorId)
         : "";
 
       if (state.editData.licenseFile?.id) {
@@ -814,7 +814,7 @@ export default defineComponent({
           }
         ];
         state.showBusinessLicene = true;
-        state.edit.licenseFile = deepClone(file);
+        state.edit.licenseFile = DcDeep.clone(file);
       }
 
       if (state.editData.enterpriseExtend?.cmdcFile) {

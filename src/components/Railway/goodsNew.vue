@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { getSystemDataShow } from "@/api/systemDataShowApi";
-import { deepClone } from "@/utils";
+import { DcDeep } from "@dczy/tie-tools";
 import {
   reactive,
   toRefs,
@@ -75,7 +75,7 @@ export default defineComponent({
       goodsInfo.priceNumberZC = PriceNumberZC;
       goodsInfo.priceNumberJZX = PriceNumberJZX;
       goodsInfo.priceNumberLD = PriceNumberLD;
-      emit("change", deepClone(goodsInfo));
+      emit("change", DcDeep.clone(goodsInfo));
     }
 
     function handleGoodsBlur() {

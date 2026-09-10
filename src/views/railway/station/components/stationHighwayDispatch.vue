@@ -6,7 +6,7 @@
   <el-table
     :data="statisticData"
     :max-height="360"
-    size="small"
+    
     border
     stripe
     highlight-current-row
@@ -39,7 +39,7 @@
   <el-table
     :data="yestodayList"
     :max-height="200"
-    size="small"
+    
     border
     stripe
     highlight-current-row
@@ -54,7 +54,7 @@
       <template #default="scoped">
         <el-link
           type="primary"
-          size="small"
+          
           @click.prevent="handleShowSupplierDt(scoped.row.supplierErpId)"
         >
           {{ scoped.row.supplierErpName }}

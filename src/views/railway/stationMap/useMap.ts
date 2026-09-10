@@ -3,8 +3,8 @@ import localforage from "localforage";
 import { MapStyle } from "./mapStyle";
 import { CreateCustomControl } from "./createCustomControl";
 import { wgs84tobd09 } from "@/utils/locationConvert";
-import { deepClone, GetAddress } from "@/utils";
-import DcIcon from "@/components/icon/index.vue";
+import {  GetAddress } from "@/utils";
+import DAliIcon from "@/components/SvgIcon/AliIcon"
 import resourceCmsApi from "@/views/resource/resource-cms/api";
 import { useCms } from "../../resource/resource-cms/useCms";
 
@@ -40,6 +40,7 @@ import normalIcon from '@/assets/icons/img/normalLocation.png'
 import selfIcon from '@/assets/icons/img/selfLocation.png'
 import portIcon from '@/assets/icons/img/wharfIcon.png'
 import addressLocation from '@/assets/icons/img/addressLocation.png'
+import { DcDeep } from "@dczy/tie-tools";
 
 type FilterState = {
   goodsName: string;
@@ -230,7 +231,7 @@ export function useMap(filterState: FilterState) {
     if (showMessage) {
       const el = document.createElement("div");
       render(
-        h(DcIcon, {
+        h(DAliIcon, {
           name: "cycle",
           width: 1.6,
           height: 1.6,
@@ -283,7 +284,7 @@ export function useMap(filterState: FilterState) {
     // 返回当前定位
     const el = document.createElement("div");
     el.classList.add("dashboard-map-location-icon");
-    render(h(DcIcon, { name: "location" }), el);
+    render(h(DAliIcon, { name: "location" }), el);
     const backController = new TempControl({
       anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
       content: el,
@@ -726,7 +727,7 @@ export function useMap(filterState: FilterState) {
 
     let param = {} as Dashboard.NearLocationPointParam;
     if (Reflect.has(payload, "hasGoodPricePolicy")) {
-      param = deepClone(payload);
+      param = DcDeep.clone(payload);
     } else {
       param = {
         latitude: (payload as BMapGL.Point).lat,
@@ -1016,16 +1017,16 @@ export function useMap(filterState: FilterState) {
     const addressTitle = document.createElement("span");
     const closeBtn = document.createElement("span");
     addressTitle.innerHTML = payload.address;
-    render(h(DcIcon, { name: "red-close" }), closeBtn);
+    render(h(DAliIcon, { name: "red-close" }), closeBtn);
     titleEl.appendChild(addressTitle);
     titleEl.appendChild(closeBtn);
     const operateEl = document.createElement("div");
     const sendBtn = document.createElement("p");
-    render(h(DcIcon, { name: "start" }), sendBtn);
+    render(h(DAliIcon, { name: "start" }), sendBtn);
     sendBtn.innerHTML +=
       "<span class='dashboard-send-there-label'>从这发货</span>";
     const arriveBtn = document.createElement("p");
-    render(h(DcIcon, { name: "arrive" }), arriveBtn);
+    render(h(DAliIcon, { name: "arrive" }), arriveBtn);
     arriveBtn.innerHTML +=
       "<span class='dashboard-arrive-there-label'>到货这里</span>";
     operateEl.appendChild(sendBtn).appendChild(arriveBtn);
@@ -1308,7 +1309,7 @@ function createInfoWindow(
 
   const near = document.createElement("a");
   near.href = "javascript:void(0);";
-  render(h(DcIcon, { name: "near" }), near);
+  render(h(DAliIcon, { name: "near" }), near);
   near.innerHTML += "<span>附近站港</span>";
   near.classList.add("dashboard-operate-btn-text-wrap");
   near.addEventListener("click", () => {
@@ -1327,7 +1328,7 @@ function createInfoWindow(
 
   const routeEl = document.createElement("a");
   routeEl.href = "javascript:void(0);";
-  render(h(DcIcon, { name: "guide" }), routeEl);
+  render(h(DAliIcon, { name: "guide" }), routeEl);
   routeEl.innerHTML += "<span>到这里</span>";
   routeEl.classList.add("dashboard-operate-btn-text-wrap");
   lastP.appendChild(routeEl);
@@ -1338,7 +1339,7 @@ function createInfoWindow(
 
   const more = document.createElement("a");
   more.href = "javascript:void(0);";
-  render(h(DcIcon, { name: "detail" }), more);
+  render(h(DAliIcon, { name: "detail" }), more);
   more.innerHTML += "<span>详情</span>";
   more.classList.add("dashboard-operate-btn-text-wrap");
   more.addEventListener("click", () => {
@@ -1350,12 +1351,12 @@ function createInfoWindow(
   lastP.appendChild(more);
 
   const sendThere = document.createElement("p");
-  render(h(DcIcon, { name: "start", width: 1.2, height: 1.2 }), sendThere);
+  render(h(DAliIcon, { name: "start", }), sendThere);
   sendThere.innerHTML +=
     "<span class='dashboard-send-there-label'>从这发货</span>";
   sendThere.classList.add("dashboard-send-there-wrap");
   const arriveThere = document.createElement("p");
-  render(h(DcIcon, { name: "arrive", width: 1.2, height: 1.2 }), arriveThere);
+  render(h(DAliIcon, { name: "arrive", }), arriveThere);
   arriveThere.innerHTML +=
     "<span class='dashboard-arrive-there-label'>到货这里</span>";
   lastP.appendChild(sendThere);
@@ -1496,12 +1497,12 @@ function createPortInfoWindow(
   lastP.appendChild(more);
 
   const sendThere = document.createElement("p");
-  render(h(DcIcon, { name: "start", width: 1.2, height: 1.2 }), sendThere);
+  render(h(DAliIcon, { name: "start", width: 1.2, height: 1.2 }), sendThere);
   sendThere.innerHTML +=
     "<span class='dashboard-send-there-label'>从这发货</span>";
   sendThere.classList.add("dashboard-send-there-wrap");
   const arriveThere = document.createElement("p");
-  render(h(DcIcon, { name: "arrive", width: 1.2, height: 1.2 }), arriveThere);
+  render(h(DAliIcon, { name: "arrive", width: 1.2, height: 1.2 }), arriveThere);
   arriveThere.innerHTML +=
     "<span class='dashboard-arrive-there-label'>到货这里</span>";
   lastP.appendChild(sendThere);

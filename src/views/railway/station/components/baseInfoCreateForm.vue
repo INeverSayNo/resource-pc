@@ -13,7 +13,6 @@
       <el-form
         ref="formRef"
         :model="edit"
-        size="small"
         label-width="100px"
         label-suffix=":"
         class="form-container"
@@ -338,7 +337,6 @@
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import ContributionInput from "@/views/railway/contribution/index.vue";
 import { Message } from "@/components/Message";
-import { deepClone, GetAddress } from "@/utils";
 import {
   computed,
   reactive,
@@ -496,7 +494,7 @@ export default defineComponent({
       });
       formRef.value?.validate(async (valid) => {
         if (valid) {
-          const param = state.edit; //deepClone<RailwayStationCrudDto>(state.edit);
+          const param = state.edit; 
           if (state.edit.railwayBureau) {
             const item = state.bureauData.find(
               (e) => e.label === param.railwayBureau

@@ -10,13 +10,13 @@ import {
 import { FILE_URL, GETFILE_URL } from "@/request";
 import { Message } from "@/components/Message";
 import { ElMessageBox } from "element-plus";
-import { guid } from "@/utils";
 import { storeToRefs } from 'pinia'
 import { useRailwayStationStore } from '../station/store/index'
 import { AddStationImages } from "./api";
 import PreviewWidget from "./preview.vue";
 import { ElementUploadResponse, PreviewImgItem, UploadResponse } from "./type";
 import SearchBg from '@/assets/img/search-bg.png'
+import { DcCommon } from "@dczy/tie-tools";
 
 type OptionItem = Record<"label" | "value", string>;
 type Mark =
@@ -280,7 +280,7 @@ export default defineComponent({
       item: unionFileType
     ) {
       const ImageFile = {
-        id: guid(),
+        id: DcCommon.guid(),
         fileGroupMark: "RailwayStationImg",
         fileGroupName: "站点图片",
         fileRealName: file.name,
@@ -404,7 +404,7 @@ export default defineComponent({
           :file-list="getFileList(normalItem.typeMark)"
           list-type="picture-card"
         >
-          <DLegacyIcon name="plus" class="" style="font-size: 16px" />
+          <DAliIcon name="plus" class="" style="font-size: 16px" />
           {{ normalItem.typeName }}
         </el-upload>
 
@@ -457,7 +457,7 @@ export default defineComponent({
               :show-file-list="false"
               :file-list="getFileList(dropdownItem.typeMark)"
             >
-              <DLegacyIcon name="plus" class="" />
+              <DAliIcon name="plus" class="" />
               {{ dropdownItem.typeName }}
             </el-upload>
           </div>

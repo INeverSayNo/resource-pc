@@ -18,7 +18,7 @@ import {
 import DcIcon from "@/components/icon/index.vue";
 import { IAddressState, SearchRecordResponse } from "./type";
 import { ElMessageBox } from "element-plus";
-import { guid, useClickAway } from "@/utils";
+import { useClickAway } from "@/utils";
 import { SearchRecordTypeEnum, TransportTypeEnum } from "./enum";
 import useMap from "./useMap";
 import { useRouter } from "vue-router";
@@ -27,6 +27,7 @@ import {
   SearchNearStation
 } from "@/views/railway/stationMap/api";
 import { wgs84tobd09 } from "@/utils/locationConvert";
+import { DcCommon } from "@dczy/tie-tools";
 
 type UnionRecommendState =
   | SearchRecordResponse["hotStation"]
@@ -61,7 +62,7 @@ export default defineComponent({
     },
     mapContainerId: {
       type: String,
-      default: () => guid()
+      default: () => DcCommon.guid()
     },
     showMask: {
       type: Boolean,
@@ -201,7 +202,6 @@ export default defineComponent({
     function getNearStationPort(params) {
       Promise.all([SearchNearStation(params), SearchNearPort(params)]).then(
         (res) => {
-          console.log(res);
           const [stationRsp, portRsp] = res;
           if (
             stationRsp.isSuccessful &&
@@ -228,6 +228,8 @@ export default defineComponent({
     // el-autocomplete
 
     async function querySearchAsync(keywords: string, cb: Function) {
+
+      console.log(keywords)
       if (keywords) {
         const result: Array<any> = [];
         const stationList = await queryStations(keywords);
@@ -272,7 +274,7 @@ export default defineComponent({
             lng: bd_lng,
             typeId: TransportTypeEnum.Enum.highway.id,
             typeName: "地址",
-            _id: guid(),
+            _id: DcCommon.guid(),
             adt: {
               province: adt?.addressComponent?.province ?? "",
               city: adt?.addressComponent?.city ?? "",
@@ -459,7 +461,7 @@ export default defineComponent({
           <div class="recommend-area">
             <div class="recommend-area-railway">
               <div class="recommend-area-railway-left-icon">
-                <DcIcon name="railway" />
+                <DAliIcon name="railway" />
               </div>
               <div class="recommend-area-railway-right-content">
                 <p
@@ -569,14 +571,14 @@ export default defineComponent({
                     <p class="history-item-btns">
                       <el-button
                         type="primary"
-                        size="small"
+                       
                         @click.prevent.stop="toQuerySolution(item, 'start')"
                       >
                         从这发货
                       </el-button>
                       <el-button
                         type="warning"
-                        size="small"
+                       
                         @click.prevent.stop="toQuerySolution(item, 'arrive')"
                       >
                         到货这里
@@ -586,7 +588,7 @@ export default defineComponent({
                 </template>
               </div>
               <div v-else class="history-select-no-data">
-                <DcIcon name="purple-no-data" :width="6" :height="6" />
+                <DAliIcon name="no-data"/>
                 <span>{{ searchHistoryLoading ? "获取中" : "暂无数据" }}</span>
               </div>
             </div>

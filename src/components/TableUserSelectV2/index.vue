@@ -39,7 +39,7 @@
                 >
                   <template #append>
                     <div class="search-outer" @click="getStaffList(checkedIds, keywords)">
-                      <DLegacyIcon name="search" class=""  />
+                      <DAliIcon name="search" class=""  />
                     </div>
                   </template>
                 </el-input>
@@ -51,7 +51,6 @@
                 height="460"
                 :data="staffData"
                 style="width: 100%"
-                size="small"
                 stripe
                 border
                 highlight-current-row

@@ -12,7 +12,6 @@
     <el-form
       :model="query"
       inline
-      size="small"
       label-width="100px"
       class="dt-none-bottom-form"
     >
@@ -44,7 +43,6 @@
       ref="tableRef"
       v-loading="loading"
       :data="supplierData"
-      size="small"
       height="390px"
       border
       stripe

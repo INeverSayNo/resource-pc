@@ -5,7 +5,7 @@ export type ExternalAuthRequest =
   | { type: 'erp-cookie'; cookie: string }
   | { type: 'oa'; username: string; password: string }
 
-const SENSITIVE_KEYS = ['token', 't', 'isoa', 'name', 'pwd'] as const
+const SENSITIVE_KEYS = ['token', 't', 'isoa', 'pwd'] as const
 
 const firstString = (value: LocationQuery[string]): string => {
   if (typeof value === 'string') return value

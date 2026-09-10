@@ -95,7 +95,6 @@ export const defaultProps = {
     btnLabelWidth: '120px',
     inline: true,
     labelSuffix: '：',
-    size: 'small'
   }),
   showExpand: false,
   selection: false,

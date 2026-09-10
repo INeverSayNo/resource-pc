@@ -1,5 +1,4 @@
-import introJs from "intro.js";
-import { v4 } from "uuid";
+import { DcCommon } from "@dczy/tie-tools";
 
 export interface Rules {
   trigger: string;
@@ -639,7 +638,7 @@ export const advanceComponents = [
     ],
     tableData: [
       {
-        id: v4(),
+        id: DcCommon.guid(),
         column1: "",
         column2: ""
       }

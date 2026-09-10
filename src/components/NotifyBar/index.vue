@@ -1,6 +1,6 @@
 <template>
   <div ref="scrollRef" class="notify-bar">
-    <svg-icon icon-class="notice" style="margin-top: 4px"></svg-icon>
+    <DAliIcon name="notice" style="margin-top: 4px"></DAliIcon>
     <div class="item">
       <div v-for="item in options" :key="item" class="bar">{{ item }}</div>
     </div>

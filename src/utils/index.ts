@@ -1,46 +1,7 @@
-import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc'
-import { cloneDeep } from "lodash";
+import { DcDeep } from "@dczy/tie-tools";
 import { Address } from "./base-entity";
 import { isExternal } from "./validate";
 import { Ref, unref } from 'vue';
-dayjs.extend(utc);
-
-// 拷贝时间
-function cloneDate(date) {
-  const constructor = date.constructor;
-  return new constructor(date.valueOf());
-}
-
-/**
- * 对象数组深拷贝
- * @param {Array,Object} source 需要深拷贝的对象数组
- * @param {Array} noClone 不需要深拷贝的属性集合
- */
-export function deepClone<T = any>(source: any, noClone: string[] = []): T {
-  if (noClone.length === 0) {
-    return cloneDeep(source);
-  }
-
-  if (source == null) return source;
-  if (!source && typeof source !== "object") {
-    throw new Error("error arguments deepClone");
-  }
-  if (source instanceof Date) return cloneDate(source);
-  const targetObj: any = source.constructor === Array ? [] : {};
-  Object.keys(source).forEach((keys: string) => {
-    if (
-      source[keys] &&
-      typeof source[keys] === "object" &&
-      noClone.indexOf(keys) === -1
-    ) {
-      targetObj[keys] = deepClone(source[keys], noClone);
-    } else {
-      targetObj[keys] = source[keys];
-    }
-  });
-  return targetObj;
-}
 
 /**
  * 查找数组对象的某个下标
@@ -151,17 +112,7 @@ export function formatTime(time: any, fmt: string) {
   }
 }
 
-/**
- * @param {date} time 需要转换的时间
- * @param {String} fmt 需要转换的格式 如 yyyy-MM-dd、yyyy-MM-dd HH:mm:ss
- */
-export function formatDateTime(time: any, fmt: string) {
-  if (!time) return "";
-  else {
-    const date = new Date(time);
-    return dayjs(date).format(fmt);
-  }
-}
+
 
 export const validateObject = (rule: any, value: any, callback: Function) => {
   if (value && Object.keys(value).length > 0) {
@@ -317,26 +268,6 @@ export const getTreeDataLabels = (
   }
 };
 
-export const guid = () => {
-  function S4() {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  }
-  return (
-    S4() +
-    S4() +
-    "-" +
-    S4() +
-    "-" +
-    S4() +
-    "-" +
-    S4() +
-    "-" +
-    S4() +
-    S4() +
-    S4()
-  );
-};
-
 export function findLast(data: Array<any>, cb: Function) {
   const length = data.length;
   let index = length - 1;
@@ -370,7 +301,7 @@ export function treeToList(
 ) {
   data.forEach((item) => {
     if (!result.some((r) => r[key] === item[key])) {
-      const temp = deepClone(item);
+      const temp = DcDeep.clone(item);
       delete temp[childrenKey];
       result.push(temp);
     }
@@ -515,6 +446,7 @@ export function GetAddress(address: string, needDefault = false) {
     }
     return undefined;
   }
+ 
 }
 
 export interface UserInfo {
@@ -639,3 +571,5 @@ export const useClickAway = (el: HTMLElement | Ref<HTMLElement> | Ref<null>, cal
     }
   });
 };
+
+

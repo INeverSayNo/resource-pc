@@ -6,7 +6,7 @@
     </span>
     <el-input
       v-model="query"
-      size="small"
+      
       class="fr"
       style="width: 150px"
       placeholder="请输入关键字查询"
@@ -15,7 +15,7 @@
   <el-table
     v-loading="tableLoading"
     :data="filterArr"
-    size="small"
+    
     border
     stripe
     :max-height="tableHeight"
@@ -38,7 +38,7 @@
         <p class="flex justify-center">
           <el-link
             type="primary"
-            size="small"
+            
             @click.prevent="handleShowDt(scoped.row)"
           >
             {{ scoped.row.xfkey }}
@@ -91,7 +91,6 @@
 </template>
 <script lang="ts" setup>
 import { computed, ref, watch, reactive } from "vue";
-import { formatDateTime } from "@/utils";
 import { GetPolicyListByStationName } from "../api";
 import { DCTableColumn } from "@/components/DCLayout/store";
 import DcTableItem from "@/components/DCLayout/TableColumn.vue";
@@ -99,6 +98,7 @@ import PolicyDetailDialog from "./policyDetailDialog.vue";
 import DcGap from "@/components/Gap/index.vue";
 import CompanyBase from "@/views/supplierV2/components/CompanyBase.vue";
 import type { RailwayPolicyItemNew } from "../types";
+import { DcDate } from "@dczy/tie-tools";
 
 const props = defineProps({
   stationId: {
@@ -284,7 +284,7 @@ const tableCols = ref<DCTableColumn[]>([
     width: 100,
     span: 2,
     formatter(row, column, cellValue, rindex?) {
-      return formatDateTime(cellValue, "YYYY-MM-DD");
+      return DcDate.format(cellValue, "YYYY-MM-DD");
     }
   },
   {
@@ -293,7 +293,7 @@ const tableCols = ref<DCTableColumn[]>([
     align: "center",
     width: 100,
     formatter(row, column, cellValue, rindex?) {
-      return formatDateTime(cellValue, "YYYY-MM-DD");
+      return DcDate.format(cellValue, "YYYY-MM-DD");
     }
   }
 ]);

@@ -3,7 +3,6 @@
     <el-descriptions
       v-model="formRef"
       class="margin-top"
-      size="small"
       direction="vertical"
       border
     >

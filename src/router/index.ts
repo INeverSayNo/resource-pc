@@ -100,12 +100,6 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           followRoute: '/resource-app/station',
           activeMenu: '/resource-app/station'
         }
-      },
-      {
-        path: 'station-map',
-        component: () => import('@/views/railway/stationMap/map.vue'),
-        name: 'RailwayStationMap',
-        meta: { title: '站点地图' }
       }
     ]
   }

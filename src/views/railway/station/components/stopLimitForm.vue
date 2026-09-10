@@ -14,7 +14,6 @@
       :model="edit"
       :rules="rules"
       class="form-container"
-      size="small"
       label-width="100px"
       label-suffix=":"
     >
@@ -111,7 +110,7 @@
 import { Message } from "@/components/Message";
 import { useStatisticTrace } from "@/hooks/useStatisticTrace";
 import { getSystemDataShow } from "@/api/systemDataShowApi";
-import { formatDateTime, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import {
   computed,
   reactive,
@@ -124,6 +123,7 @@ import { AddStopNotice } from "../api";
 import { RailWayStopNoticeCrudDto } from "../types";
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import ContributionInput from "@/views/railway/contribution/index.vue"
+import { DcDate } from "@dczy/tie-tools";
 
 type stateProp = {
   edit: RailWayStopNoticeCrudDto;
@@ -163,7 +163,7 @@ export default defineComponent({
       edit: {
         stationId: props.stationId,
         noticeId: 65535,
-        releaseDt: formatDateTime(new Date(), "YYYY-MM-DDTHH:mm")
+        releaseDt: DcDate.format(new Date(), "YYYY-MM-DDTHH:mm")
       },
       loading: false,
       bureauData: [],
@@ -192,7 +192,7 @@ export default defineComponent({
       state.edit = {
         stationId: props.stationId,
         noticeId: 65535,
-        releaseDt: formatDateTime(new Date(), "YYYY-MM-DDTHH:mm")
+        releaseDt: DcDate.format(new Date(), "YYYY-MM-DDTHH:mm")
       };
       const userInfo = JSON.parse(localStorage.getItem("CurUser") || "{}");
       state.edit.contributionaTime = formatTime(new Date(), "yyyy-MM-dd");

@@ -6,7 +6,7 @@
     @select="handleSelect"
   >
     <template #suffix>
-      <DLegacyIcon class="el-input__icon" name="search" @click="show = true" />
+      <DAliIcon class="el-input__icon" name="search" @click="show = true" />
     </template>
     <template v-if="stationId" #append>
       <el-popconfirm
@@ -21,7 +21,7 @@
       >
         <template #reference>
           <span class="bar-btn fr">
-            <DLegacyIcon name="plus" class="" />
+            <DAliIcon name="plus" class="" />
             新增
           </span>
         </template>

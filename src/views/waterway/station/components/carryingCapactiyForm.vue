@@ -15,7 +15,6 @@
         <el-form
         ref="formRef"
           :model="edit"
-          size="small"
           label-width="100px"
           label-suffix=":"
           class="form-container"
@@ -26,7 +25,6 @@
             <el-input
             v-model="edit.numerical"
             type="number"
-            size="small"
             placeholder="请输入数值"
           ></el-input>
           </el-form-item>
@@ -53,7 +51,7 @@
 
 <script lang="ts">
 import { useAnalyticsTrack } from "@/plugins/monitor";
-import { deepClone, formatTime } from "@/utils";
+import { formatTime } from "@/utils";
 import {
   computed,
   reactive,
@@ -65,6 +63,7 @@ import { Message } from "@/components/Message";
 import { tongguoCreateAsync, tongguoUpdateAsync } from "../api"
 import { useStatisticTrace } from "@/hooks/useStatisticTrace";
 import ContributionInput from "@/views/railway/contribution/index.vue"
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   name: "",
@@ -168,7 +167,7 @@ export default defineComponent({
       formRef.value?.validate(async (valid) => {
       if (valid) {
       state.loading = true;
-      const param = deepClone(state.edit);
+      const param = DcDeep.clone(state.edit);
       param.waterPortInfoId = props?.stationId;
       if (props?.station?._id) {
         tongguoUpdateAsync(props?.station?._id, param).then((res) => {

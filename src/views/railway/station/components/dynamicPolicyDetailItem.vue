@@ -2,7 +2,6 @@
 import { computed, defineComponent, PropType } from "vue";
 import { RailwayNatureEnum } from "../../good-price-policy/types";
 import { RailwayPolicyItemNew } from "../types";
-import DLegacyIcon from '@/components/LegacyIcon/index.vue'
 export default defineComponent({
   name: "DynamicPolicyDetailItem",
   props: {
@@ -61,7 +60,7 @@ export default defineComponent({
         return (
           <div>
             <span class='theme-danger'>
-              <DLegacyIcon
+              <DAliIcon
                 class="fs-12"
                 name={(policyDetail.coefficient || 0) > 0 ? 'top' : 'bottom'}
               />

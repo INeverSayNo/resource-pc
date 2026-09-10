@@ -12,11 +12,11 @@
           >
             {{ item.contact }}
             <span class="edit theme-color" @click="handleEdit(item)">
-              <DLegacyIcon name="edit" class="" />
+              <DAliIcon name="edit" class="" />
               编辑
             </span>
             <span class="edit theme-warning" @click="handleDelete(item)">
-              <DLegacyIcon name="delete" class="" />
+              <DAliIcon name="delete" class="" />
               删除
             </span>
             <br v-if="(index + 1) % 4 === 0" />
@@ -27,7 +27,7 @@
       <div class="fr">
         <el-button
           v-show="!showContact"
-          size="small"
+          
           type="warning"
           @click="handleNew"
         >
@@ -40,7 +40,7 @@
       ref="formRef"
       :model="edit"
       :rules="rules"
-      size="small"
+      
       class="dialog-form"
       label-width="130px"
     >
@@ -65,7 +65,7 @@
           <div class="show-more-contact">
             <el-switch
               v-model="showMore"
-              size="small"
+              
               inactive-text="填写更多"
             />
           </div>
@@ -120,7 +120,7 @@
         <el-col :span="24" class="tc" style="margin-bottom: 10px">
           <el-button
             type="primary"
-            size="small"
+            
             :loading="saveNewLoading"
             @click="handleSave('new')"
           >
@@ -128,7 +128,7 @@
           </el-button>
           <el-button
             type="success"
-            size="small"
+            
             :loading="saveLoading"
             @click="handleSave('save')"
           >
@@ -141,7 +141,6 @@
 </template>
 
 <script lang="ts">
-import { deepClone, guid } from "@/utils";
 import {
   reactive,
   toRefs,
@@ -159,6 +158,7 @@ import { GetListBySupplierId, supplierContactApi } from "../api";
 import { ElMessageBox } from "element-plus";
 import { Message } from "@/components/Message";
 import { BaseData } from "@/api/dictionaryApi";
+import { DcCommon, DcDeep } from "@dczy/tie-tools";
 export default defineComponent({
   props: {
     supplierId: {
@@ -218,10 +218,10 @@ export default defineComponent({
     function handleSave(type: "save" | "new") {
       formRef.value?.validate((valid) => {
         if (valid) {
-          const item = deepClone<SupplierEnterpriseLinkPersonCreateOrUpdateDto>(
+          const item = DcDeep.clone<SupplierEnterpriseLinkPersonCreateOrUpdateDto>(
             state.edit
           );
-          const old = deepClone<SupplierEnterpriseLinkPersonDto[]>(
+          const old = DcDeep.clone<SupplierEnterpriseLinkPersonDto[]>(
             state.listData
           );
           const index = old.findIndex(
@@ -299,7 +299,7 @@ export default defineComponent({
                 state.editId = "";
               } else {
                 state.listData.push({
-                  id: guid(),
+                  id: DcCommon.guid(),
                   isScrap: item.isScrap,
                   projectNames: item.projectNames,
                   contact: item.contact,
@@ -331,7 +331,7 @@ export default defineComponent({
       ).then(() => {
         if (!props.supplierId) {
           const index = state.listData.findIndex((x) => x.id === item.id);
-          const old = deepClone<SupplierEnterpriseLinkPersonDto[]>(
+          const old = DcDeep.clone<SupplierEnterpriseLinkPersonDto[]>(
             state.listData
           );
           old.splice(index, 1);

@@ -10,8 +10,8 @@ import { GetPolicyDetails } from "../../good-price-policy/api";
 import TableColumn from "@/components/DCLayout/TableColumn.vue";
 import DcGap from "@/components/Gap/index.vue";
 import { PricePolicyResult } from "../../good-price-policy/types";
-import { deepClone } from "@/utils";
 import DynamicPolicyDetailItem from "./dynamicPolicyDetailItem.vue";
+import { DcDeep } from "@dczy/tie-tools";
 
 export default defineComponent({
   name: "PolicyDetailDialog",
@@ -135,7 +135,7 @@ export default defineComponent({
                   old.chargeTypeName += `,${chargeTypeName}`;
                 } else {
                   rData.push({
-                    ...deepClone<PricePolicyResult>(d),
+                    ...DcDeep.clone<PricePolicyResult>(d),
                     chargeTypeName: chargeTypeName
                   });
                 }
@@ -197,7 +197,7 @@ export default defineComponent({
       v-if="mainDetailsCols && mainDetailsCols.length > 0"
       class="margin-top policy-detail-dialog-el-descriptions"
       :column="4"
-      size="small"
+      
       direction="horizontal"
       border
     >
@@ -260,7 +260,6 @@ export default defineComponent({
       v-loading="loading"
       :data="detailInfo"
       border
-      size="small"
       stripe
       highlight-current-row
     >
@@ -273,7 +272,7 @@ export default defineComponent({
       <TableColumn :columns="detailsTableCols2">
         <template #coefficient="scoped">
           <span class="theme-danger">
-            <DLegacyIcon
+            <DAliIcon
               class="fs-12"
               :name="(scoped.row.coefficient || 0) > 0 ? 'top' : 'bottom'"
             />

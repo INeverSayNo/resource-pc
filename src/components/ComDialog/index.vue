@@ -16,9 +16,9 @@
       <slot name="title">
         {{ title }}
       </slot>
-      <svg-icon
+      <DAliIcon
         v-if="showFullscreen"
-        :icon-class="fullscreen ? 'exit-fullscreen' : 'fullscreen'"
+        :name="fullscreen ? 'exit-fullscreen' : 'fullscreen'"
         class-name="dialog__icon"
         @click="toggleFull"
       />

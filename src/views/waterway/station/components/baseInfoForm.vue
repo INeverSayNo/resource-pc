@@ -27,7 +27,6 @@
       <el-form
         ref="formRef"
         :model="edit"
-        size="small"
         label-width="100px"
         label-suffix=":"
         :rules="rules"
@@ -176,7 +175,7 @@
 <script lang="ts">
 import { useAnalyticsTrack } from "@/plugins/monitor";
 import { Message } from "@/components/Message";
-import { deepClone, GetAddress, formatTime } from "@/utils";
+import { GetAddress, formatTime } from "@/utils";
 import { FILE_URL } from "@/request";
 import DcUploadAttach from "@/components/UploadAttach/index.vue";
 import {
@@ -198,6 +197,7 @@ import { useWaterwayStationStore } from '../store/index'
 import { useRouter } from "vue-router";
 import ContributionInput from "@/views/railway/contribution/index.vue"
 import { NationalityOptions } from "../store";
+import { DcDeep } from "@dczy/tie-tools";
 export default defineComponent({
   name: "",
   components: {
@@ -285,7 +285,7 @@ export default defineComponent({
           viewCount: props.station?.viewCount,
           remark: props.station?.remark,
           portNationality: props.station?.portNationality,
-          carryingCapacityList: deepClone(props.carryingCapacityList),
+          carryingCapacityList: DcDeep.clone(props.carryingCapacityList),
           fileAttach: props.fileAttach
         };
         state.formAddress.address = props.station?.address;
@@ -321,11 +321,11 @@ export default defineComponent({
       });
       formRef.value?.validate(async (valid) => {
       if (valid) {
-      const param = deepClone(state.edit);
+      const param = DcDeep.clone(state.edit);
       let result = false;
       result = false;
       const stationaryData = carryingCapacityRef.value?.GetData();
-      const portTrafficability = deepClone(stationaryData) || [];
+      const portTrafficability = DcDeep.clone(stationaryData) || [];
       const delDate = [] as any;
       // const editDate = [] as any;
       (props.carryingCapacityList || []).forEach((x) => {
@@ -462,8 +462,8 @@ export default defineComponent({
             id: item._id,
             name: item.PortName
           };
-    waterwayStationStore.push(deepClone<WaterwayStationDto>(item));
-    waterwayStationStore.setCurrent(deepClone<WaterwayStationDto>(item));
+    waterwayStationStore.push(DcDeep.clone<WaterwayStationDto>(item));
+    waterwayStationStore.setCurrent(DcDeep.clone<WaterwayStationDto>(item));
     router.push({
       path:
         type === "map"
