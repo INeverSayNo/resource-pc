@@ -10,7 +10,7 @@
         <span class="brand-mark">
           <img src="@/assets/imgs/logo.png" alt="" />
         </span>
-        <span class="brand-name c-#145ca8">{{ appConfig.title }}</span>
+        <span class="brand-name c-white fs-30">{{ appConfig.title }}</span>
       </div>
     </header>
 
@@ -43,6 +43,7 @@
     --login-pink: #df2aa7;
     --login-tool-color: #34405a;
     background: url("../../assets//imgs/login-bg.jpg") 100% 100% no-repeat;
+    background-size: 100% 100%;
   }
 
   .login-header {
@@ -66,18 +67,14 @@
 
   .brand-mark {
     display: grid;
-    width: 42px;
-    height: 42px;
-    background: rgb(255 255 255 / 8%);
-    border: 1px solid rgb(255 255 255 / 16%);
-    border-radius: 13px;
-    box-shadow: inset 0 1px rgb(255 255 255 / 12%);
+    width: 52px;
+    height: 52px;
     place-items: center;
     backdrop-filter: blur(10px);
 
     img {
-      width: 31px;
-      height: 31px;
+      width: 50px;
+      height: 50px;
       object-fit: contain;
     }
   }
@@ -86,7 +83,6 @@
     max-width: 38vw;
     overflow: hidden;
     font-family: 'Avenir Next', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    font-size: 17px;
     font-weight: 650;
     letter-spacing: 0.01em;
     text-overflow: ellipsis;
@@ -431,9 +427,8 @@
     display: grid;
     grid-column: 2;
     min-height: 100dvh;
-    padding: 104px clamp(32px, 5vw, 78px) 44px;
     place-items: center;
-
+    padding-left: 50vw;
     &::before {
       position: absolute;
       top: 14%;
