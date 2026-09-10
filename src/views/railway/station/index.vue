@@ -97,6 +97,7 @@
       ></PrivateLine>
       <StopLimit :station-id="stationId" :list="data?.stopList" @reload="loadData"></StopLimit>
       <SupplierEx
+        
         :list="data?.supplier"
         :station-id="stationId"
         :loading="supplierLoading"

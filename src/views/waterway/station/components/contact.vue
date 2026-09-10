@@ -2,7 +2,7 @@
   <DcGap class="bar">
     港口联系方式
     <span class="theme-color">(共{{ datalis?.length || 0 }}条)</span>
-    <span class="fs-12 theme-danger mr-5"> (港口窗口、货运室等联系方式) </span>
+    <span class="fs-12 theme-danger mr-5px"> (港口窗口、货运室等联系方式) </span>
     <span class="bar-btn fr" @click="handleAdd">
       <DAliIcon name="plus" />
       新增

@@ -13,7 +13,6 @@
       <el-form
         ref="formRef"
         :model="edit"
-        size="small"
         label-width="100px"
         label-suffix=":"
         :rules="rules"
@@ -76,41 +75,43 @@
         </el-row>
 
         <el-form-item label="堆存天数" prop="stockpilingMinDay">
-          <el-col :span="12">
-            <el-select
-              v-model="edit.stockpilingMinDay"
-              allow-create
-              filterable
-              default-first-option
-              placeholder="请选择或输入堆存天数"
-            >
-              <el-option
-                v-for="item in minDayOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-col>
-          <el-col class="text-center" :span="5" style="margin: 0 0.5rem">
-            {{ '< 时间 ≤' }}
-          </el-col>
-          <el-col :span="12">
-            <el-select
-              v-model="edit.stockpilingMaxDay"
-              allow-create
-              filterable
-              default-first-option
-              placeholder="请选择或输入堆存天数"
-            >
-              <el-option
-                v-for="item in maxDayOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-col>
+          <el-row>
+            <el-col :span="9">
+              <el-select
+                v-model="edit.stockpilingMinDay"
+                allow-create
+                filterable
+                default-first-option
+                placeholder="请选择或输入堆存天数"
+              >
+                <el-option
+                  v-for="item in minDayOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+            <el-col class="text-center" :span="4" style="margin: 0 0.5rem">
+              {{ '< 时间 ≤' }}
+            </el-col>
+            <el-col :span="9">
+              <el-select
+                v-model="edit.stockpilingMaxDay"
+                allow-create
+                filterable
+                default-first-option
+                placeholder="请选择或输入堆存天数"
+              >
+                <el-option
+                  v-for="item in maxDayOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">

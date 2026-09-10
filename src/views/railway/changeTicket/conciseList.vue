@@ -1,118 +1,110 @@
 <script lang="ts" setup>
-import { PropType, reactive, ref, watch, computed } from "vue";
-import DcGap from "@/components/Gap/index.vue";
-import DcIcon from "@/components/icon/index.vue";
-import FileDownView from "@/components/Common/FileDownView.vue";
-import ChangeTicketEditForm from "./editForm.vue";
-import { QueryChangeTicketPage } from "./api";
-import { transportType, changeType } from "./enum";
-import type { ChangeTicketDetail, EnumItem } from "./type";
-import { GetFileListByIds } from "@/api/fileApi";
-import { FileAttach } from "@/utils/base-entity";
-import { GETFILE_URL } from "@/request";
-import { DcDate } from "@dczy/tie-tools";
+  import { PropType, reactive, ref, watch, computed } from 'vue'
+  import DcGap from '@/components/Gap/index.vue'
+  import DcIcon from '@/components/icon/index.vue'
+  import FileDownView from '@/components/Common/FileDownView.vue'
+  import ChangeTicketEditForm from './editForm.vue'
+  import { QueryChangeTicketPage } from './api'
+  import { transportType, changeType } from './enum'
+  import type { ChangeTicketDetail, EnumItem } from './type'
+  import { GetFileListByIds } from '@/api/fileApi'
+  import { FileAttach } from '@/utils/base-entity'
+  import { GETFILE_URL } from '@/request'
+  import { DcDate } from '@dczy/tie-tools'
 
-const props = defineProps({
-  stationId: {
-    type: String as PropType<string>,
-    default: ""
-  },
-  stationName: {
-    type: String as PropType<string>,
-    default: ""
-  }
-});
+  const props = defineProps({
+    stationId: {
+      type: String as PropType<string>,
+      default: ''
+    },
+    stationName: {
+      type: String as PropType<string>,
+      default: ''
+    }
+  })
 
-const changeTicketList = ref<Array<ChangeTicketDetail>>([]);
+  const changeTicketList = ref<Array<ChangeTicketDetail>>([])
 
-function getChangeTicketList() {
-  QueryChangeTicketPage(props.stationId)
-    .then((res) => {
-      if (res.isSuccessful) {
-        changeTicketList.value = res.data || [];
-      }
-    })
-    .finally(() => {
-      // loading.value = false;
-    });
-}
-
-function getTransportTypeName(item: ChangeTicketDetail, type: string) {
-  return (
-    item.transportTypeName ||
-    transportType.getArray().find((e) => e.value === type)?.label ||
-    "暂无"
-  );
-}
-
-function getChangeType(item: ChangeTicketDetail) {
-  return changeType.getSelf(item.changeType).label;
-}
-
-watch(
-  () => props.stationId,
-  (id) => {
-    id && getChangeTicketList();
-  }
-);
-
-const loadingFile = ref(false);
-const changeTicketFiles = ref<
-  Array<{ files: FileAttach[]; changeTicketId: string }>
->([]);
-const hasFile = computed(() => (id: string) => {
-  return changeTicketFiles.value.some((item) => item.changeTicketId === id);
-});
-const getFile = computed(() => (id: string) => {
-  return (
-    changeTicketFiles.value.find((item) => item.changeTicketId === id)?.files ||
-    []
-  );
-});
-const getFileUrl = (url: string) => {
-  return `${GETFILE_URL}${url}`;
-};
-function expandRow(
-  row: ChangeTicketDetail,
-  expanded: Array<ChangeTicketDetail>
-) {
-  if (!expanded.length) {
-    return;
-  }
-  if (row.fileAttachIds && !hasFile.value(row.id)) {
-    loadingFile.value = true;
-    GetFileListByIds(row.fileAttachIds.split(","))
+  function getChangeTicketList() {
+    QueryChangeTicketPage(props.stationId)
       .then((res) => {
-        if (Array.isArray(res)) {
-          changeTicketFiles.value.push({
-            changeTicketId: row.id,
-            files: res
-          });
+        if (res.isSuccessful) {
+          changeTicketList.value = res.data || []
         }
       })
       .finally(() => {
-        loadingFile.value = false;
-      });
+        // loading.value = false;
+      })
   }
-}
 
-//#region 编辑 & 新增
-const showEditForm = ref(false);
-const isEdit = ref(false);
-const changeTicketId = ref("");
-function editChangeTicket(row: ChangeTicketDetail) {
-  showEditForm.value = true;
-  changeTicketId.value = row.id;
-  isEdit.value = true;
-}
+  function getTransportTypeName(item: ChangeTicketDetail, type: string) {
+    return (
+      item.transportTypeName ||
+      transportType.getArray().find((e) => e.value === type)?.label ||
+      '暂无'
+    )
+  }
 
-function addChangeTicket() {
-  isEdit.value = false;
-  changeTicketId.value = "";
-  showEditForm.value = true;
-}
+  function getChangeType(item: ChangeTicketDetail) {
+    return changeType.getSelf(item.changeType).label
+  }
 
-//#endregion
+  watch(
+    () => props.stationId,
+    (id) => {
+      id && getChangeTicketList()
+    }
+  )
+
+  const loadingFile = ref(false)
+  const changeTicketFiles = ref<Array<{ files: FileAttach[]; changeTicketId: string }>>([])
+  const hasFile = computed(() => (id: string) => {
+    return changeTicketFiles.value.some((item) => item.changeTicketId === id)
+  })
+  const getFile = computed(() => (id: string) => {
+    return changeTicketFiles.value.find((item) => item.changeTicketId === id)?.files || []
+  })
+  const getFileUrl = (url: string) => {
+    return `${GETFILE_URL}${url}`
+  }
+  function expandRow(row: ChangeTicketDetail, expanded: Array<ChangeTicketDetail>) {
+    if (!expanded.length) {
+      return
+    }
+    if (row.fileAttachIds && !hasFile.value(row.id)) {
+      loadingFile.value = true
+      GetFileListByIds(row.fileAttachIds.split(','))
+        .then((res) => {
+          if (Array.isArray(res)) {
+            changeTicketFiles.value.push({
+              changeTicketId: row.id,
+              files: res
+            })
+          }
+        })
+        .finally(() => {
+          loadingFile.value = false
+        })
+    }
+  }
+
+  //#region 编辑 & 新增
+  const showEditForm = ref(false)
+  const isEdit = ref(false)
+  const changeTicketId = ref('')
+  function editChangeTicket(row: ChangeTicketDetail) {
+    showEditForm.value = true
+    changeTicketId.value = row.id
+    isEdit.value = true
+  }
+
+  function addChangeTicket() {
+    isEdit.value = false
+    changeTicketId.value = ''
+    showEditForm.value = true
+  }
+
+  //#endregion
 </script>
 <template>
   <div>
@@ -143,9 +135,7 @@ function addChangeTicket() {
                   </div>
                   <div v-else>
                     <div v-if="!hasFile(row.id)" class="no-data-wrap">
-                      <DAliIcon
-                        name="no-data"
-                      ></DAliIcon>
+                      <DAliIcon name="no-data"></DAliIcon>
                       <span class="label">暂无附件</span>
                     </div>
                     <template v-else>
@@ -167,36 +157,21 @@ function addChangeTicket() {
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="transportTypeName"
-        label="运输方式"
-        align="center"
-        width="360"
-      >
+      <el-table-column prop="transportTypeName" label="运输方式" align="center" width="360">
         <template #default="{ row }">
           <p>
             <span>{{ getTransportTypeName(row, row.transportType) }}</span>
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="changeType"
-        label="换装方式"
-        align="center"
-        width="140"
-      >
+      <el-table-column prop="changeType" label="换装方式" align="center" width="140">
         <template #default="{ row }">
           <p>
             <span>{{ getChangeType(row) }}</span>
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="changeCost"
-        label="换装费用"
-        align="center"
-        width="140"
-      >
+      <el-table-column prop="changeCost" label="换装费用" align="center" width="140">
         <template #default="{ row }">
           <p>
             <span>
@@ -206,12 +181,7 @@ function addChangeTicket() {
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="elapsedTime"
-        label="换装耗时"
-        align="center"
-        width="140"
-      >
+      <el-table-column prop="elapsedTime" label="换装耗时" align="center" width="140">
         <template #default="{ row }">
           <p>
             <span>{{ row.elapsedTime }}</span>
@@ -220,12 +190,7 @@ function addChangeTicket() {
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="contacts"
-        label="联系人"
-        align="center"
-        width="200"
-      >
+      <el-table-column prop="contacts" label="联系人" align="center" width="200">
         <template #default="{ row }">
           <p>
             <span>{{ row.contacts }}</span>
@@ -240,52 +205,25 @@ function addChangeTicket() {
 
       <el-table-column prop="remark" label="换装说明" align="center">
         <template #default="{ row }">
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            :content="row.remark"
-            placement="top-start"
-          >
+          <el-tooltip class="box-item" effect="dark" :content="row.remark" placement="top-start">
             <span>{{ row.remark }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="更新人/时间"
-        align="center"
-        width="200"
-      >
+      <el-table-column prop="createTime" label="更新人/时间" align="center" width="200">
         <template #default="{ row }">
-          <span class="mr-05">
+          <span class="mr-5px">
             {{ row.lastModifierName || row.creatorName }}
           </span>
           <span>
-            {{
-              DcDate.format(
-                row.lastModificationTime || row.creationTime,
-                "YYYY-MM-DD"
-              )
-            }}
+            {{ DcDate.format(row.lastModificationTime || row.creationTime, 'YYYY-MM-DD') }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="oper"
-        fixed="right"
-        label="操作"
-        align="center"
-        width="100"
-      >
+      <el-table-column prop="oper" fixed="right" label="操作" align="center" width="100">
         <template #default="{ row }">
           <div>
-            <el-button
-              link
-              type="warning"
-              @click="editChangeTicket(row)"
-            >
-              编辑
-            </el-button>
+            <el-button link type="warning" @click="editChangeTicket(row)"> 编辑 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -303,65 +241,65 @@ function addChangeTicket() {
 </template>
 
 <style lang="less" scoped>
-.expand-container {
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-i {
-  font-style: normal;
-}
-
-.label {
-  color: #969799;
-}
-
-.mr-02 {
-  margin-left: 0.2rem;
-}
-
-.affiliation-name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & > :first-child {
-    margin-right: 0.2rem;
+  .expand-container {
+    font-size: 14px;
+    line-height: 1.8;
   }
-}
 
-.price {
-  color: #ff976a;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.file-attach-wrap {
-  display: flex;
-  align-items: flex-start;
-}
-
-.file-attach-list {
-  display: flex;
-  flex-wrap: wrap;
-
-  & > div {
-    margin-right: 0.4rem;
-    margin-bottom: 0.4rem;
+  i {
+    font-style: normal;
   }
-}
 
-.no-data-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  & > span {
-    font-size: 12px;
+  .label {
+    color: #969799;
   }
-}
 
-.price {
-  color: #ff976a;
-}
+  .mr-02 {
+    margin-left: 0.2rem;
+  }
+
+  .affiliation-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > :first-child {
+      margin-right: 0.2rem;
+    }
+  }
+
+  .price {
+    color: #ff976a;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .file-attach-wrap {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .file-attach-list {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > div {
+      margin-right: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+  }
+
+  .no-data-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & > span {
+      font-size: 12px;
+    }
+  }
+
+  .price {
+    color: #ff976a;
+  }
 </style>

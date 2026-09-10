@@ -72,7 +72,7 @@
 
     <template #buttonGroup>
       <el-button type="primary" @click="showAdd = true">
-        <DAliIcon name="plus" />
+        <DAliIcon name="plus" color="white"/>
         新增
       </el-button>
     </template>

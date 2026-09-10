@@ -1,114 +1,112 @@
 <script lang="ts" setup>
-import { PropType, reactive, ref, watch } from "vue";
-import DcGap from "@/components/Gap/index.vue";
-import DcIcon from "@/components/icon/index.vue";
-import WarehouseEditForm from "./editForm.vue";
-import { QueryWarehousePage } from "./api";
-import type { WarehouseItem } from "./type";
-import { useRouter } from "vue-router";
-import { useRailwayStationStore } from '../station/store/index'
-import { DcDate } from "@dczy/tie-tools";
+  import { PropType, reactive, ref, watch } from 'vue'
+  import DcGap from '@/components/Gap/index.vue'
+  import DcIcon from '@/components/icon/index.vue'
+  import WarehouseEditForm from './editForm.vue'
+  import { QueryWarehousePage } from './api'
+  import type { WarehouseItem } from './type'
+  import { useRouter } from 'vue-router'
+  import { useRailwayStationStore } from '../station/store/index'
+  import { DcDate } from '@dczy/tie-tools'
 
-const props = defineProps({
-  stationId: {
-    type: String as PropType<string>,
-    default: ""
-  },
-  stationName: {
-    type: String as PropType<string>,
-    default: ""
-  },
-  tableHeight: {
-    type: Number,
-    default: 360
+  const props = defineProps({
+    stationId: {
+      type: String as PropType<string>,
+      default: ''
+    },
+    stationName: {
+      type: String as PropType<string>,
+      default: ''
+    },
+    tableHeight: {
+      type: Number,
+      default: 360
+    }
+  })
+  const railwayStationStore = useRailwayStationStore()
+
+  const router = useRouter()
+
+  //#region 分页
+  const paginationState = reactive({
+    page: 1,
+    limit: 20,
+    total: 0
+  })
+
+  function handlePageChange(page: number) {
+    paginationState.page = page
+    getWarehouseList()
   }
-});
-const railwayStationStore = useRailwayStationStore()
+  function handlePageSizeChange(size: number) {
+    paginationState.limit = size
+    getWarehouseList()
+  }
+  //#endregion
 
-const router = useRouter();
+  const warehouseList = ref<Array<WarehouseItem>>([])
 
-//#region 分页
-const paginationState = reactive({
-  page: 1,
-  limit: 20,
-  total: 0
-});
+  function getWarehouseList() {
+    const params = {
+      ...paginationState,
+      affiliationName: props.stationName
+    }
+    QueryWarehousePage(params)
+      .then((res) => {
+        if (res.isSuccessful) {
+          paginationState.total = res.totalCount
+          warehouseList.value = res.items || []
+          railwayStationStore.setWarehouseList(res.items || [])
+        }
+      })
+      .finally(() => {
+        // loading.value = false;
+      })
+  }
 
-function handlePageChange(page: number) {
-  paginationState.page = page;
-  getWarehouseList();
-}
-function handlePageSizeChange(size: number) {
-  paginationState.limit = size;
-  getWarehouseList();
-}
-//#endregion
+  watch(
+    () => props.stationName,
+    (name) => {
+      name && getWarehouseList()
+    }
+  )
 
-const warehouseList = ref<Array<WarehouseItem>>([]);
-
-function getWarehouseList() {
-  const params = {
-    ...paginationState,
-    affiliationName: props.stationName
-  };
-  QueryWarehousePage(params)
-    .then((res) => {
-      if (res.isSuccessful) {
-        paginationState.total = res.totalCount;
-        warehouseList.value = res.items || [];
-        railwayStationStore.setWarehouseList(res.items || []);
+  function getWarehouseNature(payload: string | null): Array<{ name: string; type: string }> {
+    if (!payload) return []
+    return payload.split(',').map((e) => {
+      return {
+        name: e,
+        type: 'success'
       }
     })
-    .finally(() => {
-      // loading.value = false;
-    });
-}
-
-watch(
-  () => props.stationName,
-  (name) => {
-    name && getWarehouseList();
   }
-);
 
-function getWarehouseNature(
-  payload: string | null
-): Array<{ name: string; type: string }> {
-  if (!payload) return [];
-  return payload.split(",").map((e) => {
-    return {
-      name: e,
-      type: "success"
-    };
-  });
-}
-
-//#region 编辑 & 新增
-const showEditForm = ref(false);
-const isEdit = ref(false);
-const warehouseId = ref("");
-function editWarehouse(row: WarehouseItem) {
-  showEditForm.value = true;
-  warehouseId.value = row.id;
-  isEdit.value = true;
-}
-
-function addWarehouse() {
-  isEdit.value = false;
-  warehouseId.value = "";
-  showEditForm.value = true;
-}
-
-//#endregion
-
-function toStationDetail(row: WarehouseItem) {
-  if (row.affiliation.afId) {
-    router.push({
-      path: "/resource-app/station-dt",
-      query: { id: row.affiliation.afId, name: row.affiliation.afName }
-    });
+  //#region 编辑 & 新增
+  const showEditForm = ref(false)
+  const isEdit = ref(false)
+  const warehouseId = ref('')
+  function editWarehouse(row: WarehouseItem) {
+    showEditForm.value = true
+    warehouseId.value = row.id
+    isEdit.value = true
   }
-}
+
+  function addWarehouse() {
+    isEdit.value = false
+    warehouseId.value = ''
+    showEditForm.value = true
+  }
+
+  //#endregion
+
+  function toStationDetail(row: WarehouseItem) {
+    if (row.affiliation.afId) {
+      router.push({
+        path: '/resource-app/station-dt',
+        query: { id: row.affiliation.afId, name: row.affiliation.afName }
+      })
+    }
+  }
 </script>
 <template>
   <div>
@@ -120,7 +118,7 @@ function toStationDetail(row: WarehouseItem) {
       </span>
     </DcGap>
 
-    <el-table  :data="warehouseList" highlight-current-row border :max-height="tableHeight">
+    <el-table :data="warehouseList" highlight-current-row border :max-height="tableHeight">
       <el-table-column type="expand">
         <template #default="{ row }">
           <div class="expand-container">
@@ -175,19 +173,9 @@ function toStationDetail(row: WarehouseItem) {
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="name"
-        label="仓库名称"
-        align="center"
-        width="360"
-      />
+      <el-table-column prop="name" label="仓库名称" align="center" width="360" />
 
-      <el-table-column
-        prop="affiliation"
-        label="归属站点/公司"
-        align="center"
-        width="150px"
-      >
+      <el-table-column prop="affiliation" label="归属站点/公司" align="center" width="150px">
         <template #default="{ row }">
           <p class="affiliation-name" @click="toStationDetail(row)">
             <DAliIcon v-if="row.affiliation.afId" name="railway"></DAliIcon>
@@ -211,12 +199,7 @@ function toStationDetail(row: WarehouseItem) {
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="freeDays"
-        label="免堆期"
-        align="center"
-        width="140"
-      >
+      <el-table-column prop="freeDays" label="免堆期" align="center" width="140">
         <template #default="{ row }">
           <p>
             <span>{{ row.freeDays }}</span>
@@ -232,18 +215,8 @@ function toStationDetail(row: WarehouseItem) {
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="typeName"
-        label="仓库类型"
-        align="center"
-        width="140"
-      />
-      <el-table-column
-        prop="natureName"
-        label="仓库性质"
-        align="center"
-        width="190"
-      >
+      <el-table-column prop="typeName" label="仓库类型" align="center" width="140" />
+      <el-table-column prop="natureName" label="仓库性质" align="center" width="190">
         <template #default="{ row }">
           <p>
             <el-tag
@@ -259,42 +232,20 @@ function toStationDetail(row: WarehouseItem) {
           </p>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="更新人/时间"
-        align="center"
-        width="200"
-      >
+      <el-table-column prop="createTime" label="更新人/时间" align="center" width="200">
         <template #default="{ row }">
-          <span class="mr-05">
+          <span class="mr-5px">
             {{ row.lastModifierName || row.creatorName }}
           </span>
           <span>
-            {{
-              DcDate.format(
-                row.lastModificationTime || row.creationTime,
-                "YYYY-MM-DD"
-              )
-            }}
+            {{ DcDate.format(row.lastModificationTime || row.creationTime, 'YYYY-MM-DD') }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="oper"
-        fixed="right"
-        label="操作"
-        align="center"
-        width="100"
-      >
+      <el-table-column prop="oper" fixed="right" label="操作" align="center" width="100">
         <template #default="{ row }">
           <div>
-            <el-button
-              link
-              type="warning"
-              @click="editWarehouse(row)"
-            >
-              编辑
-            </el-button>
+            <el-button link type="warning" @click="editWarehouse(row)"> 编辑 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -321,36 +272,36 @@ function toStationDetail(row: WarehouseItem) {
 </template>
 
 <style lang="less" scoped>
-.expand-container {
-  font-size: 14px;
-  line-height: 1.8;
-}
-i {
-  font-style: normal;
-}
+  .expand-container {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  i {
+    font-style: normal;
+  }
 
-.label {
-  color: #969799;
-}
-.mr-02 {
-  margin-left: 0.2rem;
-}
-.affiliation-name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  cursor: pointer;
-  & > :first-child {
-    margin-right: 0.2rem;
+  .label {
+    color: #969799;
   }
-  & > :last-child {
-    color: #55b0ee;
+  .mr-02 {
+    margin-left: 0.2rem;
   }
-}
-.price {
-  color: #ff976a;
-  font-weight: 600;
-  font-size: 14px;
-}
+  .affiliation-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: pointer;
+    & > :first-child {
+      margin-right: 0.2rem;
+    }
+    & > :last-child {
+      color: #55b0ee;
+    }
+  }
+  .price {
+    color: #ff976a;
+    font-weight: 600;
+    font-size: 14px;
+  }
 </style>

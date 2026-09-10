@@ -1,7 +1,7 @@
 <template>
   <DcGap class="bar">
     港口通过能力信息
-    <span class="bar-btn fr fs-14 mr-10 theme-color cu-pointer" @click="handleAddRow">
+    <span class="bar-btn fr fs-14 mr-10px theme-color cu-pointer" @click="handleAddRow">
       <DAliIcon name="plus" class="" />
       新增
     </span>

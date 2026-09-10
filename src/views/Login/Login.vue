@@ -42,6 +42,7 @@
     --login-blue: #347edf;
     --login-pink: #df2aa7;
     --login-tool-color: #34405a;
+    background: url("../../assets//imgs/login-bg.jpg") 100% 100% no-repeat;
   }
 
   .login-header {

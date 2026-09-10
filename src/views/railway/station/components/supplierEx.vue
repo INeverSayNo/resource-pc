@@ -36,50 +36,60 @@
       <slot name="headerButton"></slot>
     </div>
   </DcGap>
-  <el-table
+  <ElTable
+    v-if="list.length"
     v-loading="loading"
+    ref="tableRef"
     :data="list"
     :max-height="tableHeight"
     border
     stripe
     highlight-current-row
+    flexible
   >
-    <el-table-column type="index" label="序号" align="center"></el-table-column>
+    <el-table-column
+      type="index"
+      label="序号"
+      align="center"
+      fixed="left"
+      width="80"
+    ></el-table-column>
     <el-table-column label="供应商名称" align="center" width="250" prop="supplier.supplierName">
-      <template #default="scoped">
-        <span>{{ scoped.row.supplier?.supplierName || '' }}</span>
-        <br v-if="scoped.row.supplier?.isContract || scoped.row.supplier?.isChinaRailway" />
-        <el-tag v-if="scoped.row.supplier?.supplierNatureName" type="primary" plain class="ml-10px">
-          {{ scoped.row.supplier?.supplierNatureName }}
-        </el-tag>
-        <el-tag v-if="scoped.row.supplier?.isContract" type="success" class="ml-10px" plain>
-          合同
-        </el-tag>
-        <el-tag v-if="scoped.row.supplier?.isChinaRailway" type="danger" class="ml-10px" plain>
-          中铁供应商
-        </el-tag>
-        <el-tag
-          v-for="item in scoped.row.supplier?.customTags"
-          :key="item.id"
-          type="warning"
-          class="ml-10px mt-05px"
-          plain
-        >
-          {{ item.tagValue }}
-        </el-tag>
+      <template #default="{ row }">
+        <p>
+          <span>{{ row.supplier?.supplierName || '' }}</span>
+          <br v-if="row.supplier?.isContract || row.supplier?.isChinaRailway" />
+          <el-tag v-if="row.supplier?.supplierNatureName" type="primary" plain class="ml-10px">
+            {{ row.supplier?.supplierNatureName }}
+          </el-tag>
+          <el-tag v-if="row.supplier?.isContract" type="success" class="ml-10px" plain>
+            合同
+          </el-tag>
+          <el-tag v-if="row.supplier?.isChinaRailway" type="danger" class="ml-10px" plain>
+            中铁供应商
+          </el-tag>
+          <el-tag
+            v-for="item in row.supplier?.customTags"
+            :key="item.id"
+            type="warning"
+            class="ml-10px mt-05px"
+            plain
+          >
+            {{ item.tagValue }}
+          </el-tag>
+        </p>
       </template>
     </el-table-column>
     <el-table-column label="联系人" width="150" align="center" prop="supplier.contact">
       <template #default="scoped">
         {{ scoped.row.supplier?.contact }}
         <span
-          v-clipboard="scoped.row.supplier?.contactPhone"
+          v-if="scoped.row.supplier?.contactPhone"
           class="theme-color cu-pointer"
           v-html="createPrivatePhone(scoped.row.supplier?.contactPhone).outerHTML"
         ></span>
       </template>
     </el-table-column>
-
     <el-table-column
       label="承接业务"
       align="center"
@@ -89,7 +99,7 @@
     <el-table-column
       label="价格说明"
       align="center"
-      width="250"
+      width="200"
       prop="costDescription"
     ></el-table-column>
     <el-table-column label="合作均单价" width="120" align="center" prop="supplier.costPrice">
@@ -110,7 +120,7 @@
       <template #default="scoped">
         {{ scoped.row.supplier?.contributorName }}
         <span
-          v-clipboard="scoped.row.supplier?.contributorPhone"
+          v-if="scoped.row.supplier?.contributorPhone"
           class="theme-color cu-pointer"
           v-html="createPrivatePhone(scoped.row.supplier?.contributorPhone).outerHTML"
         ></span>
@@ -143,7 +153,7 @@
         </el-button>
       </template>
     </el-table-column>
-  </el-table>
+  </ElTable>
   <el-pagination
     class="table-pagination"
     :current-page="page"
@@ -189,7 +199,7 @@
   import { SupplierHeadDto, SupplierOwnerOrgShip } from '../../../supplierV2/types'
   import { formatTime } from '@/utils'
   import { GetStationSupplier, RemoveStationSupplier } from '../api'
-  import { ElMessageBox } from 'element-plus'
+  import { ElMessageBox, TableInstance } from 'element-plus'
   import { Message } from '@/components/Message'
 
   export default defineComponent({
@@ -322,6 +332,8 @@
         console.log('clear')
         editFormRef.value?.setState('')
       }
+
+      const tableRef = ref<TableInstance>()
       function loadSupplier() {
         state.loading = true
         GetStationSupplier({
@@ -334,8 +346,15 @@
             state.total = res.totalCount || 0
             state.list = res.items || []
           })
-          .finally(() => {
+          .finally(async () => {
             state.loading = false
+            await nextTick()
+
+            tableRef.value?.doLayout()
+
+            requestAnimationFrame(() => {
+              tableRef.value?.setScrollLeft(0)
+            })
           })
       }
       function handleSizeChange(size: number) {
@@ -379,7 +398,8 @@
         handleCurrentChange,
         handleSizeChange,
         handleSearch,
-        handleDelete
+        handleDelete,
+        tableRef
       }
     }
   })

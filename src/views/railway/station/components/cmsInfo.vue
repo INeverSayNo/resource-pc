@@ -6,7 +6,7 @@
         <span class="theme-color">(共{{ first }}条 )</span>
       </span>
       <div class="fr">
-        <el-radio-group v-model="readStatus" class="mr-10" @change="handleSearch">
+        <el-radio-group v-model="readStatus" class="mr-10px" @change="handleSearch">
           <el-radio label="全部">全部</el-radio>
           <el-radio label="未读">未读</el-radio>
           <el-radio label="已读">已读</el-radio>

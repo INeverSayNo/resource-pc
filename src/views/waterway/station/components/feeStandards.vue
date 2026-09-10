@@ -7,11 +7,11 @@
       新增
     </span>
     &nbsp;
-    <span class="bar-btn fr mr-10" @click="importCollectTaskResource">
+    <span class="bar-btn fr mr-10px" @click="importCollectTaskResource">
       <DAliIcon name="upload" />
       导入
     </span>
-    <span class="bar-btn fr mr-20" @click="downloadTemp">
+    <span class="bar-btn fr mr-20px" @click="downloadTemp">
       <DAliIcon name="download" />
       下载模板
     </span>

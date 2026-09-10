@@ -3,12 +3,12 @@
     <div class="title">
       <svg-icon icon-class="portIcon" />
       {{ state.waterPort.portAreaName || route.query.name || '港口详情' }}
-      <el-tag v-if="state.waterPort.portNationality" class="define mr-5 fw-bold" type="danger">
+      <el-tag v-if="state.waterPort.portNationality" class="define mr-5px fw-bold" type="danger">
         {{ state.waterPort.portNationality }}
       </el-tag>
       <el-tag
         v-if="state.waterPort.portScale"
-        class="define mr-5 fw-bold"
+        class="define mr-5px fw-bold"
         :type="stationLevelTagType[state.waterPort.portScale] || 'info'"
       >
         {{ stationLevelNameMap.get(state.waterPort.portScale) || state.waterPort.portScale }}
@@ -17,7 +17,7 @@
         v-for="tag in state.tags"
         :key="tag"
         plain
-        class="define mr-5 fw-bold"
+        class="define mr-5px fw-bold"
         :type="tagColorMap.get(tag) || 'danger'"
       >
         {{ tag }}
@@ -65,7 +65,10 @@
       :station-id="stationId"
       :wharf-data="state.portWharf"
     />
-    <PortLocationMap :center-latlng="portLocation" />
+    <PortLocationMap
+      :center-latlng="portLocation"
+      :port-name="state.waterPort.portAreaName || route.query.name"
+    />
     <SupplierEx
       :key="`suppliers-${detailScopeKey}`"
       :station-id="stationId"
@@ -164,6 +167,7 @@
   }
 
   const portLocation = computed(() => {
+    console.log(state)
     const [lat = '', lng = ''] = String(state.waterPort.portCoord || '').split('/')
     return { lat, lng }
   })

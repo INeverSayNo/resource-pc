@@ -4,11 +4,11 @@
       {{ privateLine?.name }}(<span class="theme-danger fw-b">{{ privateLine?.lineType }}</span
       >)
       <span v-if="privateLine.isAgreement" class="theme-danger"> (已签订共用协议) </span>
-      <span class="fr theme-color cu-pointer fs-12 mr-10" @click="handleEdit">
+      <span class="fr theme-color cu-pointer fs-12 mr-10px" @click="handleEdit">
         <DAliIcon name="edit" class="" />
         编辑
       </span>
-      <span class="fr theme-color cu-pointer fs-12 mr-10" @click="showAll = !showAll">
+      <span class="fr theme-color cu-pointer fs-12 mr-10px" @click="showAll = !showAll">
         <DAliIcon :name="showAll ? 'arrow-up' : 'arrow-down'" />
         {{ showAll ? '收起' : '展开' }}
       </span>
