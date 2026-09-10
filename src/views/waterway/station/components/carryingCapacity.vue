@@ -68,12 +68,9 @@
   import DcGap from '@/components/Gap/index.vue'
   import EditForm from './carryingCapactiyForm.vue'
   import { formatTime } from '@/utils'
-  import { Message } from '@/components/Message'
-  import { ElMessageBox } from 'element-plus'
-  import BaseService from '@/api/baseService'
+  import { listTrafficability } from '@/api/waterway-port'
   import { DcDeep } from '@dczy/tie-tools'
 
-  const api = new BaseService('water-port')
   export default defineComponent({
     components: {
       DcGap,
@@ -101,6 +98,7 @@
         default: () => [] as any
       }
     },
+    emits: ['reload'],
     setup(props, { emit }) {
       // const state = reactive({
       //   data: {} as any,
@@ -117,7 +115,8 @@
         row.numerical = u?.Numerical
       }
       function handleSuccess() {
-        dataLoad()
+        void dataLoad()
+        emit('reload')
       }
       // function handleClickRow(row: any) {
       //   if (props.isView) return;
@@ -149,20 +148,11 @@
 
       const loading = ref(false)
       const datalis = ref<any>()
-      function dataLoad() {
+      async function dataLoad() {
         loading.value = true
-        api
-          .OpionDefine(`trafficability-queryById?id=` + props?.stationId, null, 'GET')
-          .then((res) => {
-            if (res && res.isSuccessful) {
-              datalis.value = res.data
-            } else {
-              datalis.value = []
-            }
-          })
-          .finally(() => {
-            loading.value = false
-          })
+        const [error, data] = await listTrafficability(props.stationId)
+        loading.value = false
+        if (!error) datalis.value = data
       }
       onMounted(() => {
         dataLoad()

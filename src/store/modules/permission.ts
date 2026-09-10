@@ -57,15 +57,16 @@ export const mergeAuthorizedStaticRoutes = (
   for (const staticParent of staticRoutes) {
     const serverParent = result.find((route) => route.path === staticParent.path)
     if (!serverParent?.children?.length || !staticParent.children?.length) continue
-    const authorizedPilot = staticParent.children.find((child) => child.path === 'station')
-    const serverPilot = serverParent.children.find((child) => child.path === authorizedPilot?.path)
+    const authorizedPilot = staticParent.children[0]
+    if (!authorizedPilot) continue
+    const serverPilot = serverParent.children.find((child) => child.path === authorizedPilot.path)
     if (!serverPilot) continue
 
     if (authorizedPilot?.component) serverPilot.component = authorizedPilot.component
     serverPilot.meta = { ...serverPilot.meta, ...authorizedPilot?.meta }
 
     for (const child of staticParent.children) {
-      if (child.path === 'station') continue
+      if (child.path === authorizedPilot.path) continue
       const existing = serverParent.children.find((item) => item.path === child.path)
       if (existing) {
         existing.component = child.component

@@ -17,7 +17,10 @@ export const useWaterwayStationStore = defineStore('waterwayStation', {
       this.currentStation = payload
     },
     push(payload: WaterwayStationDto): void {
-      if (!this.stationList.some((item) => item._id === payload._id)) this.stationList.push(payload)
+      const id = payload._id || payload.Id
+      if (!id || !this.stationList.some((item) => (item._id || item.Id) === id)) {
+        this.stationList.push(payload)
+      }
     },
     reset(): void {
       this.$reset()

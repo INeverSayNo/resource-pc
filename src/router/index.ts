@@ -102,6 +102,34 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         }
       }
     ]
+  },
+  {
+    path: '/resource-app',
+    component: Layout,
+    name: 'ResourceAppWaterwayPort',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'waterwayport',
+        component: () => import('@/views/waterway/station/index.vue'),
+        name: 'WaterwayPort',
+        meta: { title: '港口信息' }
+      },
+      {
+        path: 'waterway-port-dt',
+        component: () => import('@/views/waterway/station/details.vue'),
+        name: 'WaterwayPortDetail',
+        meta: {
+          title: '港口详情',
+          hidden: true,
+          noCache: true,
+          noTagsView: false,
+          showMainRoute: true,
+          followRoute: '/resource-app/waterwayport',
+          activeMenu: '/resource-app/waterwayport'
+        }
+      }
+    ]
   }
 ]
 
