@@ -1,7 +1,7 @@
 <template>
   <div class="station-details">
     <div class="title">
-      <svg-icon icon-class="portIcon" />
+      <DAliIcon name="portIcon" width="26" height="26"/>
       {{ state.waterPort.portAreaName || route.query.name || '港口详情' }}
       <el-tag v-if="state.waterPort.portNationality" class="define mr-5px fw-bold" type="danger">
         {{ state.waterPort.portNationality }}

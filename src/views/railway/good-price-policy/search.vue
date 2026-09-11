@@ -29,7 +29,7 @@
           <el-table
             v-loading="loading"
             :data="list"
-            :height="Math.max(400, height - 76)"
+            :height="Math.max(400, height - 96)"
             border
             stripe
             row-key="id"
