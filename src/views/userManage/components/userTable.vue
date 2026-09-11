@@ -96,19 +96,18 @@ export default defineComponent({
     </el-button>
     <el-table
       ref="userTableRef"
-      size="small"
       :data="userList"
       highlight-current-row
       border
       height="600"
       :row-class-name="getRowClassName"
     >
-      <el-table-column type="index" label="序号" align="center" fixed="left" />
+      <el-table-column type="index" label="序号" width="100" align="center" fixed="left" />
       <el-table-column
         prop="userName"
         label="姓名"
         align="center"
-        width="140"
+        width="180"
         fixed="left"
       />
       
@@ -121,13 +120,13 @@ export default defineComponent({
         prop="logonName"
         label="登录名"
         align="center"
-        width="160"
+        width="300"
       />
       <el-table-column
         prop="userName"
         label="是否冻结"
         align="center"
-        width="100"
+        width="140"
       >
         <template #default="{ row }">
           <span>{{ row.isFreeze ? "是" : "否" }}</span>
@@ -148,7 +147,7 @@ export default defineComponent({
         prop="userName"
         label="是否超级管理员"
         align="center"
-        width="120"
+        width="200"
       >
         <template #default="{ row }">
           <span>{{ row.isSuperMgr ? "是" : "否" }}</span>
@@ -159,13 +158,13 @@ export default defineComponent({
         prop="userName"
         label="创建时间"
         align="center"
-        width="220"
+        width="260"
       >
         <template #default="{ row }">
           <span>{{ formatTime(row.createTime, "yyyy-MM-dd HH:mm:ss") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" fixed="right" width="260">
+      <el-table-column label="操作" align="center" fixed="right" width="300">
         <template #default="scope">
           <el-button
             size="mini"

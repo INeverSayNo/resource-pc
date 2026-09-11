@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { computed, nextTick, PropType, ref, watch } from 'vue'
   import DcGap from '@/components/Gap/index.vue'
-  import DcIcon from '@/components/icon/index.vue'
   import { DMap } from '@dczy/tie-pc'
   import { DcCommon } from '@dczy/tie-tools'
 

@@ -1,8 +1,6 @@
 <script lang="ts" setup>
   import { PropType, reactive, ref, watch, computed } from 'vue'
   import DcGap from '@/components/Gap/index.vue'
-  import DcIcon from '@/components/icon/index.vue'
-  import FileDownView from '@/components/Common/FileDownView.vue'
   import EquipmentEditForm from './editForm.vue'
   import { QueryEquipmentPage } from './api'
   import type { EquipmentItem } from './type'

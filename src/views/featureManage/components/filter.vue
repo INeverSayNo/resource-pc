@@ -1,22 +1,21 @@
 <script lang="ts">
 import { ElForm } from "element-plus";
 import { defineComponent, reactive, shallowRef } from "vue";
-import usePositions from "../hooks/usePosition";
+import useApplications from "../hooks/useApplicationList";
 
 export default defineComponent({
-  name: "UserManageFilter",
+  name: "FeatureManageFilter",
   emits: ["query"],
   setup(props, { emit }) {
-    const { positionList } = usePositions({ immediateQuery: true });
+    const { applicationList } = useApplications();
 
     const queryFormRef = shallowRef<InstanceType<typeof ElForm>>();
     const queryForm = reactive({
       filter: "", // 关键字
-      userName: "", // 用户名
-      isFreeze: false, // 是否冻结
-      isOutSide: false, // 是否外部用户
-      isSuperMgr: false, // 是否超级管理员
-      positionId: "" // 用户角色
+      name: "", // 功能名称
+      isMenu: false, // 是否菜单
+      isShortCut: false, // 是否快捷菜单
+      applicationModuleId: "" // 所属模块
     });
 
     const handleQuery = () => {
@@ -30,10 +29,10 @@ export default defineComponent({
     };
     const handleReset = () => {
       queryForm.filter = "";
-      queryForm.userName = "";
-      queryForm.isFreeze = false;
-      queryForm.isOutSide = false;
-      queryForm.isSuperMgr = false;
+      queryForm.name = "";
+      queryForm.isMenu = false;
+      queryForm.isShortCut = false;
+      queryForm.applicationModuleId = "";
       emit("query", {});
     };
     return {
@@ -41,7 +40,7 @@ export default defineComponent({
       queryFormRef,
       handleQuery,
       handleReset,
-      positionList
+      applicationList
     };
   }
 });
@@ -51,45 +50,44 @@ export default defineComponent({
   <el-form
     ref="queryFormRef"
     :model="queryForm"
-    class="mt-10px"
     v-bind="{
       labelWidth: '140px',
       inline: true,
       labelSuffix: '：',
+      size: 'small'
     }"
   >
     <el-row>
       <el-col :span="6">
-        <el-form-item label="用户角色" prop="positionId">
-          <el-select
-            v-model="queryForm.positionId"
-            placeholder="请选择"
-            style="width: 100%"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in positionList"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
+        <el-form-item label="所属模块">
+          <el-select v-model="queryForm.applicationModuleId" placeholder="请选择所属模块" clearable>
+            <el-option-group
+              v-for="group in applicationList"
+              :key="group.id"
+              :label="group.name"
+            >
+              <el-option
+                v-for="item in group.modules"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-option-group>
           </el-select>
         </el-form-item>
       </el-col>
 
-
-      <el-col :span="3">
-        <el-form-item label="是否冻结">
-          <el-switch v-model="queryForm.isFreeze" class="ml-0.5rem" />
-        </el-form-item>
-      </el-col>
-    
       <el-col :span="4">
-        <el-form-item label="是否超级管理员">
-          <el-switch v-model="queryForm.isSuperMgr" class="ml-0.5rem" />
+        <el-form-item label="是否菜单">
+          <el-switch v-model="queryForm.isMenu" class="ml-0.5rem" />
         </el-form-item>
       </el-col>
-      <el-col :span="5">
+      <el-col :span="4">
+        <el-form-item label="是否快捷菜单">
+          <el-switch v-model="queryForm.isShortCut" class="ml-0.5rem" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
         <el-form-item label="关键字">
           <el-input
             v-model="queryForm.filter"

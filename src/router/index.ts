@@ -167,22 +167,22 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           title: "用户管理"
         }
       },
-      // {
-      //   path: "feature-manager",
-      //   component: () => import("_v/featureManage/index.vue"),
-      //   name: "FeatureManager",
-      //   meta: {
-      //     title: "功能管理"
-      //   }
-      // },
-      // {
-      //   path: "auth-manager",
-      //   component: () => import("_v/authManage/index.vue"),
-      //   name: "AuthManager",
-      //   meta: {
-      //     title: "权限管理"
-      //   }
-      // },
+      {
+        path: "feature-manager",
+        component: () => import("@/views/featureManage/index.vue"),
+        name: "FeatureManager",
+        meta: {
+          title: "功能管理"
+        }
+      },
+      {
+        path: "auth-manager",
+        component: () => import("@/views/authManage/index.vue"),
+        name: "AuthManager",
+        meta: {
+          title: "权限管理"
+        }
+      },
       // {
       //   path: "/membership-index",
       //   component: () =>

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
   import { PropType, reactive, ref, watch } from 'vue'
   import DcGap from '@/components/Gap/index.vue'
-  import DcIcon from '@/components/icon/index.vue'
   import WarehouseEditForm from './editForm.vue'
   import { QueryWarehousePage } from './api'
   import type { WarehouseItem } from './type'
