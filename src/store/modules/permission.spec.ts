@@ -105,6 +105,32 @@ describe('asyncRouterMap route authorization', () => {
     expect(filtered.routes[0].children?.some((route) => route.path === 'private-line')).toBe(false)
   })
 
+  it('registers the logistics center page together with its hidden detail route', () => {
+    const filtered = authorize([{ featureUrl: 'logistic-center-v2' }])
+
+    expect(filtered.warnings).toEqual([])
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0].redirect).toBe('/resource-app/logistic-center-v2')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual([
+      'logistic-center-v2',
+      'logistic-center-detail'
+    ])
+    expect(filtered.routes[0].children?.[0].meta.title).toBe('物流中心信息库')
+    expect(filtered.routes[0].children?.[1].meta).toMatchObject({
+      hidden: true,
+      followRoute: '/resource-app/logistic-center-v2',
+      activeMenu: '/resource-app/logistic-center-v2'
+    })
+  })
+
+  it('does not register logistics center routes when their main page is unauthorized', () => {
+    const filtered = authorize([{ featureUrl: 'station' }])
+    const paths = filtered.routes[0].children?.map((route) => route.path)
+
+    expect(paths).not.toContain('logistic-center-v2')
+    expect(paths).not.toContain('logistic-center-detail')
+  })
+
   it('registers good-price-policy with its backend icon only when authorized', () => {
     const filtered = authorize([
       { featureUrl: 'good-price-policy', meta: { icon: 'policy-icon', title: '接口标题' } }

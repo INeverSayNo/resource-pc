@@ -111,6 +111,26 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: { title: '专用线信息库' }
       },
       {
+        path: 'logistic-center-v2',
+        component: () => import('@/views/railway/logisticCenterNew/index.vue'),
+        name: 'LogisticCenterV2',
+        meta: { title: '物流中心信息库' }
+      },
+      {
+        path: 'logistic-center-detail',
+        component: () => import('@/views/railway/logisticCenterNew/details.vue'),
+        name: 'LogisticCenterDetail',
+        meta: {
+          title: '中心详情',
+          hidden: true,
+          noCache: true,
+          noTagsView: false,
+          showMainRoute: true,
+          followRoute: '/resource-app/logistic-center-v2',
+          activeMenu: '/resource-app/logistic-center-v2'
+        }
+      },
+      {
         path: 'good-price-policy',
         component: () => import('@/views/railway/good-price-policy/search.vue'),
         name: 'GoodPricePolicySearch',
