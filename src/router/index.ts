@@ -135,9 +135,99 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           followRoute: '/resource-app/waterwayport',
           activeMenu: '/resource-app/waterwayport'
         }
+      },
+      {
+        path: 'stop-loading',
+        component: () => import('@/views/railway/stopLoad/index.vue'),
+        name: 'StopLoading',
+        meta: { title: '停限装解析' }
+      },
+      {
+        path: 'stop-loading-config',
+        component: () => import('@/views/railway/stopLoad/config.vue'),
+        name: 'StopLoadingConfig',
+        meta: { title: '停限装提醒配置' }
       }
     ]
-  }
+  },
+   {
+    path: "/user-auth",
+    name: "UserAuth",
+    component: Layout,
+    redirect: "/user-auth/user-manager",
+    meta: {
+      title: "会员权限"
+    },
+    children: [
+      {
+        path: "user-manager",
+        component: () => import("@/views/userManage/index.vue"),
+        name: "UserManager",
+        meta: {
+          title: "用户管理"
+        }
+      },
+      // {
+      //   path: "feature-manager",
+      //   component: () => import("_v/featureManage/index.vue"),
+      //   name: "FeatureManager",
+      //   meta: {
+      //     title: "功能管理"
+      //   }
+      // },
+      // {
+      //   path: "auth-manager",
+      //   component: () => import("_v/authManage/index.vue"),
+      //   name: "AuthManager",
+      //   meta: {
+      //     title: "权限管理"
+      //   }
+      // },
+      // {
+      //   path: "/membership-index",
+      //   component: () =>
+      //     import("_v/DCZY/MembershipBenefits/BenefitsConfig/index.vue"),
+      //   name: "MembershipIndex",
+      //   meta: {
+      //     title: "会员权益配置"
+      //   }
+      // },
+      // {
+      //   path: "/membership-remark",
+      //   component: () =>
+      //     import("_v/DCZY/MembershipBenefits/MembershipRemark/index.vue"),
+      //   name: "MembershipRemark",
+      //   meta: {
+      //     title: "会员权益描述"
+      //   }
+      // },
+      // {
+      //   path: "/priceDiscountConfig-index",
+      //   component: () =>
+      //     import("_v/DCZY/MembershipBenefits/PriceDiscountConfig/index.vue"),
+      //   name: "PriceDiscountConfigIndex",
+      //   meta: {
+      //     title: "付费折扣配置"
+      //   }
+      // },
+      // {
+      //   path: "/tasksAndRewards-index",
+      //   component: () => import("_v/DCZY/UserTasks/TasksAndRewards/index.vue"),
+      //   name: "TasksAndRewardsIndex",
+      //   meta: {
+      //     title: "任务奖励配置"
+      //   }
+      // },
+      // {
+      //   path: "/sales-index",
+      //   component: () => import("_v/DCZY/Sales/config.vue"),
+      //   name: "SalesIndex",
+      //   meta: {
+      //     title: "销售档位配置"
+      //   }
+      // }
+    ]
+  },
 ]
 
 const router = createRouter({

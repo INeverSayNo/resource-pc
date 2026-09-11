@@ -122,6 +122,32 @@ describe('asyncRouterMap route authorization', () => {
     ).toBe(false)
   })
 
+  it('registers stop-loading pages and keeps them under the resource app route', () => {
+    const filtered = authorize([
+      { featureUrl: 'stop-loading' },
+      { featureUrl: 'stop-loading-config' }
+    ])
+
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0].redirect).toBe('/resource-app/stop-loading')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual([
+      'stop-loading',
+      'stop-loading-config'
+    ])
+    expect(filtered.routes[0].children?.map((route) => route.meta.title)).toEqual([
+      '停限装解析',
+      '停限装提醒配置'
+    ])
+  })
+
+  it('does not register stop-loading pages without authorization', () => {
+    const filtered = authorize([{ featureUrl: 'station' }])
+    expect(filtered.routes[0].children?.some((route) => route.path === 'stop-loading')).toBe(false)
+    expect(
+      filtered.routes[0].children?.some((route) => route.path === 'stop-loading-config')
+    ).toBe(false)
+  })
+
   it('does not register a hidden detail route when its main page is unauthorized', () => {
     const filtered = authorize([{ featureUrl: 'waterwayport' }])
 
