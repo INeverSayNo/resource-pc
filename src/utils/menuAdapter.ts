@@ -42,11 +42,18 @@ const resolveMenuPath = (node: BackendMenuNode, parentPath: string, isChild: boo
 
 export interface MenuAuthorizationResult {
   paths: Set<string>
+  icons: Map<string, string>
   warnings: string[]
+}
+
+const getMenuIcon = (node: BackendMenuNode): string => {
+  const icon = node.meta?.icon || node.icon || node.menuIcon
+  return typeof icon === 'string' ? icon.trim() : ''
 }
 
 export const extractAuthorizedMenuPaths = (nodes: BackendMenuNode[]): MenuAuthorizationResult => {
   const paths = new Set<string>()
+  const icons = new Map<string, string>()
   const warnings: string[] = []
 
   const visit = (items: BackendMenuNode[], parentPath: string, isChild: boolean): void => {
@@ -63,11 +70,13 @@ export const extractAuthorizedMenuPaths = (nodes: BackendMenuNode[]): MenuAuthor
       } else {
         paths.add(fullPath)
       }
+      const icon = getMenuIcon(node)
+      if (icon && !icons.has(fullPath)) icons.set(fullPath, icon)
 
       if (node.childModules?.length) visit(node.childModules, fullPath, true)
     }
   }
 
   visit(nodes, '/', false)
-  return { paths, warnings }
+  return { paths, icons, warnings }
 }

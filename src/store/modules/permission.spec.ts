@@ -14,7 +14,7 @@ const authorize = (childModules: Array<Record<string, unknown>>) => {
       childModules
     }
   ])
-  return filterAsyncRoutes(asyncRouterMap, authorization.paths)
+  return filterAsyncRoutes(asyncRouterMap, authorization.paths, authorization.icons)
 }
 
 describe('asyncRouterMap route authorization', () => {
@@ -39,6 +39,27 @@ describe('asyncRouterMap route authorization', () => {
     )
     expect(filtered.routes[0].children?.[1].meta.hidden).toBe(true)
     expect(filtered.routes[0].children?.filter((route) => !route.meta.hidden)).toHaveLength(1)
+  })
+
+  it('merges backend meta icons without overriding static route metadata', () => {
+    const filtered = authorize([
+      {
+        featureUrl: 'station',
+        featureName: '接口车站标题',
+        featureControllerName: 'missing/controller',
+        meta: { icon: 'railway-station', title: '不应覆盖的标题' }
+      }
+    ])
+
+    expect(filtered.routes[0].meta.icon).toBe('remote-icon')
+    expect(filtered.routes[0].meta.title).toBe('资源应用工具')
+    expect(filtered.routes[0].children?.[0].meta.icon).toBe('railway-station')
+    expect(filtered.routes[0].children?.[0].meta.title).toBe('车站信息')
+    expect(filtered.routes[0].children?.[0].component).toBe(
+      asyncRouterMap[0].children?.[0].component
+    )
+    expect(asyncRouterMap[0].meta.icon).toBeUndefined()
+    expect(asyncRouterMap[0].children?.[0].meta.icon).toBeUndefined()
   })
 
   it('registers the waterway page and changes an unauthorized redirect', () => {
@@ -170,6 +191,27 @@ describe('backend menu authorization paths', () => {
 
     const result = extractAuthorizedMenuPaths(menus ?? [])
     expect([...result.paths]).toEqual(['/resource-app', '/resource-app/station'])
+    expect(result.icons.size).toBe(0)
+  })
+
+  it('extracts meta.icon and supports legacy top-level icon fields', () => {
+    const result = extractAuthorizedMenuPaths([
+      {
+        featureUrl: '/resource-app',
+        meta: { icon: ' resource-app ' },
+        icon: 'ignored-icon',
+        childModules: [
+          { featureUrl: 'station', icon: 'station-icon' },
+          { featureUrl: 'private-line', menuIcon: 'private-line-icon' }
+        ]
+      }
+    ])
+
+    expect([...result.icons]).toEqual([
+      ['/resource-app', 'resource-app'],
+      ['/resource-app/station', 'station-icon'],
+      ['/resource-app/private-line', 'private-line-icon']
+    ])
   })
 
   it('accepts an absolute child path that already contains its parent path', () => {

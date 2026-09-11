@@ -64,7 +64,8 @@ const firstVisibleChildPath = (
 
 export const filterAsyncRoutes = (
   routes: AppRouteRecordRaw[],
-  authorizedPaths: ReadonlySet<string>
+  authorizedPaths: ReadonlySet<string>,
+  menuIcons: ReadonlyMap<string, string> = new Map()
 ): AsyncRouteFilterResult => {
   const normalizedAuthorizedPaths = new Set(
     [...authorizedPaths].map((path) => normalizePath(path.split(/[?#]/, 1)[0]))
@@ -106,7 +107,10 @@ export const filterAsyncRoutes = (
 
       const filteredRoute: AppRouteRecordRaw = {
         ...route,
-        meta: { ...route.meta },
+        meta: {
+          ...route.meta,
+          ...(menuIcons.get(fullPath) ? { icon: menuIcons.get(fullPath) } : {})
+        },
         children
       }
 
@@ -157,7 +161,7 @@ export const usePermissionStore = defineStore('permission', {
       if (!menus) throw new Error('菜单解析失败')
 
       const authorization = extractAuthorizedMenuPaths(menus)
-      const filtered = filterAsyncRoutes(asyncRouterMap, authorization.paths)
+      const filtered = filterAsyncRoutes(asyncRouterMap, authorization.paths, authorization.icons)
       for (const warning of [...authorization.warnings, ...filtered.warnings]) console.warn(warning)
       return filtered.routes
     },

@@ -23,6 +23,10 @@ export interface BackendMenuNode {
   name?: string
   icon?: string
   menuIcon?: string
+  meta?: {
+    icon?: string
+    [key: string]: unknown
+  }
 }
 
 export type BackendMenuResponse = BackendMenuNode[] | BackendMenuNode | string
