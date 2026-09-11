@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
 import router, { asyncRouterMap, constantRouterMap } from '@/router'
 import type { BackendMenuResponse } from '@/api/login/types'
-import { adaptBackendMenus, normalizeBackendMenus } from '@/utils/menuAdapter'
-import { generateRoutesByServer, isUrl } from '@/utils/routerHelper'
+import { extractAuthorizedMenuPaths, normalizeBackendMenus } from '@/utils/menuAdapter'
+import { isUrl, pathResolve } from '@/utils/routerHelper'
 import { store } from '../index'
 
 let dynamicRouteRemovers: Array<() => void> = []
@@ -14,26 +14,119 @@ export interface PermissionState {
   isAddRouters: boolean
 }
 
+export interface AsyncRouteFilterResult {
+  routes: AppRouteRecordRaw[]
+  warnings: string[]
+}
+
 const removeInstalledRoutes = (): void => {
   for (const removeRoute of [...dynamicRouteRemovers].reverse()) removeRoute()
   dynamicRouteRemovers = []
 }
 
-const getStaticPaths = (
+const normalizePath = (path: string): string => {
+  if (isUrl(path)) return path
+  const normalized = path.replace(/\/+/g, '/')
+  return normalized.length > 1 ? normalized.replace(/\/$/, '') : normalized
+}
+
+const resolveFullPath = (parentPath: string, routePath: string): string =>
+  normalizePath(isUrl(routePath) ? routePath : pathResolve(parentPath, routePath))
+
+const collectRoutePaths = (
   routes: AppRouteRecordRaw[],
   parentPath = '/',
   result = new Set<string>()
 ): Set<string> => {
   for (const route of routes) {
-    const fullPath = isUrl(route.path)
-      ? route.path
-      : route.path.startsWith('/')
-        ? route.path
-        : `${parentPath}/${route.path}`.replace(/\/+/g, '/')
+    const fullPath = resolveFullPath(parentPath, route.path)
     result.add(fullPath)
-    if (route.children) getStaticPaths(route.children, fullPath, result)
+    if (route.children) collectRoutePaths(route.children, fullPath, result)
   }
   return result
+}
+
+const resolveRedirectPath = (redirect: string, parentPath: string): string => {
+  const path = redirect.split(/[?#]/, 1)[0]
+  return resolveFullPath(parentPath, path)
+}
+
+const firstVisibleChildPath = (
+  routes: AppRouteRecordRaw[],
+  parentPath: string
+): string | undefined => {
+  for (const route of routes) {
+    if (route.meta.hidden) continue
+    return resolveFullPath(parentPath, route.path)
+  }
+  return undefined
+}
+
+export const filterAsyncRoutes = (
+  routes: AppRouteRecordRaw[],
+  authorizedPaths: ReadonlySet<string>
+): AsyncRouteFilterResult => {
+  const normalizedAuthorizedPaths = new Set(
+    [...authorizedPaths].map((path) => normalizePath(path.split(/[?#]/, 1)[0]))
+  )
+  const configuredPaths = collectRoutePaths(routes)
+  const warnings: string[] = []
+
+  for (const path of normalizedAuthorizedPaths) {
+    if (!configuredPaths.has(path))
+      warnings.push(`菜单路径未在 asyncRouterMap 中登记，已忽略：${path}`)
+  }
+
+  const visit = (items: AppRouteRecordRaw[], parentPath: string): AppRouteRecordRaw[] => {
+    const result: AppRouteRecordRaw[] = []
+
+    for (const route of items) {
+      const fullPath = resolveFullPath(parentPath, route.path)
+      const children = route.children ? visit(route.children, fullPath) : undefined
+
+      if (route.children?.length) {
+        if (!children?.length) continue
+      } else {
+        const followRoute = route.meta.hidden ? route.meta.followRoute : undefined
+        const normalizedFollowRoute = followRoute
+          ? resolveRedirectPath(followRoute, parentPath)
+          : undefined
+        if (normalizedFollowRoute && !configuredPaths.has(normalizedFollowRoute)) {
+          warnings.push(
+            `路由 ${fullPath} 的 followRoute 未在 asyncRouterMap 中登记：${followRoute}`
+          )
+        }
+        const followsAuthorizedRoute = Boolean(
+          normalizedFollowRoute &&
+          configuredPaths.has(normalizedFollowRoute) &&
+          normalizedAuthorizedPaths.has(normalizedFollowRoute)
+        )
+        if (!normalizedAuthorizedPaths.has(fullPath) && !followsAuthorizedRoute) continue
+      }
+
+      const filteredRoute: AppRouteRecordRaw = {
+        ...route,
+        meta: { ...route.meta },
+        children
+      }
+
+      if (children && typeof filteredRoute.redirect === 'string') {
+        const retainedPaths = collectRoutePaths(children, fullPath)
+        const redirectPath = resolveRedirectPath(filteredRoute.redirect, fullPath)
+        if (!retainedPaths.has(redirectPath)) {
+          const fallback = firstVisibleChildPath(children, fullPath)
+          if (fallback) filteredRoute.redirect = fallback
+          else delete filteredRoute.redirect
+        }
+      }
+
+      result.push(filteredRoute)
+    }
+
+    return result
+  }
+
+  return { routes: visit(routes, '/'), warnings }
 }
 
 const installRouteSet = (routes: AppRouteRecordRaw[]): void => {
@@ -49,36 +142,6 @@ const installRouteSet = (routes: AppRouteRecordRaw[]): void => {
   }
 }
 
-export const mergeAuthorizedStaticRoutes = (
-  serverRoutes: AppRouteRecordRaw[],
-  staticRoutes: AppRouteRecordRaw[] = asyncRouterMap
-): AppRouteRecordRaw[] => {
-  const result = [...serverRoutes]
-  for (const staticParent of staticRoutes) {
-    const serverParent = result.find((route) => route.path === staticParent.path)
-    if (!serverParent?.children?.length || !staticParent.children?.length) continue
-    const authorizedPilot = staticParent.children[0]
-    if (!authorizedPilot) continue
-    const serverPilot = serverParent.children.find((child) => child.path === authorizedPilot.path)
-    if (!serverPilot) continue
-
-    if (authorizedPilot?.component) serverPilot.component = authorizedPilot.component
-    serverPilot.meta = { ...serverPilot.meta, ...authorizedPilot?.meta }
-
-    for (const child of staticParent.children) {
-      if (child.path === authorizedPilot.path) continue
-      const existing = serverParent.children.find((item) => item.path === child.path)
-      if (existing) {
-        existing.component = child.component
-        existing.meta = { ...existing.meta, ...child.meta }
-      } else {
-        serverParent.children.push(child)
-      }
-    }
-  }
-  return result
-}
-
 export const usePermissionStore = defineStore('permission', {
   state: (): PermissionState => ({
     routers: [...constantRouterMap],
@@ -92,9 +155,11 @@ export const usePermissionStore = defineStore('permission', {
     prepareRoutes(response: BackendMenuResponse): AppRouteRecordRaw[] {
       const menus = normalizeBackendMenus(response)
       if (!menus) throw new Error('菜单解析失败')
-      const adapted = adaptBackendMenus(menus, getStaticPaths([...constantRouterMap]))
-      for (const warning of adapted.warnings) console.warn(warning)
-      return mergeAuthorizedStaticRoutes(generateRoutesByServer(adapted.routes))
+
+      const authorization = extractAuthorizedMenuPaths(menus)
+      const filtered = filterAsyncRoutes(asyncRouterMap, authorization.paths)
+      for (const warning of [...authorization.warnings, ...filtered.warnings]) console.warn(warning)
+      return filtered.routes
     },
     replaceRoutes(routes: AppRouteRecordRaw[]): void {
       const previousRoutes = this.addRouters

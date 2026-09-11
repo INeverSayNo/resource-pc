@@ -15,7 +15,6 @@ import {
   RailwayGoodPricePolicyEx,
   RailWayGoodsYard,
   RailWayPrivatelLine,
-  RailWayPrivatelLineCrudDto,
   RailWayStation,
   RailWayStationContacts,
   RailWayStationContactsCrudDto,
@@ -264,22 +263,6 @@ export function AddStopNotice(dto: RailWayStopNoticeCrudDto) {
 }
 
 /**
- * 修改专用线联系人信息以及收费说明信息
- * @param id 专用线Id
- * @param dto
- * @returns
- */
-export function SetPrivateLine(
-  id: string,
-  dto: RailWayPrivatelLineCrudDto,
-  isUpdate = true
-) {
-  return api
-    .OpionDefine(`${id}/private-line`, dto, isUpdate ? "PUT" : "POST", false)
-    .then((res) => (res?.isSuccessful || false) as boolean);
-}
-
-/**
  * 创建铁路供应商信息
  * @param param
  * @returns
@@ -458,3 +441,4 @@ export function GetPortByName(portName: string, defaultErr = true) {
       return [];
     });
 }
+

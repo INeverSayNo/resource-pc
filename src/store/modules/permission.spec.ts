@@ -1,199 +1,203 @@
 import { describe, expect, it } from 'vitest'
 import { asyncRouterMap } from '@/router'
-import { adaptBackendMenus } from '@/utils/menuAdapter'
-import { generateRoutesByServer } from '@/utils/routerHelper'
-import { mergeAuthorizedStaticRoutes } from './permission'
+import { extractAuthorizedMenuPaths, normalizeBackendMenus } from '@/utils/menuAdapter'
+import { filterAsyncRoutes } from './permission'
 
 const page = () => Promise.resolve({ default: {} })
 
-describe('mergeAuthorizedStaticRoutes', () => {
-  it('resolves the backend waterway controller and injects its authorized detail route', () => {
-    const adapted = adaptBackendMenus([
+const authorize = (childModules: Array<Record<string, unknown>>) => {
+  const authorization = extractAuthorizedMenuPaths([
+    {
+      featureUrl: '/resource-app',
+      featureName: '接口中的资源平台标题',
+      icon: 'remote-icon',
+      childModules
+    }
+  ])
+  return filterAsyncRoutes(asyncRouterMap, authorization.paths)
+}
+
+describe('asyncRouterMap route authorization', () => {
+  it('registers the station page and its hidden detail route only', () => {
+    const filtered = authorize([
+      {
+        featureUrl: 'station',
+        featureName: '接口车站标题',
+        featureControllerName: 'missing/controller'
+      }
+    ])
+
+    expect(filtered.warnings).toEqual([])
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual([
+      'station',
+      'station-dt'
+    ])
+    expect(filtered.routes[0].children?.[0].meta.title).toBe('车站信息')
+    expect(filtered.routes[0].children?.[0].component).toBe(
+      asyncRouterMap[0].children?.[0].component
+    )
+    expect(filtered.routes[0].children?.[1].meta.hidden).toBe(true)
+    expect(filtered.routes[0].children?.filter((route) => !route.meta.hidden)).toHaveLength(1)
+  })
+
+  it('registers the waterway page and changes an unauthorized redirect', () => {
+    const filtered = authorize([
+      {
+        featureUrl: 'waterwayport?source=menu',
+        featureControllerName: ''
+      }
+    ])
+
+    expect(filtered.routes[0].redirect).toBe('/resource-app/waterwayport')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual([
+      'waterwayport',
+      'waterway-port-dt'
+    ])
+  })
+
+  it('keeps one parent route when multiple main pages are authorized', () => {
+    const filtered = authorize([{ featureUrl: 'station' }, { featureUrl: 'waterwayport' }])
+
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0].name).toBe('ResourceApp')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual([
+      'station',
+      'station-dt',
+      'waterwayport',
+      'waterway-port-dt'
+    ])
+  })
+
+  it('registers the private-line page when it is authorized', () => {
+    const filtered = authorize([{ featureUrl: 'private-line' }])
+
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0].redirect).toBe('/resource-app/private-line')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual(['private-line'])
+    expect(filtered.routes[0].children?.[0].meta.title).toBe('专用线信息库')
+  })
+
+  it('does not register the private-line page when it is unauthorized', () => {
+    const filtered = authorize([{ featureUrl: 'station' }])
+
+    expect(filtered.routes[0].children?.some((route) => route.path === 'private-line')).toBe(false)
+  })
+
+  it('does not register a hidden detail route when its main page is unauthorized', () => {
+    const filtered = authorize([{ featureUrl: 'waterwayport' }])
+
+    expect(filtered.routes[0].children?.some((route) => route.path === 'station-dt')).toBe(false)
+  })
+
+  it('allows an explicitly authorized hidden route without followRoute permission', () => {
+    const routes = [
+      {
+        path: '/reports',
+        name: 'Reports',
+        meta: { title: '报表' },
+        children: [
+          {
+            path: 'detail',
+            name: 'ReportDetail',
+            component: page,
+            meta: { title: '详情', hidden: true }
+          }
+        ]
+      }
+    ] as AppRouteRecordRaw[]
+
+    expect(filterAsyncRoutes(routes, new Set(['/reports/detail'])).routes[0].children).toHaveLength(
+      1
+    )
+    expect(filterAsyncRoutes(routes, new Set(['/reports'])).routes).toEqual([])
+  })
+
+  it('warns and rejects a hidden route whose followRoute is not configured', () => {
+    const routes = [
+      {
+        path: '/reports',
+        name: 'Reports',
+        meta: { title: '报表' },
+        children: [
+          {
+            path: 'detail',
+            name: 'ReportDetail',
+            component: page,
+            meta: { title: '详情', hidden: true, followRoute: '/reports/list' }
+          }
+        ]
+      }
+    ] as AppRouteRecordRaw[]
+    const filtered = filterAsyncRoutes(routes, new Set(['/reports/list']))
+
+    expect(filtered.routes).toEqual([])
+    expect(filtered.warnings).toContain(
+      '路由 /reports/detail 的 followRoute 未在 asyncRouterMap 中登记：/reports/list'
+    )
+  })
+
+  it('warns about backend menu paths missing from asyncRouterMap', () => {
+    const filtered = authorize([{ featureUrl: 'not-configured' }])
+
+    expect(filtered.routes).toEqual([])
+    expect(filtered.warnings).toContain(
+      '菜单路径未在 asyncRouterMap 中登记，已忽略：/resource-app/not-configured'
+    )
+  })
+
+  it('does not mutate asyncRouterMap while filtering', () => {
+    const originalChildren = asyncRouterMap[0].children
+    const originalRedirect = asyncRouterMap[0].redirect
+
+    authorize([{ featureUrl: 'waterwayport' }])
+
+    expect(asyncRouterMap[0].children).toBe(originalChildren)
+    expect(asyncRouterMap[0].children).toHaveLength(5)
+    expect(asyncRouterMap[0].redirect).toBe(originalRedirect)
+  })
+})
+
+describe('backend menu authorization paths', () => {
+  it('normalizes JSON responses, nested paths and query strings', () => {
+    const menus = normalizeBackendMenus(
+      JSON.stringify({
+        featureUrl: '//resource-app/',
+        childModules: [{ featureUrl: '/station?source=shortcut#top' }]
+      })
+    )
+    expect(menus).not.toBeNull()
+
+    const result = extractAuthorizedMenuPaths(menus ?? [])
+    expect([...result.paths]).toEqual(['/resource-app', '/resource-app/station'])
+  })
+
+  it('accepts an absolute child path that already contains its parent path', () => {
+    const result = extractAuthorizedMenuPaths([
       {
         featureUrl: '/resource-app',
-        featureName: '资源平台',
-        childModules: [
-          {
-            featureUrl: 'waterwayport',
-            featureName: '港口信息',
-            featureControllerName: 'waterway/station/index'
-          }
-        ]
+        childModules: [{ featureUrl: '/resource-app/station' }]
       }
     ])
 
-    expect(adapted.warnings).toEqual([])
-    const generated = generateRoutesByServer(adapted.routes)
-    expect(generated[0].children?.[0].component).toBeTypeOf('function')
+    expect([...result.paths]).toEqual(['/resource-app', '/resource-app/station'])
+  })
 
-    const routes = mergeAuthorizedStaticRoutes(generated, asyncRouterMap)
-    expect(routes[0].children?.map((route) => route.path)).toEqual([
-      'waterwayport',
-      'waterway-port-dt'
+  it('uses menuCode as a path fallback and reports duplicates and missing paths', () => {
+    const result = extractAuthorizedMenuPaths([
+      { menuCode: 'resource-app' },
+      { featureUrl: '/resource-app' },
+      { featureName: '无路径菜单' }
+    ])
+
+    expect([...result.paths]).toEqual(['/resource-app'])
+    expect(result.warnings).toEqual([
+      '菜单路径重复，已忽略：/resource-app',
+      '菜单 无路径菜单 缺少路径'
     ])
   })
 
-  it('only exposes railway detail routes when station menu is authorized', () => {
-    const serverRoutes = [
-      {
-        path: '/resource-app',
-        name: 'server-resource-app',
-        meta: {},
-        children: [{ path: 'station', name: 'server-station', meta: {}, component: page }]
-      }
-    ] as AppRouteRecordRaw[]
-    const staticRoutes = [
-      {
-        path: '/resource-app',
-        name: 'pilot',
-        meta: {},
-        children: [
-          { path: 'station', name: 'station', meta: {}, component: page },
-          { path: 'station-dt', name: 'station-detail', meta: { hidden: true }, component: page },
-          { path: 'station-map', name: 'station-map', meta: {}, component: page }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-
-    const routes = mergeAuthorizedStaticRoutes(serverRoutes, staticRoutes)
-    expect(routes[0].children?.map((route) => route.path)).toEqual([
-      'station',
-      'station-dt',
-      'station-map'
-    ])
-  })
-
-  it('does not create a hidden back door without the station menu', () => {
-    const serverRoutes = [
-      {
-        path: '/resource-app',
-        name: 'server-resource-app',
-        meta: {},
-        children: [{ path: 'other', name: 'other', meta: {}, component: page }]
-      }
-    ] as AppRouteRecordRaw[]
-    const staticRoutes = [
-      {
-        path: '/resource-app',
-        name: 'pilot',
-        meta: {},
-        children: [
-          { path: 'station', name: 'station', meta: {}, component: page },
-          { path: 'station-dt', name: 'station-detail', meta: {}, component: page }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-
-    expect(mergeAuthorizedStaticRoutes(serverRoutes, staticRoutes)[0].children).toHaveLength(1)
-  })
-
-  it('authorizes each static slice by its own menu anchor', () => {
-    const serverRoutes = [
-      {
-        path: '/resource-app',
-        name: 'server-resource-app',
-        meta: {},
-        children: [{ path: 'waterwayport', name: 'server-waterway', meta: {}, component: page }]
-      }
-    ] as AppRouteRecordRaw[]
-    const staticRoutes = [
-      {
-        path: '/resource-app',
-        name: 'railway',
-        meta: {},
-        children: [
-          { path: 'station', name: 'station', meta: {}, component: page },
-          { path: 'station-dt', name: 'station-detail', meta: { hidden: true }, component: page }
-        ]
-      },
-      {
-        path: '/resource-app',
-        name: 'waterway',
-        meta: {},
-        children: [
-          { path: 'waterwayport', name: 'waterwayport', meta: {}, component: page },
-          {
-            path: 'waterway-port-dt',
-            name: 'waterway-detail',
-            meta: { hidden: true },
-            component: page
-          }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-
-    const routes = mergeAuthorizedStaticRoutes(serverRoutes, staticRoutes)
-    expect(routes[0].children?.map((route) => route.path)).toEqual([
-      'waterwayport',
-      'waterway-port-dt'
-    ])
-    expect(routes[0].children?.some((route) => route.path === 'station-dt')).toBe(false)
-  })
-
-  it('does not expose waterway detail to a railway-only menu', () => {
-    const serverRoutes = [
-      {
-        path: '/resource-app',
-        name: 'server-resource-app',
-        meta: {},
-        children: [{ path: 'station', name: 'server-station', meta: {}, component: page }]
-      }
-    ] as AppRouteRecordRaw[]
-    const waterwayRoutes = [
-      {
-        path: '/resource-app',
-        name: 'waterway',
-        meta: {},
-        children: [
-          { path: 'waterwayport', name: 'waterwayport', meta: {}, component: page },
-          { path: 'waterway-port-dt', name: 'waterway-detail', meta: {}, component: page }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-
-    const routes = mergeAuthorizedStaticRoutes(serverRoutes, waterwayRoutes)
-    expect(routes[0].children?.map((route) => route.path)).toEqual(['station'])
-  })
-
-  it('keeps railway and waterway slices independent when both menus are authorized', () => {
-    const serverRoutes = [
-      {
-        path: '/resource-app',
-        name: 'server-resource-app',
-        meta: {},
-        children: [
-          { path: 'station', name: 'server-station', meta: {}, component: page },
-          { path: 'waterwayport', name: 'server-waterway', meta: {}, component: page }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-    const staticRoutes = [
-      {
-        path: '/resource-app',
-        name: 'railway',
-        meta: {},
-        children: [
-          { path: 'station', name: 'station', meta: {}, component: page },
-          { path: 'station-dt', name: 'station-detail', meta: {}, component: page }
-        ]
-      },
-      {
-        path: '/resource-app',
-        name: 'waterway',
-        meta: {},
-        children: [
-          { path: 'waterwayport', name: 'waterwayport', meta: {}, component: page },
-          { path: 'waterway-port-dt', name: 'waterway-detail', meta: {}, component: page }
-        ]
-      }
-    ] as AppRouteRecordRaw[]
-
-    const routes = mergeAuthorizedStaticRoutes(serverRoutes, staticRoutes)
-    expect(routes[0].children?.map((route) => route.path)).toEqual([
-      'station',
-      'waterwayport',
-      'station-dt',
-      'waterway-port-dt'
-    ])
+  it('returns no dynamic routes for an empty authorization set', () => {
+    expect(filterAsyncRoutes(asyncRouterMap, new Set()).routes).toEqual([])
   })
 })

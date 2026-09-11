@@ -11,6 +11,9 @@ interface RouteMetaCustom extends Record<string | number | symbol, unknown> {
   affix?: boolean
   activeMenu?: string
   noTagsView?: boolean
+  followAuth?: string
+  followRoute?: string
+  showMainRoute?: boolean
 }
 
 declare module 'vue-router' {
@@ -24,19 +27,7 @@ declare global {
   declare interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta' | 'children'> {
     name: string
     meta: RouteMetaCustom
-    component?: Component | string
+    component?: Component
     children?: AppRouteRecordRaw[]
-  }
-
-  declare interface AppCustomRouteRecordRaw extends Omit<
-    RouteRecordRaw,
-    'meta' | 'component' | 'children'
-  > {
-    name: string
-    meta: RouteMetaCustom
-    component: string
-    path: string
-    redirect?: string
-    children?: AppCustomRouteRecordRaw[]
   }
 }

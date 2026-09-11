@@ -1,58 +1,47 @@
-export interface PrivateLineItem {
-  fileAttach: any;
-  tags: AnalyserOptions[];
-  id: string;
-  stationId: string;
-  stationName: string;
-  name: string;
-  num: string;
-  transferMileage: number;
-  lineProperty: string;
-  lineType: string;
-  ownerUnit: any;
-  rightUnit: any;
-  shareUnit: any;
-  shareUnitList: string;
-  contacts: string;
-  phone: string;
-  arriveCategory: string;
-  sendCategory: string;
-  overrun: boolean;
-  overweight: boolean;
-  containerSendHS: string;
-  containerArriveHS: string;
-  containerMixedLoading: boolean;
-  maxLiftingCapacity: number;
-  forkliftLC: number;
-  container20LC: number;
-  container40LC: number;
-  dangerSendFilling: any;
-  dangerSendNotFilling: any;
-  dangerSendContainer: any;
-  dangerArriveFilling: any;
-  dangerArriveNotFilling: any;
-  dangerArriveContainer: any;
-  chargeRemark: string;
-  address: string;
-  isAgreement: boolean;
-  fileAttachIds: any;
-  isScrap: boolean;
-  scraperId: any;
-  scraperName: any;
-  scrapTime: any;
-  organizationId: string;
-  organizationRelationshipId: string;
-  organizationCode: string;
-  organizationRelationshipCode: string;
-  organizationName: string;
-  creatorName: string;
-  lastModifierName: string;
-  deleterName: any;
-  isDeleted: boolean;
-  deleterId: any;
-  deletionTime: any;
-  lastModificationTime: string;
-  lastModifierId: string;
-  creationTime: string;
-  creatorId: string;
+import type { FileAttach } from '@/utils/base-entity'
+import type { RailWayPrivatelLine } from '@/views/railway/station/types'
+
+export type PrivateLineStationType = 'all' | 'start' | 'arrive'
+
+export interface PrivateLineQuery {
+  page: number
+  pageSize: number
+  name?: string
+  stationName?: string
+  isSend?: boolean
+  category?: string
+  isContainer?: boolean
+  isDanger?: boolean
+}
+
+export interface PrivateLineAttachment extends FileAttach {
+  id?: string
+  filePath?: string
+  fileType?: string
+  fileRealName?: string
+}
+
+export interface PrivateLineItem extends RailWayPrivatelLine {
+  tags?: string[]
+  fileAttach?: PrivateLineAttachment[]
+  fileAttachIds?: string | string[]
+  isScrap?: boolean
+  scraperId?: string | null
+  scraperName?: string | null
+  scrapTime?: string | null
+  organizationId?: string
+  organizationRelationshipId?: string
+  organizationCode?: string
+  organizationRelationshipCode?: string
+  organizationName?: string
+  creatorName?: string
+  lastModifierName?: string
+  deleterName?: string | null
+  isDeleted?: boolean
+  deleterId?: string | null
+  deletionTime?: string | null
+  lastModificationTime?: string
+  lastModifierId?: string
+  creationTime?: string
+  creatorId?: string
 }

@@ -73,13 +73,16 @@ export const constantRouterMap: AppRouteRecordRaw[] = [
   }
 ]
 
-// Railway pilot routes are merged into the matching server-authorized menu branch.
 export const asyncRouterMap: AppRouteRecordRaw[] = [
   {
     path: '/resource-app',
     component: Layout,
-    name: 'ResourceAppRailwayPilot',
-    meta: { hidden: true },
+    name: 'ResourceApp',
+    redirect: '/resource-app/station',
+    meta: {
+      alwaysShow: true,
+      title: '资源应用工具'
+    },
     children: [
       {
         path: 'station',
@@ -100,15 +103,13 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
           followRoute: '/resource-app/station',
           activeMenu: '/resource-app/station'
         }
-      }
-    ]
-  },
-  {
-    path: '/resource-app',
-    component: Layout,
-    name: 'ResourceAppWaterwayPort',
-    meta: { hidden: true },
-    children: [
+      },
+      {
+        path: 'private-line',
+        component: () => import('@/views/railway/privateLine/index.vue'),
+        name: 'RailwayPrivateLine',
+        meta: { title: '专用线信息库' }
+      },
       {
         path: 'waterwayport',
         component: () => import('@/views/waterway/station/index.vue'),

@@ -79,7 +79,7 @@
             :rules="[
               {
                 validator: validatorNoHZZM,
-                messgae: '请输入正确的电话号码',
+                message: '请输入正确的电话号码',
                 trigger: 'blur'
               }
             ]"
@@ -101,7 +101,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="" props="isAgreement">
+          <el-form-item label="" prop="isAgreement">
             <el-switch
               v-model="edit.isAgreement"
               active-text="是否与专用线签订共用协议"
@@ -190,7 +190,7 @@
           <DcGap class="mb-05">
             集装箱办理范围
             <span
-              class="theme-color fr cu-pointer"
+              class="c-#145ca8 fr cursor-pointer"
               @click="expand.container = !expand.container"
             >
               {{ expand.container ? "收起" : "展开" }}
@@ -253,7 +253,7 @@
           <DcGap class="mb-05">
             危险品办理范围
             <span
-              class="theme-color fr cu-pointer"
+              class="c-#145ca8 fr cursor-pointer"
               @click="expand.danger = !expand.danger"
             >
               {{ expand.danger ? "收起" : "展开" }}
@@ -319,7 +319,7 @@
           <DcGap class="mb-05">
             起重能力
             <span
-              class="theme-color fr cu-pointer"
+              class="c-#145ca8 fr cursor-pointer"
               @click="expand.LiftingCapacity = !expand.LiftingCapacity"
             >
               {{ expand.LiftingCapacity ? "收起" : "展开" }}
@@ -377,234 +377,179 @@
   </com-dialog>
 </template>
 
-<script lang="ts">
-import { Message } from "@/components/Message";
-import {
-  computed,
-  reactive,
-  toRefs,
-  defineComponent,
-  PropType,
-  ref
-} from "vue";
-import { SetPrivateLine } from "../api";
-import { RailWayPrivatelLine, RailWayPrivatelLineCrudDto } from "../types";
-import { GetAddress, validatorNoHZZM } from "@/utils";
-import { useStatisticTrace } from "@/hooks/useStatisticTrace";
-import { ContainerType } from "../store";
-import { FILE_URL } from "@/request";
-import { FileAttach } from "@/utils/base-entity";
-import DcMapSelect from "@/components/BmapSelect/index.vue";
-import DcGap from "@/components/Gap/index.vue";
-import DcFileAttach from "@/components/UploadAttach/dcUploadAttach.vue";
-import { useAnalyticsTrack } from "@/plugins/monitor";
-import { QueryPrivateLineDetailById } from "../../privateLine/api";
-import DcRailwayStation from "@/components/Railway/station.vue";
-import ContributionInput from "@/views/railway/contribution/index.vue"
-import { formatTime } from "@/utils";
-import { DcDeep } from "@dczy/tie-tools";
-type stateProp = {
-  edit: RailWayPrivatelLineCrudDto;
-  loading: boolean;
-  containerSend: string[];
-  containerArrive: string[];
-  fileAttacies: FileAttach[];
-  expand: {
-    danger: boolean;
-    LiftingCapacity: boolean;
-    container: boolean;
-  };
-};
-export default defineComponent({
-  name: "",
-  components: {
-    DcMapSelect,
-    DcGap,
-    DcFileAttach,
-    DcRailwayStation,
-    ContributionInput
-  },
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: () => false
-    },
-    privateLine: {
-      type: Object as PropType<RailWayPrivatelLine>,
-      default: () => {}
-    }
-  },
-  emits: ["update:modelValue", "success"],
-  setup(props, { emit }) {
-    const { businessOperationStart, businessOperationEnd } =
-      useAnalyticsTrack();
-    const stationName = ref("");
-    const stationIptId = ref("");
-    const formRef = ref();
-    const action = ref(`${FILE_URL}/privateline`);
-    const { SetTrace } = useStatisticTrace();
-    const containerOption = ContainerType.filter((x) => x.label);
-    const showDetails = computed({
-      get: () => props.modelValue,
-      set: (val) => {
-        emit("update:modelValue", val);
-      }
-    });
-    const isEdit = computed(() => {
-      return !props.privateLine.id;
-    });
-    const state = reactive<stateProp>({
-      edit: {},
-      loading: false,
-      containerSend: [],
-      containerArrive: [],
-      expand: {
-        danger: false,
-        LiftingCapacity: false,
-        container: false
-      },
-      fileAttacies: []
-    });
-    const handleOpen = () => {
-      businessOperationStart();
-      if (props.privateLine?.id) {
-        state.edit = {
-          name: props.privateLine.name,
-          num: props.privateLine.num,
-          transferMileage: props.privateLine.transferMileage,
-          contacts: props.privateLine.contacts,
-          phone: props.privateLine.phone,
-          chargeRemark: props.privateLine.chargeRemark,
-          addressFormat: GetAddress(props.privateLine.address, true),
-          isAgreement: props.privateLine.isAgreement,
-          lineProperty: props.privateLine.lineProperty,
-          lineType: props.privateLine.lineType,
-          ownerUnit: props.privateLine.ownerUnit,
-          rightUnit: props.privateLine.rightUnit,
-          shareUnit: props.privateLine.shareUnit,
-          arriveCategory: props.privateLine.arriveCategory,
-          sendCategory: props.privateLine.sendCategory,
-          overrun: props.privateLine.overrun,
-          overweight: props.privateLine.overweight,
-          containerSendHS: props.privateLine.containerSendHS,
-          containerArriveHS: props.privateLine.containerArriveHS,
-          containerMixedLoading: props.privateLine.containerMixedLoading,
-          maxLiftingCapacity: props.privateLine.maxLiftingCapacity,
-          forkliftLC: props.privateLine.forkliftLC,
-          container20LC: props.privateLine.container20LC,
-          container40LC: props.privateLine.container40LC,
-          dangerSendFilling: props.privateLine.dangerSendFilling,
-          dangerSendNotFilling: props.privateLine.dangerSendNotFilling,
-          dangerSendContainer: props.privateLine.dangerSendContainer,
-          dangerArriveFilling: props.privateLine.dangerArriveFilling,
-          dangerArriveNotFilling: props.privateLine.dangerArriveNotFilling,
-          dangerArriveContainer: props.privateLine.dangerArriveContainer,
-        };
-        state.containerArrive =
-          props.privateLine?.containerArriveHS?.split(",") || [];
-        state.containerSend =
-          props.privateLine?.containerSendHS?.split(",") || [];
-        // state.fileAttacies = DcDeep.clone<FileAttach[]>(
-        //   props.privateLine.fileAttach || []
-        // );
-        getFileList(props.privateLine.id);
-      } else {
-        state.edit = {};
-        state.containerArrive = [];
-        state.containerSend = [];
-        state.fileAttacies = [];
-      }
-      const userInfo = JSON.parse(localStorage.getItem("CurUser") || "{}");
-      state.edit.contributionaTime = formatTime(new Date(), "yyyy-MM-dd");
-      state.edit.contributor = userInfo.given_name;
-    };
+<script setup lang="ts">
+  import { computed, ref } from 'vue'
+  import type { FormInstance, FormRules } from 'element-plus'
+  import { DcDeep } from '@dczy/tie-tools'
+  import { Message } from '@/components/Message'
+  import DcMapSelect from '@/components/BmapSelect/index.vue'
+  import DcGap from '@/components/Gap/index.vue'
+  import DcRailwayStation from '@/components/Railway/station.vue'
+  import DcFileAttach from '@/components/UploadAttach/dcUploadAttach.vue'
+  import { FILE_URL } from '@/request'
+  import { useStatisticTrace } from '@/hooks/useStatisticTrace'
+  import { useAnalyticsTrack } from '@/plugins/monitor'
+  import { formatTime, GetAddress, validatorNoHZZM } from '@/utils'
+  import type { FileAttach } from '@/utils/base-entity'
+  import ContributionInput from '@/views/railway/contribution/index.vue'
+  import { createPrivateLine, getPrivateLineDetail, updatePrivateLine } from '../../privateLine/api'
+  import { ContainerType } from '../store'
+  import type { RailWayPrivatelLine, RailWayPrivatelLineCrudDto } from '../types'
 
-    function handleStationChange(_, station) {
-      stationIptId.value = station.Id;
-    }
+  defineOptions({ name: 'PrivateLineForm' })
 
-    function handleSave() {
-      businessOperationEnd({
-        dataId: props.privateLine.stationId,
-        module: "铁路站点",
-        page_title: "站点专用线信息编辑"
-      });
-      const id =
-        props.privateLine.id ||
-        props.privateLine.stationId ||
-        stationIptId.value;
-      if (!id) {
-        Message.warning("请选择输入正确的关联站点");
-        return;
-      }
-      formRef.value?.validate((valid) => {
-        if (valid) {
-          state.loading = true;
-          const param = DcDeep.clone<RailWayPrivatelLineCrudDto>(state.edit);
-          param.address = JSON.stringify(param.addressFormat);
-          param.fileAttach = state.fileAttacies;
-          SetPrivateLine(id, param, !isEdit.value)
-            .then((res) => {
-              if (res) {
-                Message.success("保存成功");
-                showDetails.value = false;
-                if (!props.privateLine.id) {
-                  SetTrace(
-                    "$INSERT",
-                    "铁路站点",
-                    "全国铁路站点",
-                    props.privateLine.stationId,
-                    1,
-                    "专用线"
-                  );
-                }
-                emit("success");
-              }
-            })
-            .finally(() => {
-              state.loading = false;
-            });
-          SetTrace(
-            "$UPDATE",
-            "铁路站点",
-            "全国铁路站点",
-            props.privateLine.stationId || stationIptId.value
-          );
-        } else {
-          Message.warning("请完整的填写表单信息");
-        }
-      });
+  const props = withDefaults(
+    defineProps<{
+      modelValue?: boolean
+      privateLine?: Partial<RailWayPrivatelLine>
+    }>(),
+    {
+      modelValue: false,
+      privateLine: () => ({})
     }
-    const rules = {
-      name: [{ required: true, message: "请输入专用线名称", trigger: "blur" }],
-      num: [{ required: true, message: "请输入专用代码", trigger: "blur" }],
-      contributor: [{required: true, message: "请选择贡献人", trigger: "blur"}],
-      contributionaTime: [{required: true, message: "请选择贡献时间", trigger: "blur"}],
-    };
+  )
 
-    //#region 附件信息
-    function getFileList(id: string) {
-      QueryPrivateLineDetailById(id).then((res) => {
-        state.fileAttacies = res.fileAttach || [];
-      });
-    }
-    //#endregion
-    return {
-      ...toRefs(state),
-      formRef,
-      showDetails,
-      handleOpen,
-      validatorNoHZZM,
-      handleSave,
-      containerOption,
-      action,
-      isEdit,
-      rules,
-      stationName,
-      handleStationChange
-    };
+  const emit = defineEmits<{
+    (event: 'update:modelValue', value: boolean): void
+    (event: 'success'): void
+  }>()
+
+  const { businessOperationStart, businessOperationEnd } = useAnalyticsTrack()
+  const { SetTrace } = useStatisticTrace()
+  const formRef = ref<FormInstance>()
+  const stationName = ref('')
+  const stationIptId = ref('')
+  const edit = ref<RailWayPrivatelLineCrudDto>({})
+  const loading = ref(false)
+  const containerSend = ref<string[]>([])
+  const containerArrive = ref<string[]>([])
+  const fileAttacies = ref<FileAttach[]>([])
+  const expand = ref({ danger: false, LiftingCapacity: false, container: false })
+  const action = `${FILE_URL}/privateline`
+  const containerOption = ContainerType.filter((item) => item.label)
+
+  const showDetails = computed({
+    get: () => props.modelValue,
+    set: (value: boolean) => emit('update:modelValue', value)
+  })
+
+  const isEdit = computed(() => !props.privateLine.id)
+
+  const rules: FormRules<RailWayPrivatelLineCrudDto> = {
+    name: [{ required: true, message: '请输入专用线名称', trigger: 'blur' }],
+    num: [{ required: true, message: '请输入专用代码', trigger: 'blur' }],
+    contributor: [{ required: true, message: '请选择贡献人', trigger: 'blur' }],
+    contributionaTime: [{ required: true, message: '请选择贡献时间', trigger: 'blur' }]
   }
-});
+
+  const createEditModel = (line: Partial<RailWayPrivatelLine>): RailWayPrivatelLineCrudDto => ({
+    name: line.name,
+    num: line.num,
+    transferMileage: line.transferMileage,
+    contacts: line.contacts,
+    phone: line.phone,
+    chargeRemark: line.chargeRemark,
+    addressFormat: GetAddress(line.address || '', true),
+    isAgreement: line.isAgreement,
+    lineProperty: line.lineProperty,
+    lineType: line.lineType,
+    ownerUnit: line.ownerUnit,
+    rightUnit: line.rightUnit,
+    shareUnit: line.shareUnit,
+    arriveCategory: line.arriveCategory,
+    sendCategory: line.sendCategory,
+    overrun: line.overrun,
+    overweight: line.overweight,
+    containerSendHS: line.containerSendHS,
+    containerArriveHS: line.containerArriveHS,
+    containerMixedLoading: line.containerMixedLoading,
+    maxLiftingCapacity: line.maxLiftingCapacity,
+    forkliftLC: line.forkliftLC,
+    container20LC: line.container20LC,
+    container40LC: line.container40LC,
+    dangerSendFilling: line.dangerSendFilling,
+    dangerSendNotFilling: line.dangerSendNotFilling,
+    dangerSendContainer: line.dangerSendContainer,
+    dangerArriveFilling: line.dangerArriveFilling,
+    dangerArriveNotFilling: line.dangerArriveNotFilling,
+    dangerArriveContainer: line.dangerArriveContainer
+  })
+
+  const setDefaultContribution = () => {
+    const userInfo = JSON.parse(localStorage.getItem('CurUser') || '{}') as { given_name?: string }
+    edit.value.contributionaTime ||= formatTime(new Date(), 'yyyy-MM-dd')
+    edit.value.contributor ||= userInfo.given_name || ''
+  }
+
+  const handleOpen = async () => {
+    businessOperationStart()
+    stationIptId.value = ''
+    stationName.value = props.privateLine.stationName || ''
+    fileAttacies.value = []
+
+    let source = props.privateLine
+    if (props.privateLine.id) {
+      const [error, detail] = await getPrivateLineDetail(props.privateLine.id)
+      if (!error) source = { ...props.privateLine, ...detail }
+    }
+
+    edit.value = createEditModel(source)
+    containerArrive.value = source.containerArriveHS?.split(',').filter(Boolean) || []
+    containerSend.value = source.containerSendHS?.split(',').filter(Boolean) || []
+    fileAttacies.value = DcDeep.clone<FileAttach[]>(source.fileAttach || [])
+    expand.value = { danger: false, LiftingCapacity: false, container: false }
+    setDefaultContribution()
+  }
+
+  const handleStationChange = (_value: unknown, station?: { Id?: string; id?: string }) => {
+    stationIptId.value = station?.Id || station?.id || ''
+  }
+
+  const handleSave = async () => {
+    const valid = await formRef.value?.validate().catch(() => false)
+    if (!valid) {
+      Message.warning('请完整填写表单信息')
+      return
+    }
+
+    const stationId = props.privateLine.stationId || stationIptId.value
+    if (!props.privateLine.id && !stationId) {
+      Message.warning('请选择正确的关联站点')
+      return
+    }
+
+    const payload = DcDeep.clone<RailWayPrivatelLineCrudDto>(edit.value)
+    payload.address = JSON.stringify(payload.addressFormat || GetAddress('', true))
+    payload.fileAttach = DcDeep.clone<FileAttach[]>(fileAttacies.value)
+    delete payload.addressFormat
+
+    loading.value = true
+    const [error, success] = props.privateLine.id
+      ? await updatePrivateLine(props.privateLine.id, payload)
+      : await createPrivateLine(stationId, payload)
+    loading.value = false
+
+    businessOperationEnd({
+      dataId: props.privateLine.id || stationId,
+      module: '铁路站点',
+      page_title: '站点专用线信息编辑'
+    })
+
+    if (error || !success) {
+      if (error) Message.error(error.message || '保存失败')
+      return
+    }
+
+    Message.success('保存成功')
+    showDetails.value = false
+    if (props.privateLine.id) {
+      SetTrace('$UPDATE', '铁路站点', '全国铁路站点', stationId)
+    } else {
+      SetTrace('$INSERT', '铁路站点', '全国铁路站点', stationId, 1, '专用线')
+    }
+    emit('success')
+  }
 </script>
 
 <style></style>
+
