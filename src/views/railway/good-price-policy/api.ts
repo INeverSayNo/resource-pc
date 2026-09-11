@@ -1,82 +1,189 @@
-import { PagedResultDto } from "@/utils/base-entity";
-import BaseService from "@/api/baseService";
-import {
+import { BaseApi } from '@/request'
+import type { ApiResult } from '@/request'
+import { PATH_URL, USE_CRY_PTO } from '@/request/config'
+import type { PagedResultDto } from '@/utils/base-entity'
+import type {
   GoodsItems,
   PolicyAllSimpleRecordDto,
   PolicyAllSimpleUpdateDto,
   PolicyShowDto,
   PricePolicyQueryLineParam,
   PricePolicyQueryParam,
-  PricePolicyResult
-} from "./types";
-import { DcDeep } from "@dczy/tie-tools";
+  PricePolicyResult,
+  RailwayGppStatistics,
+  RailwayGppStatisticsParam,
+  PolicySimpleResultWithMap
+} from './types'
 
-const api = new BaseService("railway");
-
-/**
- * 分页查询优价主表信息
- * @param params 查询参数
- * @returns
- */
-function SearchPolicy(params: PricePolicyQueryParam) {
-  return api
-    .OpionDefine("search-policy-inner", params, "POST")
-    .then(
-      (res) => (res?.data || {}) as PagedResultDto<PolicyAllSimpleRecordDto>
-    );
+interface BusinessResponse<T> {
+  data?: T
+  isSuccessful?: boolean
+  IsSuccessful?: boolean
 }
 
-/**
- * 根据优价政策Id,获取优价明细项目
- * @param policyId 优价政策Id
- * @returns
- */
-function GetPolicyDetails(policyId: string) {
-  return api
-    .OpionDefine(`${policyId}/policy-details`, "", "GET", false)
-    .then((res) => (res?.data || []) as PricePolicyResult[]);
+interface RequestOptions {
+  signal?: AbortSignal
 }
 
-/**
- * 全部货物信息，包含品类
- * @returns
- */
-function GetAllGoods(goodsName: string) {
-  return api
-    .OpionDefine(`all-goods?goodsName=${goodsName}`, "", "GET", false)
-    .then((res) => (res?.data || []) as GoodsItems[]);
+const client = new BaseApi({ baseURL: PATH_URL, crypto: USE_CRY_PTO })
+const railwayBaseUrl = '/api/resource/railway'
+
+const emptyPage = (): PagedResultDto<PolicyAllSimpleRecordDto> => ({
+  totalCount: 0,
+  items: [],
+  isSuccessful: false,
+  message: ''
+})
+
+const unwrapData = async <T>(result: ApiResult<BusinessResponse<T>>, fallback: T): ApiResult<T> => {
+  const [error, response] = await result
+  return error ? [error, fallback] : [null, response?.data ?? fallback]
 }
 
-/**
- * 查询优价线路
- * @param param
- * @returns
- */
-function SearchPolicyLine(param: PricePolicyQueryLineParam) {
-  return api
-    .OpionDefine(`goods-policy-query`, param, "POST", false)
-    .then((res) => (res?.data || []) as PolicyShowDto[]);
+const unwrapSuccess = async (result: ApiResult<BusinessResponse<unknown>>): ApiResult<boolean> => {
+  const [error, response] = await result
+  if (error) return [error, false]
+  const successful = response?.isSuccessful ?? response?.IsSuccessful
+  return [null, successful !== false]
 }
 
-/**
- * 更新优价集装箱类型以及备注
- * @param param
- * @returns
- */
-function UpdatePolicyContainerTypeAndRemark(param: PolicyAllSimpleUpdateDto) {
-  const postParam = DcDeep.clone<PolicyAllSimpleUpdateDto>(param);
-  if (param.containerTypes.length) {
-    postParam.containerType = param.containerTypes.join(",");
+const withSignal = (options: RequestOptions) =>
+  options.signal ? { signal: options.signal } : undefined
+
+export const buildPolicyPageParams = (params: PricePolicyQueryParam) => ({
+  start: 0,
+  sumfield: '',
+  sort: "[{property:'id',direction:'desc'}]",
+  totalRowsCount: 0,
+  isExport: true,
+  isAllPage: true,
+  total: 0,
+  totalpagecount: 0,
+  ...params,
+  limit: params.pageSize || 50,
+  KeyWords: undefined
+})
+
+export const searchPolicies = (
+  params: PricePolicyQueryParam,
+  options: RequestOptions = {}
+): ApiResult<PagedResultDto<PolicyAllSimpleRecordDto>> =>
+  unwrapData(
+    client.post<BusinessResponse<PagedResultDto<PolicyAllSimpleRecordDto>>>(
+      `${railwayBaseUrl}/search-policy-inner`,
+      buildPolicyPageParams(params),
+      true,
+      withSignal(options)
+    ),
+    emptyPage()
+  )
+
+export const getPolicyDetails = (
+  policyId: string,
+  options: RequestOptions = {}
+): ApiResult<PricePolicyResult[]> =>
+  unwrapData(
+    client.get<BusinessResponse<PricePolicyResult[]>>(
+      `${railwayBaseUrl}/${encodeURIComponent(policyId)}/policy-details`,
+      undefined,
+      true,
+      withSignal(options)
+    ),
+    []
+  )
+
+export const getAllPolicyGoods = (
+  goodsName: string,
+  options: RequestOptions = {}
+): ApiResult<GoodsItems[]> =>
+  unwrapData(
+    client.get<BusinessResponse<GoodsItems[]>>(
+      `${railwayBaseUrl}/all-goods`,
+      { goodsName },
+      true,
+      withSignal(options)
+    ),
+    []
+  )
+
+export const searchPolicyLine = (
+  params: PricePolicyQueryLineParam,
+  options: RequestOptions = {}
+): ApiResult<PolicyShowDto[]> =>
+  unwrapData(
+    client.post<BusinessResponse<PolicyShowDto[]>>(
+      `${railwayBaseUrl}/goods-policy-query`,
+      params,
+      true,
+      withSignal(options)
+    ),
+    []
+  )
+
+export const updatePolicyContainerAndRemark = (
+  params: PolicyAllSimpleUpdateDto
+): ApiResult<boolean> => {
+  const payload: PolicyAllSimpleUpdateDto = {
+    ...params,
+    containerTypes: [...params.containerTypes],
+    containerType: params.containerTypes.join(',')
   }
-  return api
-    .OpionDefine(`update-policy-cr`, postParam, "POST", false)
-    .then((res) => (res?.isSuccessful || false) as boolean);
+  return unwrapSuccess(
+    client.post<BusinessResponse<unknown>>(`${railwayBaseUrl}/update-policy-cr`, payload, true)
+  )
 }
 
-export {
-  SearchPolicy,
-  GetPolicyDetails,
-  GetAllGoods,
-  SearchPolicyLine,
-  UpdatePolicyContainerTypeAndRemark
-};
+export const queryPolicyChannels = (
+  params: RailwayGppStatisticsParam,
+  options: RequestOptions = {}
+): ApiResult<RailwayGppStatistics> =>
+  unwrapData(
+    client.post<BusinessResponse<RailwayGppStatistics>>(
+      `${railwayBaseUrl}/policy-channel`,
+      params,
+      true,
+      withSignal(options)
+    ),
+    { policyList: [], cities: [] }
+  )
+
+export const getPolicyChannelStations = (
+  policyId: string,
+  options: RequestOptions = {}
+): ApiResult<PolicySimpleResultWithMap> =>
+  unwrapData(
+    client.get<BusinessResponse<PolicySimpleResultWithMap>>(
+      `${railwayBaseUrl}/${encodeURIComponent(policyId)}/policy-channel`,
+      undefined,
+      true,
+      withSignal(options)
+    ),
+    { policyId, xfkey: '', policyType: '', coefficient: 0, mapItems: [] }
+  )
+
+export const batchQueryPolicies = (file: File): ApiResult<string> => {
+  const formData = new FormData()
+  formData.append('file', file, file.name)
+  return unwrapData(
+    client.post<BusinessResponse<string>>(
+      `${railwayBaseUrl}/search-policy-bymulti-bypath`,
+      formData,
+      true,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    ),
+    ''
+  )
+}
+
+export const importPolicies = (file: File): ApiResult<boolean> => {
+  const formData = new FormData()
+  formData.append('file', file, file.name)
+  return unwrapSuccess(
+    client.post<BusinessResponse<unknown>>(
+      '/api/resource/railway-highway-platform-sync/import-railway-goodsprice',
+      formData,
+      true,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+  )
+}

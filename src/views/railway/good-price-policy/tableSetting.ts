@@ -21,7 +21,7 @@ const mainTableCols: DCTableColumn[] = [
     formatter: (r, c, val) => {
       return RailwayNatureEnum.getSelf(val)?.label;
     },
-    dtFormatter(cellValue, data) {
+    dtFormatter(cellValue, _data) {
       return RailwayNatureEnum.getSelf(cellValue)?.label;
     }
   },
@@ -77,7 +77,7 @@ const mainTableCols: DCTableColumn[] = [
     width: "120",
     span: 2,
     formatter: (row) => {
-      if (row.ticketType || row.ticketType !== "集装箱") return ""
+      if (row.ticketType !== "集装箱") return ""
       return row.containerTypeMark == "1" ? "铁龙箱" : "非铁龙箱";
     }
   },

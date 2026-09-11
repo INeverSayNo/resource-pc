@@ -6,12 +6,12 @@ import {
 } from "@/views/railway/good-price-policy/tableSetting";
 import DcHighlight from "@/components/Highlight/index.vue";
 import { RailwayPolicyItemNew } from "../types";
-import { GetPolicyDetails } from "../../good-price-policy/api";
+import { getPolicyDetails } from "../../good-price-policy/api";
 import TableColumn from "@/components/DCLayout/TableColumn.vue";
 import DcGap from "@/components/Gap/index.vue";
-import { PricePolicyResult } from "../../good-price-policy/types";
 import DynamicPolicyDetailItem from "./dynamicPolicyDetailItem.vue";
-import { DcDeep } from "@dczy/tie-tools";
+import { normalizePolicyDetails } from "../../good-price-policy/logic";
+import type { PricePolicyResult } from "../../good-price-policy/types";
 
 export default defineComponent({
   name: "PolicyDetailDialog",
@@ -107,62 +107,13 @@ export default defineComponent({
 
     const loading = ref(false);
     const detailInfo = ref<PricePolicyResult[]>([]);
-    const getPolicyDetailById = (payload: RailwayPolicyItemNew) => {
+    const getPolicyDetailById = async (payload: RailwayPolicyItemNew) => {
       if (!Reflect.has(payload || {}, "policyId")) return;
       loading.value = true;
-      GetPolicyDetails(props.policyDetail.policyId)
-        .then((res) => {
-          if (Array.isArray(res) && res.length) {
-            const rData: PricePolicyResult[] = [];
-            res
-              .sort((x, y) => {
-                return (x.coefficient || 0) > (y.coefficient || 0) ? -1 : 1;
-              })
-              .forEach((d) => {
-                const chargeTypeName = d.chargeTypeName
-                  ? d.chargeTypeName.split(":")[0]
-                  : "";
-                const old = rData.find(
-                  (x) =>
-                    x.coefficient === d.coefficient &&
-                    ((chargeTypeName.indexOf("运费") === -1 &&
-                      x.chargeTypeName?.indexOf("运费") === -1) ||
-                      (chargeTypeName.indexOf("运费") !== -1 &&
-                        x.chargeTypeName?.indexOf("运费") !== -1))
-                );
-
-                if (old) {
-                  old.chargeTypeName += `,${chargeTypeName}`;
-                } else {
-                  rData.push({
-                    ...DcDeep.clone<PricePolicyResult>(d),
-                    chargeTypeName: chargeTypeName
-                  });
-                }
-              });
-            detailInfo.value = rData.sort((x, y) => {
-              const xV = getSortVal(x);
-              const yV = getSortVal(y);
-              return xV - yV > 0 ? 1 : -1;
-            });
-          }
-        })
-        .finally(() => {
-          loading.value = false;
-        });
+      const [error, result] = await getPolicyDetails(props.policyDetail.policyId);
+      if (!error) detailInfo.value = normalizePolicyDetails(result);
+      loading.value = false;
     };
-
-    function getSortVal(x: PricePolicyResult) {
-      return x.chargeTypeName?.indexOf("运费") !== -1
-        ? 1
-        : x.chargeTypeName?.startsWith("发") &&
-          x.chargeTypeName?.endsWith("装卸费")
-        ? 2
-        : x.chargeTypeName?.startsWith("到") &&
-          x.chargeTypeName?.endsWith("装卸费")
-        ? 3
-        : 4;
-    }
     const handleShowSendInfo = (senderName: string) => {
       // Emit an event to show sender info
       emit("showSenderInfo", senderName);

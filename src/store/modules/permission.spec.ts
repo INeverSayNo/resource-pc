@@ -105,6 +105,23 @@ describe('asyncRouterMap route authorization', () => {
     expect(filtered.routes[0].children?.some((route) => route.path === 'private-line')).toBe(false)
   })
 
+  it('registers good-price-policy with its backend icon only when authorized', () => {
+    const filtered = authorize([
+      { featureUrl: 'good-price-policy', meta: { icon: 'policy-icon', title: '接口标题' } }
+    ])
+    expect(filtered.routes[0].redirect).toBe('/resource-app/good-price-policy')
+    expect(filtered.routes[0].children?.map((route) => route.path)).toEqual(['good-price-policy'])
+    expect(filtered.routes[0].children?.[0].meta).toMatchObject({
+      title: '优价政策查询',
+      icon: 'policy-icon'
+    })
+    expect(
+      authorize([{ featureUrl: 'station' }]).routes[0].children?.some(
+        (route) => route.path === 'good-price-policy'
+      )
+    ).toBe(false)
+  })
+
   it('does not register a hidden detail route when its main page is unauthorized', () => {
     const filtered = authorize([{ featureUrl: 'waterwayport' }])
 
@@ -174,7 +191,7 @@ describe('asyncRouterMap route authorization', () => {
     authorize([{ featureUrl: 'waterwayport' }])
 
     expect(asyncRouterMap[0].children).toBe(originalChildren)
-    expect(asyncRouterMap[0].children).toHaveLength(5)
+    expect(asyncRouterMap[0].children).toHaveLength(6)
     expect(asyncRouterMap[0].redirect).toBe(originalRedirect)
   })
 })

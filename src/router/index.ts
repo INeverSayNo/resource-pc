@@ -111,6 +111,12 @@ export const asyncRouterMap: AppRouteRecordRaw[] = [
         meta: { title: '专用线信息库' }
       },
       {
+        path: 'good-price-policy',
+        component: () => import('@/views/railway/good-price-policy/search.vue'),
+        name: 'GoodPricePolicySearch',
+        meta: { title: '优价政策查询' }
+      },
+      {
         path: 'waterwayport',
         component: () => import('@/views/waterway/station/index.vue'),
         name: 'WaterwayPort',
