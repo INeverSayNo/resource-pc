@@ -43,7 +43,15 @@ const resolveMenuPath = (node: BackendMenuNode, parentPath: string, isChild: boo
 export interface MenuAuthorizationResult {
   paths: Set<string>
   icons: Map<string, string>
+  entries: MenuAuthorizationEntry[]
   warnings: string[]
+}
+
+export interface MenuAuthorizationEntry {
+  path: string
+  parentPath: string
+  menuCode?: string
+  code?: string
 }
 
 const getMenuIcon = (node: BackendMenuNode): string => {
@@ -54,6 +62,7 @@ const getMenuIcon = (node: BackendMenuNode): string => {
 export const extractAuthorizedMenuPaths = (nodes: BackendMenuNode[]): MenuAuthorizationResult => {
   const paths = new Set<string>()
   const icons = new Map<string, string>()
+  const entries: MenuAuthorizationEntry[] = []
   const warnings: string[] = []
 
   const visit = (items: BackendMenuNode[], parentPath: string, isChild: boolean): void => {
@@ -69,6 +78,12 @@ export const extractAuthorizedMenuPaths = (nodes: BackendMenuNode[]): MenuAuthor
         warnings.push(`菜单路径重复，已忽略：${fullPath}`)
       } else {
         paths.add(fullPath)
+        entries.push({
+          path: fullPath,
+          parentPath,
+          menuCode: node.menuCode,
+          code: node.code
+        })
       }
       const icon = getMenuIcon(node)
       if (icon && !icons.has(fullPath)) icons.set(fullPath, icon)
@@ -78,5 +93,5 @@ export const extractAuthorizedMenuPaths = (nodes: BackendMenuNode[]): MenuAuthor
   }
 
   visit(nodes, '/', false)
-  return { paths, icons, warnings }
+  return { paths, icons, entries, warnings }
 }

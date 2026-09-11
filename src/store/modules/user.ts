@@ -14,7 +14,7 @@ import { decodeJwtUser, getUserId } from '@/utils/jwt'
 import { monitor } from '@/plugins/monitor'
 import { useDictionaryStore } from './dictionary'
 import { useOrgUserStore } from './orgUser'
-import { usePermissionStore } from './permission'
+import { isProductionRouteEnvironment, usePermissionStore } from './permission'
 import { useTagsViewStore } from './tagsView'
 import { useFunPermissionStoreWithOut } from './funPermission'
 import { useRailwayStationStoreWithOut } from '@/views/railway/station/store/index'
@@ -57,11 +57,15 @@ export const useUserStore = defineStore('user', {
       const userInfo = decodeJwtUser(token)
       if (!userInfo) throw new Error('Token 解析失败')
 
-      const [menuError, menuResponse] = await getUserMenus(token)
-      if (menuError || !menuResponse) throw menuError || new Error('菜单加载失败')
-
       const permissionStore = usePermissionStore()
-      const routes = permissionStore.prepareRoutes(menuResponse)
+      let routes: AppRouteRecordRaw[]
+      if (isProductionRouteEnvironment()) {
+        const [menuError, menuResponse] = await getUserMenus(token)
+        if (menuError || !menuResponse) throw menuError || new Error('菜单加载失败')
+        routes = permissionStore.prepareRoutes(menuResponse)
+      } else {
+        routes = permissionStore.prepareRoutes()
+      }
       permissionStore.replaceRoutes(routes)
 
       this.token = token
@@ -159,13 +163,15 @@ export const useUserStore = defineStore('user', {
 
         const permissionStore = usePermissionStore()
         if (!permissionStore.isAddRouters) {
-          const [menuError, menuResponse] = await getUserMenus(this.token)
-          if (menuError || !menuResponse) {
-            this.clearSession()
-            return false
-          }
           try {
-            const routes = permissionStore.prepareRoutes(menuResponse)
+            let routes: AppRouteRecordRaw[]
+            if (isProductionRouteEnvironment()) {
+              const [menuError, menuResponse] = await getUserMenus(this.token)
+              if (menuError || !menuResponse) throw menuError || new Error('菜单加载失败')
+              routes = permissionStore.prepareRoutes(menuResponse)
+            } else {
+              routes = permissionStore.prepareRoutes()
+            }
             permissionStore.replaceRoutes(routes)
           } catch {
             this.clearSession()

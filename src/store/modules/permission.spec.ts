@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { asyncRouterMap } from '@/router'
 import { extractAuthorizedMenuPaths, normalizeBackendMenus } from '@/utils/menuAdapter'
-import { filterAsyncRoutes } from './permission'
+import { filterAsyncRoutes, filterAsyncRoutesByMenus, resolvePermissionRoutes } from './permission'
 
 const page = () => Promise.resolve({ default: {} })
 
@@ -122,6 +122,119 @@ describe('asyncRouterMap route authorization', () => {
     ).toBe(false)
   })
 
+  it('matches the production DCZYUserManage module path and registers user-manager', () => {
+    const backendMenus = [
+      {
+        code: 'DCZYUserManage',
+        name: '会员权限管理',
+        icon: 'table',
+        childModules: [
+          {
+            menuCode: 'UserManager',
+            featureName: '用户管理',
+            featureUrl: 'user-manager',
+            featureIsMenu: true,
+            menuIcon: 'tree'
+          }
+        ]
+      }
+    ]
+    const authorization = extractAuthorizedMenuPaths(backendMenus)
+    const filtered = resolvePermissionRoutes(asyncRouterMap, backendMenus, 'pro')
+
+    expect([...authorization.paths]).toEqual(['/DCZYUserManage', '/DCZYUserManage/user-manager'])
+    expect(filtered.warnings).toEqual([])
+    expect(filtered.routes).toHaveLength(1)
+    expect(filtered.routes[0]).toMatchObject({
+      path: '/DCZYUserManage',
+      redirect: '/DCZYUserManage/user-manager',
+      meta: { title: '会员权限', icon: 'table' }
+    })
+    expect(filtered.routes[0].children).toHaveLength(1)
+    expect(filtered.routes[0].children?.[0]).toMatchObject({
+      path: 'user-manager',
+      name: 'UserManager',
+      meta: { title: '用户管理', icon: 'tree' }
+    })
+    expect(asyncRouterMap[1]).toMatchObject({
+      path: '/user-auth',
+      redirect: '/user-auth/user-manager'
+    })
+  })
+
+  it('registers a cloned full asyncRouterMap outside the pro environment', () => {
+    const result = resolvePermissionRoutes(asyncRouterMap, undefined, 'dev')
+
+    expect(result.warnings).toEqual([])
+    expect(result.routes.map((route) => route.path)).toEqual(
+      asyncRouterMap.map((route) => route.path)
+    )
+    expect(result.routes[0].children?.map((route) => route.path)).toEqual(
+      asyncRouterMap[0].children?.map((route) => route.path)
+    )
+    expect(result.routes).not.toBe(asyncRouterMap)
+    expect(result.routes[0]).not.toBe(asyncRouterMap[0])
+  })
+
+  it('uses backend paths after matching static route names and rebases hidden route metadata', () => {
+    const routes = [
+      {
+        path: '/local-module',
+        name: 'LocalModule',
+        component: page,
+        redirect: '/local-module/members',
+        meta: { title: '本地模块' },
+        children: [
+          {
+            path: 'members',
+            name: 'UserManager',
+            component: page,
+            meta: { title: '用户' }
+          },
+          {
+            path: 'member-detail',
+            name: 'UserDetail',
+            component: page,
+            meta: {
+              title: '用户详情',
+              hidden: true,
+              followRoute: '/local-module/members',
+              activeMenu: '/local-module/members'
+            }
+          }
+        ]
+      }
+    ] as AppRouteRecordRaw[]
+    const authorization = extractAuthorizedMenuPaths([
+      {
+        code: 'RemoteModule',
+        childModules: [
+          {
+            menuCode: 'UserManager',
+            featureUrl: 'user-manager',
+            featureIsMenu: true
+          }
+        ]
+      }
+    ])
+    const result = filterAsyncRoutesByMenus(routes, authorization)
+
+    expect(result.warnings).toEqual([])
+    expect(result.routes[0].path).toBe('/RemoteModule')
+    expect(result.routes[0].redirect).toBe('/RemoteModule/user-manager')
+    expect(result.routes[0].children?.map((route) => route.path)).toEqual([
+      'user-manager',
+      'member-detail'
+    ])
+    expect(result.routes[0].children?.[1].meta).toMatchObject({
+      hidden: true,
+      followRoute: '/RemoteModule/user-manager',
+      activeMenu: '/RemoteModule/user-manager'
+    })
+    expect(routes[0].path).toBe('/local-module')
+    expect(routes[0].children?.[0].path).toBe('members')
+  })
+
   it('registers stop-loading pages and keeps them under the resource app route', () => {
     const filtered = authorize([
       { featureUrl: 'stop-loading' },
@@ -143,9 +256,9 @@ describe('asyncRouterMap route authorization', () => {
   it('does not register stop-loading pages without authorization', () => {
     const filtered = authorize([{ featureUrl: 'station' }])
     expect(filtered.routes[0].children?.some((route) => route.path === 'stop-loading')).toBe(false)
-    expect(
-      filtered.routes[0].children?.some((route) => route.path === 'stop-loading-config')
-    ).toBe(false)
+    expect(filtered.routes[0].children?.some((route) => route.path === 'stop-loading-config')).toBe(
+      false
+    )
   })
 
   it('does not register a hidden detail route when its main page is unauthorized', () => {
@@ -212,12 +325,13 @@ describe('asyncRouterMap route authorization', () => {
 
   it('does not mutate asyncRouterMap while filtering', () => {
     const originalChildren = asyncRouterMap[0].children
+    const originalChildrenLength = originalChildren?.length
     const originalRedirect = asyncRouterMap[0].redirect
 
     authorize([{ featureUrl: 'waterwayport' }])
 
     expect(asyncRouterMap[0].children).toBe(originalChildren)
-    expect(asyncRouterMap[0].children).toHaveLength(6)
+    expect(asyncRouterMap[0].children?.length).toBe(originalChildrenLength)
     expect(asyncRouterMap[0].redirect).toBe(originalRedirect)
   })
 })
